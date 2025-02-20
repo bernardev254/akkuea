@@ -7,7 +7,7 @@ import { useModalStore } from '@/store/useModalStore';
 const overlayVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
-  exit: { opacity: 0 }
+  exit: { opacity: 0 },
 };
 
 const modalVariants = {
@@ -17,10 +17,10 @@ const modalVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: 'spring',
       duration: 0.5,
-      bounce: 0.3
-    }
+      bounce: 0.3,
+    },
   },
   exit: {
     scale: 0.95,
@@ -28,17 +28,20 @@ const modalVariants = {
     y: 20,
     transition: {
       duration: 0.2,
-      ease: "easeOut"
-    }
-  }
+      ease: 'easeOut',
+    },
+  },
 };
 
 export const Modal = () => {
   const { isOpen, content, closeModal } = useModalStore();
 
-  const handleEscape = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') closeModal();
-  }, [closeModal]);
+  const handleEscape = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeModal();
+    },
+    [closeModal]
+  );
 
   const handleContentClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -62,10 +65,7 @@ export const Modal = () => {
 
   return (
     <AnimatePresence>
-      <div
-        className="fixed inset-0 flex items-center justify-center z-50"
-        onClick={closeModal}
-      >
+      <div className="fixed inset-0 flex items-center justify-center z-50" onClick={closeModal}>
         <motion.div
           variants={overlayVariants}
           initial="hidden"
@@ -75,7 +75,7 @@ export const Modal = () => {
             position: 'fixed',
             inset: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(4px)'
+            backdropFilter: 'blur(4px)',
           }}
         />
 
@@ -94,15 +94,11 @@ export const Modal = () => {
             borderRadius: '0.75rem',
             boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
             overflow: 'auto',
-            maxHeight: '90vh'
+            maxHeight: '90vh',
           }}
         >
-          <div
-            onClick={handleContentClick}
-          >
-            <div className="p-6">
-              {content}
-            </div>
+          <div onClick={handleContentClick}>
+            <div className="p-6">{content}</div>
           </div>
         </motion.div>
       </div>

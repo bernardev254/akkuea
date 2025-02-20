@@ -12,4 +12,4 @@ export const useModalStore = create<ModalStore>((set) => ({
   content: null,
   openModal: (content) => set({ isOpen: true, content }),
   closeModal: () => set({ isOpen: false, content: null }),
-})); 
+}));
