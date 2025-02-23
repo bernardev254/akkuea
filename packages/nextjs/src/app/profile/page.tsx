@@ -4,8 +4,8 @@ import { Flag } from "lucide-react";
 
 const ProfilePage = () => {
   return (
-    <div className="h-screen">
-    <div className="bg-white h-screen  shadow-sm p-6">
+    <div className="">
+    <div className="bg-white md:h-screen  shadow-sm p-6">
      
       <div className="flex flex-col md:flex-row items-start gap-6">
        
@@ -83,7 +83,7 @@ const ProfilePage = () => {
           </div>
   
           
-          <p className="text-gray-700 leading-relaxed mb-6">
+          <p className=" text-gray-700 leading-relaxed mb-6 md:w-1/2">
             I'm a crack designer, I like software engineering and also mixing as a DJ. Passionate
             about creating beautiful and functional digital experiences.
           </p>
