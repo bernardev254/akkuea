@@ -1,25 +1,37 @@
-"use client"
+'use client';
 
-import type React from "react"
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { PlusCircle, Image, Video } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type React from 'react';
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { PlusCircle, Image, Video } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function CreatePostModal() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState("text")
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('text');
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     // Handle post creation logic here
-    setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -74,7 +86,7 @@ export default function CreatePostModal() {
                 className="bg-white dark:bg-black text-gray-900 dark:text-white border-gray-200 dark:border-gray-700"
               />
             </TabsContent>
-            {activeTab === "text" && (
+            {activeTab === 'text' && (
               <>
                 <div>
                   <Label htmlFor="category" className="text-[#00ced1] dark:text-[#00ced1]">
@@ -111,5 +123,5 @@ export default function CreatePostModal() {
         </Tabs>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
