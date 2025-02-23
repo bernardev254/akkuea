@@ -4,8 +4,8 @@ import { Flag } from "lucide-react";
 
 const ProfilePage = () => {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-24">
-    <div className="bg-white rounded-xl shadow-sm p-6">
+    <div className="h-screen">
+    <div className="bg-white h-screen  shadow-sm p-6">
      
       <div className="flex flex-col md:flex-row items-start gap-6">
        
