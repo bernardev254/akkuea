@@ -4,6 +4,7 @@ import { useWallet } from '@/components/auth/hooks/useWallet.hook';
 import { useGlobalAuthenticationStore } from '@/components/auth/store/data';
 import { Button } from '@/components/ui/button';
 import QuickPost from '@/components/quickPost/quickPost';
+import CreatePostModal from '@/components/floating-button/button';
 
 export default function Home() {
   const { handleConnect, handleDisconnect } = useWallet();
@@ -25,10 +26,7 @@ export default function Home() {
         </div>
         <QuickPost />
       </main>
-      <footer className="w-full flex gap-6 flex-wrap items-center justify-center">
-        {/* biome-ignore lint/a11y/useValidAnchor: <explanation> */}
-        <a className="flex items-center gap-2 hover:underline hover:underline-offset-4">Footer</a>
-      </footer>
+      <CreatePostModal />
     </div>
   );
 }
