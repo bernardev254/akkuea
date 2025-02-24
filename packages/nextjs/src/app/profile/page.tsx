@@ -6,7 +6,7 @@ const ProfilePage = () => {
   return (
     <div className="bg-white md:h-screen  shadow-sm p-6 ">
      
-      <div className="flex flex-col md:flex-row items-start gap-6 md:p-7  ">
+      <div className="flex flex-col md:flex-row items-start gap-6 md:pt-7 md:pl-10">
        
         <div className="w-full md:w-auto flex flex-col items-center justify-between md:items-start md:h-[270px]  pt-6" >
       
@@ -32,7 +32,7 @@ const ProfilePage = () => {
         </div>
   
     
-        <div className="flex-1 pt-2 w-full">
+        <div className="flex-1 pt-2 w-full ml-3">
         
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-2">
             <div>
