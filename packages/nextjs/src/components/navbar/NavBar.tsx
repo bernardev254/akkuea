@@ -1,5 +1,3 @@
-
-
 "use client"
 
 import type React from "react"
@@ -31,7 +29,7 @@ const Navbar = () => {
 
   useEffect(() => {
     if (searchQuery.length > 0) {
-      // Simular sugerencias de búsqueda
+      // simulated Suggestions
       const simulatedSuggestions = [`${searchQuery} en Akkuea`, `Buscar ${searchQuery}`, `${searchQuery} populares`]
       setSuggestions(simulatedSuggestions)
       setShowSuggestions(true)
@@ -48,7 +46,7 @@ const Navbar = () => {
   const handleSuggestionClick = (suggestion: string) => {
     setSearchQuery(suggestion)
     setShowSuggestions(false)
-    // Aquí puedes agregar la lógica para realizar la búsqueda
+    //Add here the logic to search
   }
 
   return (
@@ -70,7 +68,7 @@ const Navbar = () => {
           />
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 
-          {/* Sugerencias de búsqueda */}
+          {/* Suggestions */}
           {showSuggestions && suggestions.length > 0 && (
             <div className="absolute z-10 w-full bg-card border border-border mt-1 rounded-md shadow-lg">
               {suggestions.map((suggestion, index) => (
@@ -101,4 +99,3 @@ const Navbar = () => {
 }
 
 export default Navbar
-
