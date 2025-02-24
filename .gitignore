@@ -58,3 +58,7 @@ Desktop.ini
 *.pid
 *.seed
 *.coverdata
+
+#bun
+bun.lock
+packages/nextjs/bun.lock
