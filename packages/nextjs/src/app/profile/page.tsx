@@ -4,12 +4,11 @@ import { Flag } from "lucide-react";
 
 const ProfilePage = () => {
   return (
-    <div className="">
-    <div className="bg-white md:h-screen  shadow-sm p-6">
+    <div className="bg-white md:h-screen  shadow-sm p-6 ">
      
-      <div className="flex flex-col md:flex-row items-start gap-6">
+      <div className="flex flex-col md:flex-row items-start gap-6 md:p-7  ">
        
-        <div className="w-full md:w-auto flex flex-col items-center md:items-start">
+        <div className="w-full md:w-auto flex flex-col items-center justify-between md:items-start md:h-[270px]  pt-6" >
       
           <div className="w-32 h-32 md:w-44 md:h-44 rounded-full ring-4 ring-white bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden shadow-lg">
             <svg
@@ -35,7 +34,7 @@ const ProfilePage = () => {
     
         <div className="flex-1 pt-2 w-full">
         
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-2">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 hover:text-teal-600 transition-colors duration-200">
                 Jefferson Calderon
@@ -49,7 +48,7 @@ const ProfilePage = () => {
           </div>
   
         
-          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 text-sm text-gray-600 mb-6">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 text-sm text-gray-600 mb-2">
             <div className="flex items-center gap-1">
               <MapPin size={16} className="text-gray-400" />
               <span>San Francisco, CA</span>
@@ -67,7 +66,7 @@ const ProfilePage = () => {
           </div>
   
           
-          <div className="flex flex-row gap-8 mb-6">
+          <div className="flex flex-row gap-8 mb-3">
             <div className="flex flex-col items-center">
               <span className="font-bold text-xl text-gray-900">15</span>
               <span className="text-gray-600 text-sm">posts</span>
@@ -83,13 +82,13 @@ const ProfilePage = () => {
           </div>
   
           
-          <p className=" text-gray-700 leading-relaxed mb-6 md:w-1/2">
+          <p className=" text-gray-700 leading-relaxed mb-4 md:w-1/2">
             I'm a crack designer, I like software engineering and also mixing as a DJ. Passionate
             about creating beautiful and functional digital experiences.
           </p>
   
        
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-2">
             
             <button className="px-6 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors duration-200">
               Follow
@@ -116,7 +115,6 @@ const ProfilePage = () => {
         </div>
       </div>
     </div>
-  </div>
   );
 };
 
