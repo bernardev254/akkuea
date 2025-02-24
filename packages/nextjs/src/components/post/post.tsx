@@ -101,7 +101,7 @@ export default function Post({ id, author, content, categories = [] }: PostProps
             />
           </div>
         )
-      case "image":
+      case "image": 
         return (
           <div key={index} className="relative rounded-lg overflow-hidden border bg-muted">
             <Image

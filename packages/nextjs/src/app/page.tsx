@@ -5,6 +5,7 @@ import { useGlobalAuthenticationStore } from '@/components/auth/store/data';
 import { Button } from '@/components/ui/button';
 import QuickPost from '@/components/quickPost/quickPost';
 import CreatePostModal from '@/components/floating-button/button';
+import Post from '@/components/post/page';
 
 export default function Home() {
   const { handleConnect, handleDisconnect } = useWallet();
@@ -25,6 +26,7 @@ export default function Home() {
           <p>{address}</p>
         </div>
         <QuickPost />
+        <Post />
       </main>
       <CreatePostModal />
     </div>
