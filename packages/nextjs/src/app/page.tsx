@@ -4,14 +4,17 @@ import { useWallet } from '@/components/auth/hooks/useWallet.hook';
 import { useGlobalAuthenticationStore } from '@/components/auth/store/data';
 import { Button } from '@/components/ui/button';
 import QuickPost from '@/components/quickPost/quickPost';
+import Navbar from '@/components/navbar/NavBar';
 import CreatePostModal from '@/components/floating-button/button';
+
 
 export default function Home() {
   const { handleConnect, handleDisconnect } = useWallet();
   const address = useGlobalAuthenticationStore((state) => state.address);
 
   return (
-    <div className="flex flex-col items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] w-full">
+    <div className="flex flex-col min-h-screen font-[family-name:var(--font-geist-sans)]">
+      <Navbar />
       <header className="w-full flex justify-center">
         {address ? (
           <Button onClick={handleDisconnect}>Disconnect</Button>
