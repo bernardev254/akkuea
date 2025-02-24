@@ -83,16 +83,6 @@ const Navbar = () => {
             </div>
           )}
         </div>
-
-        {/* Right Icons */}
-        <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-muted rounded-full">
-            <MessageCircle className="h-5 w-5 text-muted-foreground" />
-          </button>
-          <button className="p-2 hover:bg-muted rounded-full">
-            <User className="h-5 w-5 text-muted-foreground" />
-          </button>
-        </div>
       </div>
     </nav>
   )
