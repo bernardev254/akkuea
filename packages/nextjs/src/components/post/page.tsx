@@ -5,7 +5,8 @@ import { Toaster } from "sonner"
 
 export default function Page() {
   return (
-    <div className="p-4">
+    <div className="max-w-4xl w-full mx-auto px-8 ">
+      <div className="w-full">
       <Post
         id="1"
         author={{
@@ -54,6 +55,7 @@ export default function Page() {
         ]}
       />
       <Toaster />
+    </div>
     </div>
   )
 }

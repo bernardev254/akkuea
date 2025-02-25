@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Image from "next/image"
 import { Download, Flag, MessageCircle, Share2 } from "lucide-react"
@@ -40,7 +39,6 @@ export default function Post({ id, author, content, categories = [] }: PostProps
       console.error("Error sharing:", error)
     }
   }
-
   const handleComment = (text: string) => {
     const newComment: Comment = {
       id: Date.now().toString(),
@@ -162,7 +160,7 @@ export default function Post({ id, author, content, categories = [] }: PostProps
   }
 
   return (
-    <Card className="max-w-2xl w-full">
+    <Card className="max-w-4xl w-full p-4">
       <div className="flex flex-row items-center gap-3 p-4">
         <Avatar className="h-10 w-10">
           <AvatarImage src={author.avatar} alt={author.name} />
