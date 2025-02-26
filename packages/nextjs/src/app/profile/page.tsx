@@ -1,6 +1,7 @@
 import React from 'react';
-import { Edit, MapPin, Link, MessageCircle, Share2, Flag as LinkIcon, Calendar } from 'lucide-react';
+import { Edit, MapPin, MessageCircle, Share2, Flag as LinkIcon, Calendar } from 'lucide-react';
 import { Flag } from "lucide-react";
+import UserPost from '@/components/quickPost/post-grid/userprofilepost'
 
 const ProfilePage = () => {
   return (
@@ -83,7 +84,7 @@ const ProfilePage = () => {
   
           
           <p className=" text-gray-700 leading-relaxed mb-4 md:w-1/2">
-            I'm a crack designer, I like software engineering and also mixing as a DJ. Passionate
+            I am a crack designer, I like software engineering and also mixing as a DJ. Passionate
             about creating beautiful and functional digital experiences.
           </p>
   
@@ -114,6 +115,7 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+      <UserPost/>
     </div>
   );
 };
