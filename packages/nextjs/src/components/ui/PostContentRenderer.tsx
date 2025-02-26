@@ -1,10 +1,10 @@
-import React from "react";
-import Image from "next/image";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Card } from "@/components/ui/card";
-import { ExternalLink, Play, Link as LinkIcon, FileText } from "lucide-react";
+import React from 'react';
+import Image from 'next/image';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
+import { ExternalLink, Play, Link as LinkIcon, FileText } from 'lucide-react';
 
-type ContentType = "image" | "text" | "video" | "link" | "mixed";
+type ContentType = 'image' | 'text' | 'video' | 'link' | 'mixed';
 
 interface Post {
   id: string;
@@ -25,20 +25,16 @@ interface PostContentRendererProps {
   onClose: () => void;
 }
 
-const PostContentRenderer: React.FC<PostContentRendererProps> = ({
-  post,
-  isOpen,
-  onClose,
-}) => {
+const PostContentRenderer: React.FC<PostContentRendererProps> = ({ post, isOpen, onClose }) => {
   const renderContent = () => {
     switch (post.contentType) {
-      case "image":
+      case 'image':
         return (
           <div className="w-full h-full max-h-[70vh] relative">
             {post.thumbnail && (
               <Image
                 src={post.thumbnail}
-                alt={post.title || "Post image"}
+                alt={post.title || 'Post image'}
                 width={800}
                 height={800}
                 className="object-contain max-h-[70vh] mx-auto"
@@ -47,7 +43,7 @@ const PostContentRenderer: React.FC<PostContentRendererProps> = ({
           </div>
         );
 
-      case "video":
+      case 'video':
         return (
           <div className="w-full max-h-[70vh] bg-black">
             {post.videoUrl ? (
@@ -66,22 +62,20 @@ const PostContentRenderer: React.FC<PostContentRendererProps> = ({
           </div>
         );
 
-      case "text":
+      case 'text':
         return (
           <Card className="p-6 max-h-[70vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">{post.title}</h2>
-            <div className="prose dark:prose-invert">
-              {post.content || post.description}
-            </div>
+            <div className="prose dark:prose-invert">{post.content || post.description}</div>
           </Card>
         );
 
-      case "link":
+      case 'link':
         return (
           <Card className="p-6 max-h-[70vh] overflow-y-auto">
             <div className="flex items-center gap-2 mb-4">
               <LinkIcon className="h-5 w-5 text-blue-500" />
-              <h2 className="text-xl font-bold">{post.title || "Shared Link"}</h2>
+              <h2 className="text-xl font-bold">{post.title || 'Shared Link'}</h2>
             </div>
             <p className="mb-4">{post.description}</p>
             {post.url && (
@@ -108,14 +102,14 @@ const PostContentRenderer: React.FC<PostContentRendererProps> = ({
           </Card>
         );
 
-      case "mixed":
+      case 'mixed':
         return (
           <div className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto p-4">
             {post.thumbnail && (
               <div className="rounded-md overflow-hidden">
                 <Image
                   src={post.thumbnail}
-                  alt={post.title || "Post content"}
+                  alt={post.title || 'Post content'}
                   width={600}
                   height={400}
                   className="object-cover w-full"
@@ -153,7 +147,10 @@ const PostContentRenderer: React.FC<PostContentRendererProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-3xl w-full p-0 overflow-hidden">
         <DialogHeader className="p-4 border-b">
-          <DialogTitle>{post.title || `${post.contentType.charAt(0).toUpperCase() + post.contentType.slice(1)} Post`}</DialogTitle>
+          <DialogTitle>
+            {post.title ||
+              `${post.contentType.charAt(0).toUpperCase() + post.contentType.slice(1)} Post`}
+          </DialogTitle>
         </DialogHeader>
         <div className="p-0">{renderContent()}</div>
       </DialogContent>

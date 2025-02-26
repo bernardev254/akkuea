@@ -1,14 +1,14 @@
-'use client'
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import { Card } from "@/components/ui/card";
-import  Skeleton  from "@/components/ui/skeleton";
-import { useInView } from "react-intersection-observer";
-import { Play, Link, FileText, AlertCircle } from "lucide-react";
-import PostContentRenderer from "./PostContentRenderer";
+'use client';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { Card } from '@/components/ui/card';
+import Skeleton from '@/components/ui/skeleton';
+import { useInView } from 'react-intersection-observer';
+import { Play, Link, FileText, AlertCircle } from 'lucide-react';
+import PostContentRenderer from './PostContentRenderer';
 
 // Define the types of posts
-type ContentType = "image" | "text" | "video" | "link" | "mixed";
+type ContentType = 'image' | 'text' | 'video' | 'link' | 'mixed';
 
 interface Post {
   id: string;
@@ -46,44 +46,54 @@ const UserProfilePostsGrid: React.FC<UserProfilePostsGridProps> = ({
   // Fetch posts function
   const fetchPosts = async (pageNum: number) => {
     if (!hasMore) return;
-    
+
     setIsLoading(true);
     try {
       // Replace with your actual API call
       // const response = await fetch(`/api/users/${userId}/posts?page=${pageNum}&limit=12`);
       // if (!response.ok) throw new Error('Failed to fetch posts');
       // const data = await response.json();
-      
+
       // Mock data for demonstration
-      const mockData = Array(12).fill(null).map((_, index) => {
-        const contentTypeIndex = Math.floor(Math.random() * 5);
-        const contentType = ["image", "text", "video", "link", "mixed"][contentTypeIndex] as ContentType;
-        
-        return {
-          id: `post-${pageNum}-${index}`,
-          userId,
-          contentType,
-          thumbnail: index % 3 === 0 && contentType !== "image" ? undefined : `https://via.placeholder.com/400x400?text=Post+${pageNum}-${index}`,
-          title: `Post ${pageNum}-${index}`,
-          description: `This is the description for post ${pageNum}-${index}`,
-          url: (contentType === "link" || contentType === "mixed") ? "https://example.com" : undefined,
-          content: contentType === "text" ? "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, eget aliquam nisl nunc eget nisl." : undefined,
-          videoUrl: contentType === "video" ? "https://example.com/video.mp4" : undefined,
-          createdAt: new Date().toISOString(),
-        };
-      });
+      const mockData = Array(12)
+        .fill(null)
+        .map((_, index) => {
+          const contentTypeIndex = Math.floor(Math.random() * 5);
+          const contentType = ['image', 'text', 'video', 'link', 'mixed'][
+            contentTypeIndex
+          ] as ContentType;
+
+          return {
+            id: `post-${pageNum}-${index}`,
+            userId,
+            contentType,
+            thumbnail:
+              index % 3 === 0 && contentType !== 'image'
+                ? undefined
+                : `https://via.placeholder.com/400x400?text=Post+${pageNum}-${index}`,
+            title: `Post ${pageNum}-${index}`,
+            description: `This is the description for post ${pageNum}-${index}`,
+            url:
+              contentType === 'link' || contentType === 'mixed' ? 'https://example.com' : undefined,
+            content:
+              contentType === 'text'
+                ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, eget aliquam nisl nunc eget nisl.'
+                : undefined,
+            videoUrl: contentType === 'video' ? 'https://example.com/video.mp4' : undefined,
+            createdAt: new Date().toISOString(),
+          };
+        });
 
       // Simulate end of data after 3 pages
       const newHasMore = pageNum < 3;
-      
+
       setTimeout(() => {
-        setPosts(prevPosts => pageNum === 1 ? mockData : [...prevPosts, ...mockData]);
+        setPosts((prevPosts) => (pageNum === 1 ? mockData : [...prevPosts, ...mockData]));
         setHasMore(newHasMore);
         setIsLoading(false);
       }, 1000);
-      
     } catch (err) {
-      setError("Failed to load posts. Please try again.");
+      setError('Failed to load posts. Please try again.');
       setIsLoading(false);
     }
   };
@@ -96,7 +106,7 @@ const UserProfilePostsGrid: React.FC<UserProfilePostsGridProps> = ({
   // Handle infinite scroll
   useEffect(() => {
     if (inView && !isLoading && hasMore) {
-      setPage(prevPage => prevPage + 1);
+      setPage((prevPage) => prevPage + 1);
       fetchPosts(page + 1);
     }
   }, [inView, isLoading, hasMore]);
@@ -104,13 +114,13 @@ const UserProfilePostsGrid: React.FC<UserProfilePostsGridProps> = ({
   // Content type icon renderer
   const renderContentTypeIcon = (type: ContentType) => {
     switch (type) {
-      case "video":
+      case 'video':
         return <Play className="h-6 w-6 text-white" />;
-      case "link":
+      case 'link':
         return <Link className="h-6 w-6 text-white" />;
-      case "text":
+      case 'text':
         return <FileText className="h-6 w-6 text-white" />;
-      case "mixed":
+      case 'mixed':
         return <FileText className="h-6 w-6 text-white" />;
       default:
         return null;
@@ -121,7 +131,7 @@ const UserProfilePostsGrid: React.FC<UserProfilePostsGridProps> = ({
   const PostCard = ({ post }: { post: Post }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    
+
     return (
       <>
         <Card
@@ -134,14 +144,14 @@ const UserProfilePostsGrid: React.FC<UserProfilePostsGridProps> = ({
             <div className="w-full h-full relative">
               <Image
                 src={post.thumbnail}
-                alt={post.title || "Post thumbnail"}
+                alt={post.title || 'Post thumbnail'}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover"
                 priority={false}
               />
               {/* Content type indicator */}
-              {post.contentType !== "image" && (
+              {post.contentType !== 'image' && (
                 <div className="absolute top-2 right-2 bg-black/50 p-1 rounded-full">
                   {renderContentTypeIcon(post.contentType)}
                 </div>
@@ -149,7 +159,7 @@ const UserProfilePostsGrid: React.FC<UserProfilePostsGridProps> = ({
             </div>
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-              {post.contentType === "text" ? (
+              {post.contentType === 'text' ? (
                 <div className="p-4 text-sm overflow-hidden max-h-full">
                   <h3 className="font-bold mb-2">{post.title}</h3>
                   <p className="text-gray-600 dark:text-gray-300 line-clamp-6">
@@ -170,24 +180,22 @@ const UserProfilePostsGrid: React.FC<UserProfilePostsGridProps> = ({
           {/* Hover overlay */}
           <div
             className={`absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white p-4 transition-opacity duration-200 ${
-              isHovered ? "opacity-100" : "opacity-0"
+              isHovered ? 'opacity-100' : 'opacity-0'
             }`}
           >
             {post.title && <h3 className="font-bold mb-1 text-center">{post.title}</h3>}
             {post.description && (
-              <p className="text-sm text-gray-200 line-clamp-3 text-center">
-                {post.description}
-              </p>
+              <p className="text-sm text-gray-200 line-clamp-3 text-center">{post.description}</p>
             )}
             <div className="mt-2 text-xs">Click to view</div>
           </div>
         </Card>
 
         {/* Post Content Preview Dialog */}
-        <PostContentRenderer 
-          post={post} 
-          isOpen={isDialogOpen} 
-          onClose={() => setIsDialogOpen(false)} 
+        <PostContentRenderer
+          post={post}
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
         />
       </>
     );
@@ -220,18 +228,16 @@ const UserProfilePostsGrid: React.FC<UserProfilePostsGridProps> = ({
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
-        
+
         {isLoading && renderSkeletons()}
       </div>
 
       {/* Load more trigger element */}
       {hasMore && !error && <div ref={ref} className="h-20 w-full" />}
-      
+
       {/* End of content message */}
       {!hasMore && posts.length > 0 && (
-        <div className="text-center text-gray-500 mt-8 mb-4">
-          No more posts to load
-        </div>
+        <div className="text-center text-gray-500 mt-8 mb-4">No more posts to load</div>
       )}
     </div>
   );

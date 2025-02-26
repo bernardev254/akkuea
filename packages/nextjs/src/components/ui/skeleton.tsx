@@ -1,48 +1,49 @@
-import React from "react";
+import React from 'react';
 
 interface SkeletonProps {
   className?: string;
-  variant?: "rectangular" | "circular" | "text";
-  animation?: "pulse" | "wave" | "none";
+  variant?: 'rectangular' | 'circular' | 'text';
+  animation?: 'pulse' | 'wave' | 'none';
 }
 
 const Skeleton: React.FC<SkeletonProps> = ({
-  className = "",
-  variant = "rectangular",
-  animation = "pulse",
+  className = '',
+  variant = 'rectangular',
+  animation = 'pulse',
 }) => {
   // Base classes
-  let baseClasses = "";
-  
+  let baseClasses = '';
+
   // Add variant-specific classes
   switch (variant) {
-    case "circular":
-      baseClasses += "rounded-full";
+    case 'circular':
+      baseClasses += 'rounded-full';
       break;
-    case "text":
-      baseClasses += "h-4 rounded";
+    case 'text':
+      baseClasses += 'h-4 rounded';
       break;
-    case "rectangular":
+    case 'rectangular':
     default:
-      baseClasses += "rounded";
+      baseClasses += 'rounded';
       break;
   }
-  
+
   // Add animation classes
   switch (animation) {
-    case "pulse":
-      baseClasses += " animate-pulse";
+    case 'pulse':
+      baseClasses += ' animate-pulse';
       break;
-    case "wave":
-      baseClasses += " relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent";
+    case 'wave':
+      baseClasses +=
+        ' relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent';
       break;
-    case "none":
+    case 'none':
     default:
       break;
   }
 
   return (
-    <div 
+    <div
       className={`bg-gray-200 dark:bg-gray-700 ${baseClasses} ${className}`}
       role="status"
       aria-label="loading"

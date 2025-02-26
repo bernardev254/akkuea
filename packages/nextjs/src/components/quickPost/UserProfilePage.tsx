@@ -1,5 +1,5 @@
-import React from "react";
-import UserProfilePostsGrid from "./post-grid/userprofilepost";
+import React from 'react';
+import UserProfilePostsGrid from './post-grid/userprofilepost';
 
 // Placeholder for the user data component that would be above the posts grid
 const UserProfileHeader = () => (
