@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import QuickPost from '@/components/quickPost/quickPost';
 import Navbar from '@/components/navbar/NavBar';
 import CreatePostModal from '@/components/floating-button/button';
+import Post from '@/components/post/page';
 
 
 export default function Home() {
@@ -28,6 +29,7 @@ export default function Home() {
           <p>{address}</p>
         </div>
         <QuickPost />
+        <Post />
       </main>
       <CreatePostModal />
     </div>
