@@ -11,10 +11,8 @@ const Skeleton: React.FC<SkeletonProps> = ({
   variant = 'rectangular',
   animation = 'pulse',
 }) => {
-  // Base classes
   let baseClasses = '';
 
-  // Add variant-specific classes
   switch (variant) {
     case 'circular':
       baseClasses += 'rounded-full';
@@ -28,7 +26,6 @@ const Skeleton: React.FC<SkeletonProps> = ({
       break;
   }
 
-  // Add animation classes
   switch (animation) {
     case 'pulse':
       baseClasses += ' animate-pulse';
