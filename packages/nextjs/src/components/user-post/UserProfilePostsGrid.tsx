@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
-import Skeleton from '@/components/user post/skeleton';
+import Skeleton from '@/components/user-post/skeleton';
 import { useInView } from 'react-intersection-observer';
 import { Play, Link, FileText, AlertCircle } from 'lucide-react';
 import PostContentRenderer from './PostContentRenderer';
