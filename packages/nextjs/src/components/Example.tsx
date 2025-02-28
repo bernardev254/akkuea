@@ -12,10 +12,6 @@ export const Example = () => {
       <div>
         <h2 className="text-2xl font-bold mb-4">Post Title</h2>
 
-        <div className="mb-4">
-          <Image src="/example.jpg" alt="Post image" className="rounded-lg" />
-        </div>
-
         <p className="mb-4">Post content goes here...</p>
 
         <div className="flex gap-4 mb-4">
