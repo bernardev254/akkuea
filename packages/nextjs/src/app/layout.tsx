@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { Modal } from '@/components/Modal/Modal';
 import { ThemeProvider } from 'next-themes';
 import type { ThemeProviderProps } from 'next-themes';
 import './globals.css';
@@ -30,7 +31,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {children}
+        <Modal />
+      </body>
     </html>
   );
 }
