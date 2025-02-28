@@ -32,5 +32,5 @@ export interface PostProps {
     name: string;
     icon?: React.ReactNode;
   }>;
-  modal: () => void
+  modal: () => void;
 }

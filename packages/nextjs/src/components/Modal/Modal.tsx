@@ -86,7 +86,7 @@ export const Modal = () => {
           className="ml-auto absolute top-[1rem] right-[1rem] rounded-[50%]"
           onClick={closeModal}
         >
-          <X className='h-6 w-6'/>
+          <X className="h-6 w-6" />
         </Button>
         <motion.div
           variants={modalVariants}
@@ -100,9 +100,7 @@ export const Modal = () => {
             maxHeight: '90vh',
           }}
         >
-          <div onClick={handleContentClick}>
-            {content}
-          </div>
+          <div onClick={handleContentClick}>{content}</div>
         </motion.div>
       </div>
     </AnimatePresence>
