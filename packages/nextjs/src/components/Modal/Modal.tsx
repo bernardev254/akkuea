@@ -3,6 +3,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useModalStore } from '@/store/useModalStore';
+import { X } from 'lucide-react';
+import { Button } from '../ui/button';
 
 const overlayVariants = {
   hidden: { opacity: 0 },
@@ -65,7 +67,7 @@ export const Modal = () => {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 flex items-center justify-center z-50" onClick={closeModal}>
+      <div className="fixed inset-0 flex items-center justify-center z-50">
         <motion.div
           variants={overlayVariants}
           initial="hidden"
@@ -78,7 +80,14 @@ export const Modal = () => {
             backdropFilter: 'blur(4px)',
           }}
         />
-
+        <Button
+          variant="ghost"
+          size="icon"
+          className="ml-auto absolute top-[1rem] right-[1rem] rounded-[50%]"
+          onClick={closeModal}
+        >
+          <X className='h-6 w-6'/>
+        </Button>
         <motion.div
           variants={modalVariants}
           initial="hidden"
@@ -87,18 +96,12 @@ export const Modal = () => {
           style={{
             position: 'relative',
             width: '100%',
-            maxWidth: '42rem',
-            marginLeft: '1rem',
-            marginRight: '1rem',
-            backgroundColor: 'white',
-            borderRadius: '0.75rem',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
             overflow: 'auto',
             maxHeight: '90vh',
           }}
         >
           <div onClick={handleContentClick}>
-            <div className="p-6">{content}</div>
+            {content}
           </div>
         </motion.div>
       </div>

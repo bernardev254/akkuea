@@ -3,7 +3,7 @@
 import type React from 'react';
 import { useState } from 'react';
 import Image from 'next/image';
-import { Download, Flag, MessageCircle, Share2 } from 'lucide-react';
+import { Download, Eye, Flag, MessageCircle, Share2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,8 +14,10 @@ import { CommentsSection } from './comments-section';
 import { ReportDialog } from './report-dialog';
 import { toast } from 'sonner';
 import { Comment, PostProps } from '../auth/store/data/post-types';
+import { useModalStore } from '@/store/useModalStore';
 
-export default function Post({ id, author, content, categories = [] }: PostProps) {
+export default function Post({ id, author, content, categories = [], modal }: PostProps) {
+  const isOpen = useModalStore(state => state.isOpen)
   const [showComments, setShowComments] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [comments, setComments] = useLocalStorage<Comment[]>(`post-${id}-comments`, []);
@@ -151,7 +153,8 @@ export default function Post({ id, author, content, categories = [] }: PostProps
 
   return (
     <Card className="max-w-4xl w-full p-4">
-      <div className="flex flex-row items-center gap-3 p-4">
+      <div className="flex flex-row justify-between items-center p-4">
+        <div className='flex gap-3'>
         <Avatar className="h-10 w-10">
           <AvatarImage src={author.avatar} alt={author.name} />
           <AvatarFallback>{author.name[0]}</AvatarFallback>
@@ -160,6 +163,17 @@ export default function Post({ id, author, content, categories = [] }: PostProps
           <span className="font-semibold">{author.name}</span>
           <span className="text-sm text-muted-foreground">@{author.username}</span>
         </div>
+        </div>
+        
+        <div className='flex gap-2'>
+        {!isOpen && <Button
+          variant="ghost"
+          size="icon"
+          className="ml-auto"
+          onClick={modal}
+        >
+          <Eye className="h-4 w-4" />
+        </Button>}
         <Button
           variant="ghost"
           size="icon"
@@ -168,6 +182,7 @@ export default function Post({ id, author, content, categories = [] }: PostProps
         >
           <Flag className="h-4 w-4" />
         </Button>
+        </div>
       </div>
       <div className="p-4 pt-0 space-y-4">
         {/* CHANGE: Text content with better formatting */}

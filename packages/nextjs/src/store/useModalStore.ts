@@ -2,8 +2,8 @@ import { create } from 'zustand';
 
 interface ModalStore {
   isOpen: boolean;
-  content: React.ReactNode | null;
-  openModal: (content: React.ReactNode) => void;
+  content: any | null;
+  openModal: (content: any) => void;
   closeModal: () => void;
 }
 

@@ -5,7 +5,6 @@ import QuickPost from '@/components/quickPost/quickPost';
 import Navbar from '@/components/navbar/NavBar';
 import CreatePostModal from '@/components/floating-button/button';
 import Post from '@/components/post/page';
-import { Example } from '@/components/Example';
 
 export default function Home() {
   const address = useGlobalAuthenticationStore((state) => state.address);
@@ -20,7 +19,6 @@ export default function Home() {
         </div>
         <QuickPost />
         <Post />
-        <Example />
       </main>
       <CreatePostModal />
     </div>
