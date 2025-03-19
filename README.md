@@ -1,38 +1,32 @@
-# Scaffold Stellar 🚀
+# Akkuea 🚀🎓
 
-## Overview
+## 🌟 Overview
 
-Scaffold Stellar is a cutting-edge project template designed to provide developers with a robust, high-performance starting point for full-stack applications. By combining the power of Next.js and Rust, this scaffold offers an optimized development experience with modern web technologies.
+Akkuea is a revolutionary platform transforming how education works. We leverage existing educational methods and expand them to reach a larger audience, creating direct impact on global education. Akkuea empowers users to share educational resources while providing tools to visualize, download, and utilize content from our social network - a social network with superpowers! ✨
 
-## 🌟 Key Features
+## 🔍 Mission
 
-- **Next.js Frontend**: Powerful React framework for building modern web applications
-- **Rust Backend**: High-performance systems programming language for critical components
-- **Bun Package Management**: Fast, all-in-one JavaScript runtime and package manager
-- **Comprehensive Development Tools**:
-  - Husky Git Hooks
-  - ESLint and Prettier configuration
-  - GitHub Actions CI/CD
-  - Monorepo workspace structure
+Our mission is to democratize education by creating an accessible platform where knowledge can be freely shared, discovered, and utilized. We believe that quality education should be available to everyone, regardless of their background or location.
 
-## 📋 Prerequisites
+## 📚 Key Features
 
-Before you begin, ensure you have the following installed:
+- **Resource Sharing**: Post and discover educational materials
+- **Content Visualization**: Interactive ways to engage with educational content
+- **Community Support**: Connect with like-minded educators and learners
+- **Download Capabilities**: Access resources offline when needed
+- **Collaborative Learning**: Engage with others on educational topics
 
-- [Bun](https://bun.sh/) (v1.0.25 or later)
-- [Node.js](https://nodejs.org/) (v20.11.0 or later)
-- [Rust](https://www.rust-lang.org/) (v1.76.0 or later)
-- [Git](https://git-scm.com/)
+## 🏗️ Project Structure
 
-## 🛠 Project Structure
+Akkuea is organized as a monorepo, containing multiple packages and services that work together:
 
 ```
-scaffold-stellar/
+akkuea/
 │
 ├── packages/
 │   ├── nextjs/        # Next.js frontend application
 │   └── rust/          # Rust backend services
-│
+├── docs/                # Documentation
 ├── .gitignore
 ├── .toolversions
 ├── package.json
@@ -41,31 +35,31 @@ scaffold-stellar/
 
 ## 🚀 Getting Started
 
-### 1. Clone the Repository
+### 1. Fork the Repository
+
+### 2. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/scaffold-stellar.git
-cd scaffold-stellar
+git clone https://github.com/your-username/akkuea.git
+cd akkuea
 ```
 
-### 2. Install Dependencies
+### Frontend
+
+```bash
+cd packages/nextjs
+```
 
 ```bash
 bun install
 ```
 
-### 3. Run Development Servers
-
-#### Frontend (Next.js)
-
 ```bash
-bun run dev:frontend
+bun run build
 ```
 
-#### Backend (Rust)
-
 ```bash
-bun run dev:rust
+bun run dev
 ```
 
 ## 🔧 Available Scripts
@@ -78,13 +72,16 @@ bun run dev:rust
 
 ## 🤝 Contributing
 
+We welcome contributions from everyone! Akkuea is a monorepo, so please navigate to the appropriate folder that corresponds to your issue or feature before making changes.
+
 ### Contribution Guidelines
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Navigate to the relevant package directory (`cd packages/[package-name]`)
+3. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+4. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+5. Push to the branch (`git push origin feature/AmazingFeature`)
+6. Open a Pull Request
 
 ## 🔗 Connected Technologies
 
@@ -98,10 +95,13 @@ For support, please open an issue in the GitHub repository or join our community
 
 ## 📊 Project Status
 
-![Build Status](https://img.shields.io/github/actions/workflow/status/your-username/scaffold-stellar/build.yml)
-![Coverage](https://img.shields.io/codecov/c/github/your-username/scaffold-stellar)
-![Version](https://img.shields.io/github/v/release/your-username/scaffold-stellar)
+🧱 Under construction... 
+
+We invite you to leave a star on the repository if you find Akkuea useful! 🌟
 
 ---
 
+**Join the educational revolution! 🚀🎓**
+
 **Happy Coding! 🚀**
+
