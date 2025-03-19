@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { PlusCircle, Image, Video } from 'lucide-react';
+import { PlusCircle, Image as ImageIcon, Video } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -65,7 +65,7 @@ export default function CreatePostModal() {
                   htmlFor="image"
                   className="text-[#00ced1] dark:text-[#00ced1] flex items-center gap-2 cursor-pointer"
                 >
-                  <Image className="w-5 h-5" />
+                  <ImageIcon className="w-5 h-5" />
                   Upload Image
                 </Label>
                 <Input id="image" type="file" accept="image/*" className="hidden" />
@@ -125,3 +125,12 @@ export default function CreatePostModal() {
     </Dialog>
   );
 }
+
+export const UploadLabel = () => {
+  return (
+    <div className="flex items-center gap-2">
+      <ImageIcon className="h-4 w-4" aria-hidden="true" />
+      <span>Upload</span>
+    </div>
+  );
+};

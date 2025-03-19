@@ -1,13 +1,15 @@
+'use client';
+
 import { BookOpen, Tags } from 'lucide-react';
 import Post from './post';
 import { Toaster } from 'sonner';
 import { useModalStore } from '@/store/useModalStore';
 
 export default function Page() {
-  const { openModal } = useModalStore();
+  const { onOpen } = useModalStore();
 
   const component = (
-    <div className="max-w-4xl w-full mx-auto px-8 ">
+    <div className="max-w-4xl w-full mx-auto px-8">
       <div className="w-full">
         <Post
           id="1"
@@ -25,25 +27,7 @@ export default function Page() {
                 aspectRatio: 16 / 9,
                 downloadUrl: 'https://example.com/video.mp4',
               },
-              // EXAMPLE OF CONTENT USING IMG UN COMMENT TO TEST IT
-
-              // {
-              //   type: "image",
-              //   url: "/placeholder.svg",
-              //   aspectRatio: 1,
-              //   downloadUrl: "https://example.com/image.jpg",
-              // },
             ],
-            // EXAMPLE OF CONTENT USING LINKS
-
-            // links: [
-            //   {
-            //     url: "https://example.com/particle-systems",
-            //     title: "Understanding Particle Systems in Computer Graphics",
-            //     description: "A comprehensive guide to implementing particle systems for visual effects and simulations.",
-            //     image: "/placeholder.svg",
-            //   },
-            // ],
           }}
           categories={[
             {
@@ -55,7 +39,7 @@ export default function Page() {
               icon: <Tags className="h-4 w-4" />,
             },
           ]}
-          modal={() => openModal(component)}
+          modal={() => onOpen(component)}
         />
         <Toaster />
       </div>
