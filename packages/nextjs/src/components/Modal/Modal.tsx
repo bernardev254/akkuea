@@ -1,108 +1,35 @@
 'use client';
 
-import React, { useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
 import { useModalStore } from '@/store/useModalStore';
 import { X } from 'lucide-react';
 import { Button } from '../ui/button';
-
-const overlayVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-  exit: { opacity: 0 },
-};
-
-const modalVariants = {
-  hidden: { scale: 0.95, opacity: 0, y: 20 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: 'spring',
-      duration: 0.5,
-      bounce: 0.3,
-    },
-  },
-  exit: {
-    scale: 0.95,
-    opacity: 0,
-    y: 20,
-    transition: {
-      duration: 0.2,
-      ease: 'easeOut',
-    },
-  },
-};
+import {
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+} from '../ui/dialog';
 
 export const Modal = () => {
-  const { isOpen, content, closeModal } = useModalStore();
-
-  const handleEscape = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeModal();
-    },
-    [closeModal]
-  );
-
-  const handleContentClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, handleEscape]);
-
-  if (!isOpen) return null;
+  const { isOpen, view, onClose } = useModalStore();
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 flex items-center justify-center z-50">
-        <motion.div
-          variants={overlayVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(4px)',
-          }}
-        />
-        <Button
-          variant="ghost"
-          size="icon"
-          className="ml-auto absolute top-[1rem] right-[1rem] rounded-[50%]"
-          onClick={closeModal}
-        >
-          <X className="h-6 w-6" />
-        </Button>
-        <motion.div
-          variants={modalVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          style={{
-            position: 'relative',
-            width: '100%',
-            overflow: 'auto',
-            maxHeight: '90vh',
-          }}
-        >
-          <div onClick={handleContentClick}>{content}</div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+    <Dialog open={isOpen} onOpenChange={() => onClose?.()}>
+      <DialogPortal>
+        <DialogOverlay className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogContent className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
+          <Button
+            variant="ghost"
+            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100"
+            onClick={() => onClose?.()}
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </Button>
+          {view}
+        </DialogContent>
+      </DialogPortal>
+    </Dialog>
   );
 };
