@@ -1,5 +1,7 @@
 use soroban_sdk::{Address, String, Vec, contracttype};
 
+/// Educator profile data structure
+/// Contains all information about an educator including their credentials and verification status
 #[contracttype]
 #[derive(Clone)]
 pub struct Educator {
@@ -15,6 +17,8 @@ pub struct Educator {
     pub rating: u32,
 }
 
+/// Verification levels for educators
+/// Represents the different tiers of verification an educator can achieve
 #[contracttype]
 #[derive(Clone, PartialEq)]
 pub enum VerificationLevel {
@@ -24,6 +28,8 @@ pub enum VerificationLevel {
     Expert,
 }
 
+/// Verification request data structure
+/// Used to track the status of verification requests from educators
 #[contracttype]
 #[derive(Clone)]
 pub struct VerificationRequest {
@@ -34,6 +40,7 @@ pub struct VerificationRequest {
     pub reviewer: Option<Address>,
 }
 
+/// Status options for verification requests
 #[contracttype]
 #[derive(Clone, PartialEq)]
 pub enum RequestStatus {
@@ -43,6 +50,8 @@ pub enum RequestStatus {
     Rejected,
 }
 
+/// Review data structure
+/// Contains information about reviews submitted for educators
 #[contracttype]
 #[derive(Clone)]
 pub struct Review {
