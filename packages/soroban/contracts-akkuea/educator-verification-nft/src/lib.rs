@@ -5,6 +5,8 @@ mod datatype;
 mod interfaces;
 mod verification;
 mod nft;
+#[cfg(test)]
+mod test;
 
 use datatype::{Educator, VerificationLevel, Review};
 use interfaces::EducatorVerificationInterface;
@@ -19,7 +21,7 @@ impl EducatorVerificationInterface for EducatorVerificationContract {
         if VerificationSystem::has_administrator(&env) {
             panic!("already initialized");
         }
-        env.storage().instance().set(&symbol_short!("ADMIN"), &admin);
+        env.storage().instance().set(&symbol_short!("admin"), &admin);
     }
 
     fn register_educator(
@@ -44,7 +46,7 @@ impl EducatorVerificationInterface for EducatorVerificationContract {
             rating: 0,
         };
 
-        let key = symbol_short!("edu");
+        let key = symbol_short!("EDU");
         let mut educators: Map<Address, Educator> = env.storage().persistent().get(&key).unwrap_or(Map::new(&env));
         
         if educators.contains_key(educator_address.clone()) {
@@ -133,7 +135,7 @@ impl EducatorVerificationInterface for EducatorVerificationContract {
     fn update_educator_profile(env: Env, educator_address: Address, name: Option<String>, specialty_areas: Option<Vec<String>>) -> bool {
         educator_address.require_auth();
         
-        let key = symbol_short!("edu");
+        let key = symbol_short!("EDU");
         let mut educators: Map<Address, Educator> = env.storage().persistent().get(&key).unwrap_or(Map::new(&env));
         
         if let Some(mut educator) = educators.get(educator_address.clone()) {
