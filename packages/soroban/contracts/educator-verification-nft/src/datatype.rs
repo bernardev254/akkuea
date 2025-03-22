@@ -20,7 +20,7 @@ pub struct Educator {
 /// Verification levels for educators
 /// Represents the different tiers of verification an educator can achieve
 #[contracttype]
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum VerificationLevel {
     Pending,
     Basic,
@@ -42,7 +42,7 @@ pub struct VerificationRequest {
 
 /// Status options for verification requests
 #[contracttype]
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum RequestStatus {
     Pending,
     InReview,
