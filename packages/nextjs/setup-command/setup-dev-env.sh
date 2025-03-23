@@ -296,67 +296,10 @@ show_help() {
   echo "Options:"
   echo "  -h, --help         Display this help message and exit"
   echo "  --skip-checks      Skip system requirement checks"
-  echo "  --fix-dependencies Fix common package.json issues"
   echo ""
-  echo "This script sets up the development environment for the Akkuea project."
-  echo "It performs system checks, installs Bun package manager if needed,"
-  echo "and installs all dependencies for the project."
+  echo "This script sets up the development tools for the Akkuea project."
+  echo "It performs system checks and installs required tools like Node.js, Git, and Bun."
   exit 0
-}
-
-# Function to fix common package.json issues
-fix_package_json() {
-  local package_file=$1
-  print_info "Checking package.json for common issues in $package_file..."
-  
-  if [ ! -f "$package_file" ]; then
-    print_warning "Package file $package_file not found"
-    return 0  # Return success even if file not found to continue script
-  fi
-  
-  # Create a backup
-  cp "$package_file" "${package_file}.bak"
-  print_info "Created backup at ${package_file}.bak"
-  
-  # OS-specific sed command differences
-  if [ "$OS_NAME" = "macOS" ]; then
-    # macOS requires an empty string for -i
-    SED_INPLACE="sed -i ''"
-  else
-    # Linux and others
-    SED_INPLACE="sed -i"
-  fi
-  
-  # Fix incorrect React version (if it's set to a future version)
-  if grep -q '"react": "19' "$package_file" || grep -q '"react-dom": "19' "$package_file"; then
-    print_info "Fixing incorrect React version..."
-    $SED_INPLACE 's/"react": "19/"react": "18/g' "$package_file"
-    $SED_INPLACE 's/"react-dom": "19/"react-dom": "18/g' "$package_file"
-  fi
-  
-  # Fix incorrect Next.js version (if it's set to a future version)
-  if grep -q '"next": "15' "$package_file"; then
-    print_info "Fixing incorrect Next.js version..."
-    $SED_INPLACE 's/"next": "15/"next": "14/g' "$package_file"
-  fi
-  
-  # For duplicate dependencies, we'll just notify the user
-  print_info "Checking for duplicate dependencies (manual fix may be required)..."
-  
-  # Check for duplicate keys in dependencies
-  if grep -q 'dependencies' "$package_file"; then
-    DUPLICATES=$(grep -o '"@[^"]*"' "$package_file" | sort | uniq -d)
-    if [ -n "$DUPLICATES" ]; then
-      print_warning "Found duplicate dependencies in $package_file:"
-      echo "$DUPLICATES"
-      print_info "You may need to manually edit the file to remove duplicates."
-    else
-      print_info "No duplicate dependencies found."
-    fi
-  fi
-  
-  print_success "Completed package.json checks"
-  return 0
 }
 
 # Function to install Bun with OS-specific considerations
@@ -422,7 +365,6 @@ install_bun() {
 # ========================================================
 
 SKIP_CHECKS=false
-FIX_DEPENDENCIES=false
 
 for arg in "$@"; do
   case $arg in
@@ -431,10 +373,6 @@ for arg in "$@"; do
       ;;
     --skip-checks)
       SKIP_CHECKS=true
-      shift
-      ;;
-    --fix-dependencies)
-      FIX_DEPENDENCIES=true
       shift
       ;;
     *)
@@ -569,197 +507,26 @@ else
 fi
 
 # ========================================================
-# Project Setup
-# ========================================================
-
-print_header "Akkuea Project Setup"
-
-# Check if we're in the project root
-if [ ! -d "packages" ] || [ ! -d "packages/nextjs" ]; then
-  print_error "This script must be run from the Akkuea project root directory"
-fi
-
-# Fix package.json if requested
-if [ "$FIX_DEPENDENCIES" = true ]; then
-  print_info "Fixing package.json files..."
-  fix_package_json "package.json"
-  fix_package_json "packages/nextjs/package.json"
-fi
-
-# Continue with installation even if fixing dependencies failed
-print_info "Installing root dependencies..."
-
-# OS-specific installation considerations
-case "$OS_NAME" in
-  Windows)
-    print_info "Windows detected: Using extended timeout for dependency installation"
-    # Windows can be slower with file operations
-    bun install --timeout=60000 || {
-      print_warning "Failed to install root dependencies with standard method"
-      print_info "Trying alternative installation method..."
-      
-      # Try with --force if normal install fails
-      bun install --force --timeout=60000 || {
-        print_error "Failed to install root dependencies"
-      }
-    }
-    ;;
-  *)
-    bun install || {
-      print_warning "Failed to install root dependencies with standard method"
-      print_info "Trying alternative installation method..."
-      
-      # Try with --force if normal install fails
-      bun install --force || {
-        print_error "Failed to install root dependencies"
-      }
-    }
-    ;;
-esac
-
-print_success "Root dependencies installed successfully"
-
-# ========================================================
-# Next.js Setup
-# ========================================================
-
-print_header "Next.js Setup"
-
-print_info "Setting up Next.js application..."
-cd packages/nextjs
-
-print_info "Installing Next.js dependencies..."
-# Use --no-save to avoid modifying package.json during installation
-
-# OS-specific installation considerations
-case "$OS_NAME" in
-  Windows)
-    print_info "Windows detected: Using extended timeout for Next.js dependency installation"
-    bun install --no-save --timeout=60000 || {
-      print_warning "Failed to install Next.js dependencies with standard method"
-      print_info "Trying alternative installation method..."
-      
-      # Try with --force if normal install fails
-      bun install --force --no-save --timeout=60000 || {
-        if [ "$FIX_DEPENDENCIES" = false ]; then
-          print_warning "Installation failed. Try running the script with --fix-dependencies option"
-          print_error "Failed to install Next.js dependencies"
-        else
-          print_warning "Failed to install Next.js dependencies even after fixing package.json"
-          print_info "You may need to manually fix the package.json file in packages/nextjs"
-          print_info "Continuing with setup..."
-        fi
-      }
-    }
-    ;;
-  *)
-    bun install --no-save || {
-      print_warning "Failed to install Next.js dependencies with standard method"
-      print_info "Trying alternative installation method..."
-      
-      # Try with --force if normal install fails
-      bun install --force --no-save || {
-        if [ "$FIX_DEPENDENCIES" = false ]; then
-          print_warning "Installation failed. Try running the script with --fix-dependencies option"
-          print_error "Failed to install Next.js dependencies"
-        else
-          print_warning "Failed to install Next.js dependencies even after fixing package.json"
-          print_info "You may need to manually fix the package.json file in packages/nextjs"
-          print_info "Continuing with setup..."
-        fi
-      }
-    }
-    ;;
-esac
-
-print_success "Next.js setup completed"
-
-# Return to project root
-cd ../..
-
-# ========================================================
-# Development Tools Setup
-# ========================================================
-
-print_header "Development Tools Setup"
-
-# Set up Git hooks if .husky directory exists
-if [ -d ".husky" ]; then
-  print_info "Setting up Git hooks..."
-  
-  # OS-specific husky setup
-  case "$OS_NAME" in
-    Windows)
-      # Windows may need special handling for husky
-      if [ -f "node_modules/.bin/husky" ]; then
-        node_modules/.bin/husky install || {
-          print_warning "Failed to set up Git hooks with node_modules/.bin/husky"
-          print_info "Trying with bun husky install..."
-          bun husky install || {
-            print_warning "Failed to set up Git hooks. You may need to set them up manually."
-          }
-        }
-      else
-        bun husky install || {
-          print_warning "Failed to set up Git hooks. You may need to set them up manually."
-        }
-      fi
-      ;;
-    *)
-      bun husky install || {
-        print_warning "Failed to set up Git hooks. You may need to set them up manually."
-      }
-      ;;
-  esac
-  
-  print_success "Git hooks set up successfully"
-fi
-
-# ========================================================
-# Environment Variables
-# ========================================================
-
-print_header "Environment Variables Setup"
-
-# Check if .env.local exists in Next.js directory
-if [ ! -f "packages/nextjs/.env.local" ] && [ -f "packages/nextjs/.env.example" ]; then
-  print_info "Creating .env.local from .env.example..."
-  cp packages/nextjs/.env.example packages/nextjs/.env.local
-  print_success "Created .env.local file"
-else
-  print_info "Environment files already set up or no example file found"
-fi
-
-# ========================================================
 # Final Steps
 # ========================================================
 
 print_header "Setup Complete"
 
-print_success "Akkuea development environment has been set up successfully!"
+print_success "Akkuea development tools have been set up successfully!"
 
-# OS-specific final instructions
-case "$OS_NAME" in
-  Windows)
-    print_info "To start the Next.js development server on Windows, run:"
-    print_info "bun --cwd packages/nextjs dev"
-    
-    if [ "$PORT_3000_AVAILABLE" = false ]; then
-      print_warning "Remember that port 3000 was detected as being in use. You may need to use a different port."
-      print_info "To use a different port: bun --cwd packages/nextjs dev -- -p <port_number>"
-    fi
-    
-    print_info "If you encounter any Windows-specific issues, please check the project documentation"
-    ;;
-  *)
-    print_info "To start the Next.js development server, run: bun --cwd packages/nextjs dev"
-    
-    if [ "$PORT_3000_AVAILABLE" = false ]; then
-      print_warning "Remember that port 3000 was detected as being in use. You may need to use a different port."
-      print_info "To use a different port: bun --cwd packages/nextjs dev -- -p <port_number>"
-    fi
-    ;;
-esac
+print_info "The following tools are now available:"
+print_info "- Node.js: For JavaScript runtime"
+print_info "- Git: For version control"
+print_info "- Bun: For package management and running the application"
+
+print_info "You can now work with the Akkuea project using these tools."
+print_info "To start the development server, navigate to the project directory and run:"
+print_info "bun --cwd packages/nextjs dev"
+
+if [ "$PORT_3000_AVAILABLE" = false ]; then
+  print_warning "Remember that port 3000 was detected as being in use. You may need to use a different port."
+  print_info "To use a different port: bun --cwd packages/nextjs dev -- -p <port_number>"
+fi
 
 # Log OS information for troubleshooting
 print_info "Setup completed on: $OS_DISTRO $OS_VERSION ($OS_ARCH)"
