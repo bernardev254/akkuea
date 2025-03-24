@@ -65,7 +65,7 @@ fn test_submit_rating_success() {
         String::from_str(&env, "Rating submitted successfully")
     );
 
-    let rating_data: RatingData = env.as_contract(&client.address, || { // Corrected: client.address
+    let rating_data: RatingData = env.as_contract(&client.address, || {
         env.storage()
             .instance()
             .get(&DataKey::TransactionRating(transaction_id.clone()))
