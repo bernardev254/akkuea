@@ -15,12 +15,12 @@ pub enum ProductCondition {
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[contracttype]
 pub enum AuctionStatus {
-    Pending,   // Created but not yet started
-    Active,    // Auction is live and accepting bids
-    Ended,     // Auction time has expired
-    Cancelled, // Auction was cancelled
-    Completed, // Product has been delivered and verified
-    Disputed,  // There is an active dispute on this auction
+    Pending,
+    Active,
+    Ended,
+    Cancelled,
+    Completed,
+    Disputed,
 }
 
 /// Dispute status

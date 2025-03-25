@@ -1,29 +1,36 @@
 #![cfg(test)]
 
-use crate::{AuctionContract, DisputeStatus, ProductCondition, ShippingStatus};
+use crate::{
+    AuctionContract, AuctionContractClient, DisputeStatus, ProductCondition, ShippingStatus,
+};
 use soroban_sdk::{
-    testutils::{Address as _, BytesN as _},
-    vec, Address, BytesN, Env, String, Vec,
+    testutils::{Address as _, BytesN as _, Ledger as _}, // Add Ledger trait
+    vec,
+    Address,
+    BytesN,
+    Env,
+    String,
 };
 
 // Helper function to create a standard test environment
-fn setup_test() -> (Env, Address, Address, Address) {
+fn setup_test() -> (Env, AuctionContractClient, Address, Address, Address) {
     let env = Env::default();
-    let contract_id = env.register_contract(None, AuctionContract);
+    let contract_id = env.register_contract(None, AuctionContract); // We'll fix client creation
 
     let admin = Address::generate(&env);
     let seller = Address::generate(&env);
     let bidder = Address::generate(&env);
 
-    // Initialize the contract
+    // Initialize the contract with the client
+    let client = AuctionContractClient::new(&env, &contract_id);
     env.mock_all_auths();
-    AuctionContract::client(&env).initialize(&admin);
+    client.initialize(&admin);
 
-    (env, admin, seller, bidder)
+    (env, client, admin, seller, bidder)
 }
 
 // Helper function to create a test auction
-fn create_test_auction(env: &Env, seller: &Address) -> BytesN<32> {
+fn create_test_auction(env: &Env, client: &AuctionContractClient, seller: &Address) -> BytesN<32> {
     let name = String::from_str(env, "Test Item");
     let description = String::from_str(env, "A test auction item");
     let condition = ProductCondition::Good;
@@ -39,7 +46,7 @@ fn create_test_auction(env: &Env, seller: &Address) -> BytesN<32> {
 
     env.mock_all_auths();
 
-    AuctionContract::client(env).create_auction(
+    client.create_auction(
         seller.clone(),
         name,
         description,
@@ -56,7 +63,7 @@ fn create_test_auction(env: &Env, seller: &Address) -> BytesN<32> {
 fn test_initialize() {
     let env = Env::default();
     let contract_id = env.register_contract(None, AuctionContract);
-    let client = AuctionContract::client(&env);
+    let client = AuctionContractClient::new(&env, &contract_id);
 
     let admin = Address::generate(&env);
 
@@ -65,18 +72,18 @@ fn test_initialize() {
     client.initialize(&admin);
 
     // Try to initialize again - should panic
+    // Since we can't use std::panic::catch_unwind in no_std,
+    // we'll just make the call and let the test fail if it doesn't panic
     env.mock_all_auths();
-    let result = std::panic::catch_unwind(|| {
-        client.initialize(&admin);
-    });
+    // This should panic - if the test passes, there's an issue
+    let result = client.try_initialize(&admin);
     assert!(result.is_err());
 }
 
 #[test]
 fn test_auction_lifecycle() {
-    let (env, admin, seller, bidder1) = setup_test();
+    let (env, client, admin, seller, bidder1) = setup_test();
     let bidder2 = Address::generate(&env);
-    let client = AuctionContract::client(&env);
 
     // Create verifier
     let verifier = Address::generate(&env);
@@ -84,7 +91,7 @@ fn test_auction_lifecycle() {
     client.add_verifier(&admin, &verifier);
 
     // Create auction
-    let auction_id = create_test_auction(&env, &seller);
+    let auction_id = create_test_auction(&env, &client, &seller);
 
     // Get auction and verify details
     let auction = client.get_auction(&auction_id).unwrap();
@@ -157,8 +164,7 @@ fn test_auction_lifecycle() {
 
 #[test]
 fn test_dispute_resolution() {
-    let (env, admin, seller, buyer) = setup_test();
-    let client = AuctionContract::client(&env);
+    let (env, client, admin, seller, buyer) = setup_test();
 
     // Add resolver
     let resolver = Address::generate(&env);
@@ -166,7 +172,7 @@ fn test_dispute_resolution() {
     client.add_resolver(&admin, &resolver);
 
     // Create and run auction
-    let auction_id = create_test_auction(&env, &seller);
+    let auction_id = create_test_auction(&env, &client, &seller);
 
     // Start auction
     let auction = client.get_auction(&auction_id).unwrap();
@@ -204,19 +210,16 @@ fn test_dispute_resolution() {
 
 #[test]
 fn test_shipping_cost_calculation() {
-    let (env, _admin, seller, _bidder) = setup_test();
-    let client = AuctionContract::client(&env);
+    let (env, client, _admin, seller, _bidder) = setup_test();
 
     // Create auction
-    let auction_id = create_test_auction(&env, &seller);
+    let auction_id = create_test_auction(&env, &client, &seller);
 
     // Calculate shipping for different speeds
     let destination = String::from_str(&env, "123 Ship St, Cityville");
 
     let express_cost = client.calculate_shipping_cost(&auction_id, &destination, &1);
-
     let standard_cost = client.calculate_shipping_cost(&auction_id, &destination, &2);
-
     let economy_cost = client.calculate_shipping_cost(&auction_id, &destination, &3);
 
     // Express should be more expensive than standard, which should be more than economy

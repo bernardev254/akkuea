@@ -37,7 +37,7 @@ pub struct ShippingInfo {
     pub recipient_address: String,
 }
 
-/// Auction data
+/// Auction data - modify to fix Option<T> issues
 #[contracttype]
 #[derive(Clone)]
 pub struct Auction {
