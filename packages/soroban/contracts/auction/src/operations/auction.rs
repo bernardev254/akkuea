@@ -1,8 +1,7 @@
+use super::storage::{add_to_user_selling, get_and_increment_auction_counter, save_auction};
 use crate::datatype::{Auction, AuctionStatus, Product, ProductCondition};
-use super::storage::{get_and_increment_auction_counter, get_auction, is_verifier, save_auction, add_to_user_selling};
-use soroban_sdk::xdr::ToXdr;
+use soroban_sdk::{Address, Bytes, BytesN, Env, String, Symbol, Vec};
 
-// Create a new auction
 pub fn create_auction(
     env: &Env,
     seller: &Address,
@@ -28,24 +27,18 @@ pub fn create_auction(
         panic!("Reserve price must be greater than 0");
     }
 
-    // Generate unique IDs by getting and incrementing the counter
+    // Generate counter for unique ID
     let counter = get_and_increment_auction_counter(env);
+    let _timestamp = env.ledger().timestamp();
 
-    // Create unique seed data for hashing
-    let auction_seed = format!(
-        "{}{}{}",
-        counter,
-        seller.to_string(),
-        env.ledger().timestamp()
-    );
+    // Create auction ID by hashing counter and timestamp bytes
+    let counter_bytes = Bytes::from_slice(env, &counter.to_be_bytes());
+    let auction_id: BytesN<32> = env.crypto().sha256(&counter_bytes).into();
 
-    // Create auction ID using sha256
-    let auction_id = env.crypto().sha256(&auction_seed.into_val(env)).into();
-
-    // Create product ID using auction ID
-    let product_seed = format!("{}product", auction_id.to_string());
-
-    let product_id = env.crypto().sha256(&product_seed.into_val(env)).into();
+    // Create product ID using a different input
+    let product_counter = counter + 1;
+    let product_bytes = Bytes::from_slice(env, &product_counter.to_be_bytes());
+    let product_id: BytesN<32> = env.crypto().sha256(&product_bytes).into();
 
     // Create product
     let product = Product {
@@ -61,7 +54,7 @@ pub fn create_auction(
 
     // Create auction
     let auction = Auction {
-        id: auction_id,
+        id: auction_id.clone(),
         product,
         status: AuctionStatus::Pending,
         start_time: *start_time,
@@ -76,15 +69,13 @@ pub fn create_auction(
 
     // Save the auction
     save_auction(env, &auction_id, &auction);
-
-    // Add to user's selling auctions
     add_to_user_selling(env, seller, &auction_id);
 
     // Emit event
     env.events().publish(
-        (Symbol::new(env, "auction_created"), auction_id,
-        auction_id,
+        (Symbol::new(env, "auction_created"), auction_id.clone()),
+        auction_id.clone(),
     );
 
-    auction_id,
+    auction_id
 }
