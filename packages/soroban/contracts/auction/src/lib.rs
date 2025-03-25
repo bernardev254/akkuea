@@ -1,8 +1,11 @@
 #![no_std]
-use soroban_sdk::{contract, contractimpl, BytesN, Env};
+use soroban_sdk::{contract, contractimpl, Address, BytesN, Env, String, Vec};
 
-mod auction;
-use auction::*;
+mod datatype;
+mod operations;
+
+// Re-exports for external use
+pub use datatype::{Auction, DisputeStatus, ProductCondition, ShippingStatus};
 
 #[contract]
 pub struct AuctionContract;
@@ -10,8 +13,8 @@ pub struct AuctionContract;
 #[contractimpl]
 impl AuctionContract {
     // Initialize the contract with an admin
-    pub fn initialize(env: Env, admin: Address) -> Result<(), String> {
-        auction::initialize(env, admin)
+    pub fn initialize(env: Env, admin: Address) {
+        operations::initialize(&env, &admin);
     }
 
     // Create a new auction for a product
@@ -26,24 +29,24 @@ impl AuctionContract {
         reserve_price: i128,
         start_time: u64,
         end_time: u64,
-    ) -> Result<BytesN<32>, String> {
-        auction::create_auction(
-            env,
-            seller,
-            name,
-            description,
-            condition,
-            images,
-            inventory_count,
-            reserve_price,
-            start_time,
-            end_time,
+    ) -> BytesN<32> {
+        operations::create_auction(
+            &env,
+            &seller,
+            &name,
+            &description,
+            &condition,
+            &images,
+            &inventory_count,
+            &reserve_price,
+            &start_time,
+            &end_time,
         )
     }
 
     // Start an auction (transition from Pending to Active)
-    pub fn start_auction(env: Env, auction_id: BytesN<32>) -> Result<(), String> {
-        auction::start_auction(env, auction_id)
+    pub fn start_auction(env: Env, auction_id: BytesN<32>) {
+        operations::start_auction(&env, &auction_id);
     }
 
     // Place a bid on an auction
@@ -53,28 +56,23 @@ impl AuctionContract {
         bidder: Address,
         amount: i128,
         quantity: u32,
-    ) -> Result<(), String> {
-        auction::place_bid(env, auction_id, bidder, amount, quantity)
+    ) {
+        operations::place_bid(&env, &auction_id, &bidder, &amount, &quantity);
     }
 
     // End an auction (can be called by anyone after end_time)
-    pub fn end_auction(env: Env, auction_id: BytesN<32>) -> Result<(), String> {
-        auction::end_auction(env, auction_id)
+    pub fn end_auction(env: Env, auction_id: BytesN<32>) {
+        operations::end_auction(&env, &auction_id);
     }
 
     // Cancel an auction (only possible in Pending status)
-    pub fn cancel_auction(env: Env, auction_id: BytesN<32>) -> Result<(), String> {
-        auction::cancel_auction(env, auction_id)
+    pub fn cancel_auction(env: Env, auction_id: BytesN<32>) {
+        operations::cancel_auction(&env, &auction_id);
     }
 
     // Verify product authenticity (only verifiers can do this)
-    pub fn verify_product(
-        env: Env,
-        verifier: Address,
-        auction_id: BytesN<32>,
-        is_authentic: bool,
-    ) -> Result<(), String> {
-        auction::verify_product(env, verifier, auction_id, is_authentic)
+    pub fn verify_product(env: Env, verifier: Address, auction_id: BytesN<32>, is_authentic: bool) {
+        operations::verify_product(&env, &verifier, &auction_id, &is_authentic);
     }
 
     // Add shipping information (seller only)
@@ -86,35 +84,26 @@ impl AuctionContract {
         estimated_delivery: u64,
         shipping_cost: i128,
         recipient_address: String,
-    ) -> Result<(), String> {
-        auction::add_shipping_info(
-            env,
-            auction_id,
-            tracking_number,
-            carrier,
-            estimated_delivery,
-            shipping_cost,
-            recipient_address,
-        )
+    ) {
+        operations::add_shipping_info(
+            &env,
+            &auction_id,
+            &tracking_number,
+            &carrier,
+            &estimated_delivery,
+            &shipping_cost,
+            &recipient_address,
+        );
     }
 
     // Update shipping status
-    pub fn update_shipping_status(
-        env: Env,
-        auction_id: BytesN<32>,
-        new_status: ShippingStatus,
-    ) -> Result<(), String> {
-        auction::update_shipping_status(env, auction_id, new_status)
+    pub fn update_shipping_status(env: Env, auction_id: BytesN<32>, new_status: ShippingStatus) {
+        operations::update_shipping_status(&env, &auction_id, &new_status);
     }
 
     // Open a dispute (buyer only)
-    pub fn open_dispute(
-        env: Env,
-        auction_id: BytesN<32>,
-        buyer: Address,
-        reason: String,
-    ) -> Result<(), String> {
-        auction::open_dispute(env, auction_id, buyer, reason)
+    pub fn open_dispute(env: Env, auction_id: BytesN<32>, buyer: Address, reason: String) {
+        operations::open_dispute(&env, &auction_id, &buyer, &reason);
     }
 
     // Resolve a dispute (admin or dispute resolver only)
@@ -123,38 +112,38 @@ impl AuctionContract {
         resolver: Address,
         auction_id: BytesN<32>,
         resolution: DisputeStatus,
-    ) -> Result<(), String> {
-        auction::resolve_dispute(env, resolver, auction_id, resolution)
+    ) {
+        operations::resolve_dispute(&env, &resolver, &auction_id, &resolution);
     }
 
     // Add a product verifier (admin only)
-    pub fn add_verifier(env: Env, admin: Address, verifier: Address) -> Result<(), String> {
-        auction::add_verifier(env, admin, verifier)
+    pub fn add_verifier(env: Env, admin: Address, verifier: Address) {
+        operations::add_verifier(&env, &admin, &verifier);
     }
 
     // Add a dispute resolver (admin only)
-    pub fn add_resolver(env: Env, admin: Address, resolver: Address) -> Result<(), String> {
-        auction::add_resolver(env, admin, resolver)
+    pub fn add_resolver(env: Env, admin: Address, resolver: Address) {
+        operations::add_resolver(&env, &admin, &resolver);
     }
 
     // Get auction details
     pub fn get_auction(env: Env, auction_id: BytesN<32>) -> Option<Auction> {
-        auction::get_auction(env, auction_id)
+        operations::query_auction(&env, &auction_id)
     }
 
     // Get auctions where user is seller
     pub fn get_user_selling_auctions(env: Env, user: Address) -> Vec<BytesN<32>> {
-        auction::get_user_selling_auctions(env, user)
+        operations::query_user_selling_auctions(&env, &user)
     }
 
     // Get auctions where user has bid
     pub fn get_user_bidding_auctions(env: Env, user: Address) -> Vec<BytesN<32>> {
-        auction::get_user_bidding_auctions(env, user)
+        operations::query_user_bidding_auctions(&env, &user)
     }
 
     // Bulk operations: get multiple auctions at once
     pub fn get_auctions(env: Env, auction_ids: Vec<BytesN<32>>) -> Vec<Auction> {
-        auction::get_auctions(env, auction_ids)
+        operations::query_auctions(&env, &auction_ids)
     }
 
     // Calculate shipping based on location
@@ -163,8 +152,8 @@ impl AuctionContract {
         auction_id: BytesN<32>,
         destination: String,
         shipping_speed: u32,
-    ) -> Result<i128, String> {
-        auction::calculate_shipping_cost(env, auction_id, destination, shipping_speed)
+    ) -> i128 {
+        operations::calculate_shipping_cost(&env, &auction_id, &destination, &shipping_speed)
     }
 }
 
