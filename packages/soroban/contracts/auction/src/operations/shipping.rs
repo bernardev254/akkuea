@@ -55,15 +55,9 @@ pub fn update_shipping_status(env: &Env, auction_id: &BytesN<32>, new_status: &S
     if !auction.has_shipping {
         panic!("No shipping information available");
     }
+
+    // Update the shipping status
     auction.shipping_status = *new_status;
-    shipping.status = *new_status;
-    auction.has_shipping = true;
-    auction.shipping_status = shipping_info.status;
-    auction.shipping_tracking = shipping_info.tracking_number;
-    auction.shipping_carrier = shipping_info.carrier;
-    auction.shipping_delivery_estimate = shipping_info.estimated_delivery;
-    auction.shipping_cost = shipping_info.shipping_cost;
-    auction.shipping_recipient = shipping_info.recipient_address;
 
     // If delivered, update auction status
     if *new_status == ShippingStatus::Delivered {

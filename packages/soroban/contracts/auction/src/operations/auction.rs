@@ -1,5 +1,6 @@
 use super::storage::{add_to_user_selling, get_and_increment_auction_counter, save_auction};
 use crate::datatype::{Auction, AuctionStatus, DisputeStatus, Product, ProductCondition};
+use crate::ShippingStatus;
 use soroban_sdk::{Address, Bytes, BytesN, Env, String, Symbol, Vec};
 
 pub fn create_auction(
@@ -65,7 +66,13 @@ pub fn create_auction(
         highest_bid_timestamp: 0,
         highest_bid_quantity: 0,
         all_bids: Vec::new(env),
-        shipping: None,
+        has_shipping: false,
+        shipping_status: ShippingStatus::NotShipped,
+        shipping_tracking: String::from_str(env, ""),
+        shipping_carrier: String::from_str(env, ""),
+        shipping_delivery_estimate: 0,
+        shipping_cost: 0,
+        shipping_recipient: String::from_str(env, ""),
         dispute_status: DisputeStatus::None,
         has_dispute_reason: false,
         dispute_reason: String::from_str(env, ""),

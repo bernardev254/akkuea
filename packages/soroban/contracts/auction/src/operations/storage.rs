@@ -1,4 +1,4 @@
-use crate::datatype::{Auction, SerializableAuction, StorageKey};
+use crate::datatype::{Auction, StorageKey};
 use soroban_sdk::{Address, BytesN, Env, Map, Vec};
 
 // Get admin address

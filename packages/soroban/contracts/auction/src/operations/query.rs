@@ -4,16 +4,13 @@ use soroban_sdk::{Address, BytesN, Env, Map, String, Vec};
 
 // Query a single auction
 pub fn query_auction(env: &Env, auction_id: &BytesN<32>) -> Option<Auction> {
-    let auctions: Map<BytesN<32>, SerializableAuction> = env
+    let auctions: Map<BytesN<32>, Auction> = env
         .storage()
         .instance()
         .get(&StorageKey::Auctions)
-        .unwrap_or_else(|| Map::<BytesN<32>, SerializableAuction>::new(env));
+        .unwrap_or_else(|| Map::<BytesN<32>, Auction>::new(env));
 
-    // Return the auction if it exists
-    auctions
-        .get(auction_id.clone())
-        .map(|serializable| Auction::from(serializable))
+    auctions.get(auction_id.clone())
 }
 
 // Query auctions by seller
@@ -34,16 +31,16 @@ pub fn query_user_bidding_auctions(env: &Env, user: &Address) -> Vec<BytesN<32>>
 
 // Query multiple auctions at once
 pub fn query_auctions(env: &Env, auction_ids: &Vec<BytesN<32>>) -> Vec<Auction> {
-    let auctions: Map<BytesN<32>, SerializableAuction> = env
+    let auctions: Map<BytesN<32>, Auction> = env
         .storage()
         .instance()
         .get(&StorageKey::Auctions)
-        .unwrap_or_else(|| Map::<BytesN<32>, SerializableAuction>::new(env));
+        .unwrap_or_else(|| Map::<BytesN<32>, Auction>::new(env));
 
     let mut result = Vec::new(env);
     for id in auction_ids.iter() {
-        if let Some(serializable) = auctions.get(id) {
-            result.push_back(Auction::from(serializable));
+        if let Some(auction) = auctions.get(id) {
+            result.push_back(auction);
         }
     }
     result
