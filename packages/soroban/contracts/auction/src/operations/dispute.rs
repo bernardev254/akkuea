@@ -9,8 +9,8 @@ pub fn open_dispute(env: &Env, auction_id: &BytesN<32>, buyer: &Address, reason:
     let mut auction = get_auction(env, auction_id);
 
     // Check if caller is highest bidder
-    if let Some(highest_bid) = &auction.current_highest_bid {
-        if highest_bid.bidder != *buyer {
+    if auction.has_highest_bid {
+        if auction.highest_bidder != *buyer {
             panic!("Only the highest bidder can open a dispute");
         }
     } else {
@@ -28,7 +28,8 @@ pub fn open_dispute(env: &Env, auction_id: &BytesN<32>, buyer: &Address, reason:
 
     // Update auction
     auction.dispute_status = DisputeStatus::Open;
-    auction.dispute_reason = Some(reason.clone());
+    auction.has_dispute_reason = true;
+    auction.dispute_reason = reason.clone();
     auction.status = AuctionStatus::Disputed;
     save_auction(env, auction_id, &auction);
 

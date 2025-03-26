@@ -1,5 +1,5 @@
 use super::storage::{add_to_user_selling, get_and_increment_auction_counter, save_auction};
-use crate::datatype::{Auction, AuctionStatus, Product, ProductCondition};
+use crate::datatype::{Auction, AuctionStatus, DisputeStatus, Product, ProductCondition};
 use soroban_sdk::{Address, Bytes, BytesN, Env, String, Symbol, Vec};
 
 pub fn create_auction(
@@ -29,7 +29,6 @@ pub fn create_auction(
 
     // Generate counter for unique ID
     let counter = get_and_increment_auction_counter(env);
-    let _timestamp = env.ledger().timestamp();
 
     // Create auction ID by hashing counter and timestamp bytes
     let counter_bytes = Bytes::from_slice(env, &counter.to_be_bytes());
@@ -52,7 +51,7 @@ pub fn create_auction(
         is_authenticated: false,
     };
 
-    // Create auction
+    // Create auction with Option<T> fields
     let auction = Auction {
         id: auction_id.clone(),
         product,
@@ -60,11 +59,16 @@ pub fn create_auction(
         start_time: *start_time,
         end_time: *end_time,
         reserve_price: *reserve_price,
-        current_highest_bid: None,
+        has_highest_bid: false,
+        highest_bidder: env.current_contract_address(),
+        highest_bid_amount: 0,
+        highest_bid_timestamp: 0,
+        highest_bid_quantity: 0,
         all_bids: Vec::new(env),
         shipping: None,
-        dispute_status: crate::datatype::DisputeStatus::None,
-        dispute_reason: None,
+        dispute_status: DisputeStatus::None,
+        has_dispute_reason: false,
+        dispute_reason: String::from_str(env, ""),
     };
 
     // Save the auction

@@ -19,6 +19,16 @@ pub fn place_bid(
         panic!("Auction is not active");
     }
 
+    // Validate auction state
+    if auction.status != AuctionStatus::Active {
+        panic!("Auction is not active");
+    }
+
+    // Validate auction state
+    if auction.status != AuctionStatus::Active {
+        panic!("Auction is not active");
+    }
+
     let current_time = env.ledger().timestamp();
     if current_time < auction.start_time {
         panic!("Auction has not started yet");
@@ -33,29 +43,35 @@ pub fn place_bid(
     }
 
     // Check bid amount
-    if let Some(highest_bid) = &auction.current_highest_bid {
+    if auction.has_highest_bid {
+        let highest_bid = Bid {
+            bidder: auction.highest_bidder.clone(),
+            amount: auction.highest_bid_amount,
+            timestamp: auction.highest_bid_timestamp,
+            quantity: auction.highest_bid_quantity,
+        };
+
         if amount <= &highest_bid.amount {
             panic!("Bid amount must be higher than current highest bid");
         }
-    } else if *amount < auction.reserve_price {
-        panic!("Bid amount must be at least the reserve price");
     }
 
     // Create new bid
     let new_bid = Bid {
         bidder: bidder.clone(),
         amount: *amount,
-        timestamp: current_time,
+        timestamp: env.ledger().timestamp(),
         quantity: *quantity,
     };
 
     // Update auction
-    auction.current_highest_bid = Some(new_bid.clone());
+    auction.has_highest_bid = true;
+    auction.highest_bidder = new_bid.bidder.clone();
+    auction.highest_bid_amount = new_bid.amount;
+    auction.highest_bid_timestamp = new_bid.timestamp;
+    auction.highest_bid_quantity = new_bid.quantity;
     auction.all_bids.push_back(new_bid);
     save_auction(env, auction_id, &auction);
-
-    // Add to bidder's auctions
-    add_to_user_bidding(env, bidder, auction_id);
 
     // Emit event
     env.events().publish(

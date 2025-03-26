@@ -21,7 +21,7 @@ pub fn add_shipping_info(
         panic!("Can only add shipping info for ended auctions");
     }
 
-    if auction.current_highest_bid.is_none() {
+    if !auction.has_highest_bid {
         panic!("No winning bid for this auction");
     }
 
@@ -35,7 +35,7 @@ pub fn add_shipping_info(
         recipient_address: recipient_address.clone(),
     };
 
-    auction.shipping = Some(shipping_info);
+    auction.set_shipping_info(Some(shipping_info), env);
     save_auction(env, auction_id, &auction);
 
     // Emit event
@@ -52,13 +52,18 @@ pub fn update_shipping_status(env: &Env, auction_id: &BytesN<32>, new_status: &S
     // Only the seller can update shipping status
     auction.product.seller.require_auth();
 
-    let mut shipping = auction
-        .shipping
-        .clone()
-        .unwrap_or_else(|| panic!("No shipping information available"));
-
+    if !auction.has_shipping {
+        panic!("No shipping information available");
+    }
+    auction.shipping_status = *new_status;
     shipping.status = *new_status;
-    auction.shipping = Some(shipping);
+    auction.has_shipping = true;
+    auction.shipping_status = shipping_info.status;
+    auction.shipping_tracking = shipping_info.tracking_number;
+    auction.shipping_carrier = shipping_info.carrier;
+    auction.shipping_delivery_estimate = shipping_info.estimated_delivery;
+    auction.shipping_cost = shipping_info.shipping_cost;
+    auction.shipping_recipient = shipping_info.recipient_address;
 
     // If delivered, update auction status
     if *new_status == ShippingStatus::Delivered {

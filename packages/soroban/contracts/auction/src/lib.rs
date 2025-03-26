@@ -4,8 +4,9 @@ use soroban_sdk::{contract, contractimpl, Address, BytesN, Env, String, Vec};
 mod datatype;
 mod operations;
 
-// Re-exports for external use
-pub use datatype::{Auction, DisputeStatus, ProductCondition, ShippingStatus};
+pub use datatype::{
+    Auction, AuctionStatus, Bid, DisputeStatus, ProductCondition, ShippingInfo, ShippingStatus,
+};
 
 #[contract]
 pub struct AuctionContract;

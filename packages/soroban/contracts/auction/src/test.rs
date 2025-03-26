@@ -4,25 +4,27 @@ use crate::{
     AuctionContract, AuctionContractClient, DisputeStatus, ProductCondition, ShippingStatus,
 };
 use soroban_sdk::{
-    testutils::{Address as _, BytesN as _, Ledger as _}, // Add Ledger trait
-    vec,
-    Address,
-    BytesN,
-    Env,
-    String,
+    testutils::{Address as _, Ledger as _},
+    vec, Address, BytesN, Env, String,
 };
 
 // Helper function to create a standard test environment
-fn setup_test() -> (Env, AuctionContractClient, Address, Address, Address) {
+fn setup_test() -> (
+    Env,
+    AuctionContractClient<'static>,
+    Address,
+    Address,
+    Address,
+) {
     let env = Env::default();
-    let contract_id = env.register_contract(None, AuctionContract); // We'll fix client creation
+    let contract_id = env.register(AuctionContract, ());
+    let client = AuctionContractClient::new(&env, &contract_id);
 
     let admin = Address::generate(&env);
     let seller = Address::generate(&env);
     let bidder = Address::generate(&env);
 
-    // Initialize the contract with the client
-    let client = AuctionContractClient::new(&env, &contract_id);
+    // Initialize the contract
     env.mock_all_auths();
     client.initialize(&admin);
 
@@ -30,7 +32,11 @@ fn setup_test() -> (Env, AuctionContractClient, Address, Address, Address) {
 }
 
 // Helper function to create a test auction
-fn create_test_auction(env: &Env, client: &AuctionContractClient, seller: &Address) -> BytesN<32> {
+fn create_test_auction(
+    env: &Env,
+    client: &AuctionContractClient<'_>,
+    seller: &Address,
+) -> BytesN<32> {
     let name = String::from_str(env, "Test Item");
     let description = String::from_str(env, "A test auction item");
     let condition = ProductCondition::Good;
@@ -46,23 +52,25 @@ fn create_test_auction(env: &Env, client: &AuctionContractClient, seller: &Addre
 
     env.mock_all_auths();
 
+    // Use the correct parameter signatures based on your lib.rs
     client.create_auction(
-        seller.clone(),
-        name,
-        description,
-        condition,
-        images,
-        2,    // inventory count
-        1000, // reserve price
-        start_time,
-        end_time,
+        seller,       // &Address
+        &name,        // &String
+        &description, // &String
+        &condition,   // &ProductCondition
+        &images,      // &Vec<String>
+        &2,           // &u32
+        &1000,        // &i128
+        &start_time,  // &u64
+        &end_time,    // &u64
     )
 }
 
+// Test initialization
 #[test]
 fn test_initialize() {
     let env = Env::default();
-    let contract_id = env.register_contract(None, AuctionContract);
+    let contract_id = env.register(AuctionContract, ());
     let client = AuctionContractClient::new(&env, &contract_id);
 
     let admin = Address::generate(&env);
@@ -71,15 +79,13 @@ fn test_initialize() {
     env.mock_all_auths();
     client.initialize(&admin);
 
-    // Try to initialize again - should panic
-    // Since we can't use std::panic::catch_unwind in no_std,
-    // we'll just make the call and let the test fail if it doesn't panic
+    // Try to initialize again - should fail
     env.mock_all_auths();
-    // This should panic - if the test passes, there's an issue
     let result = client.try_initialize(&admin);
     assert!(result.is_err());
 }
 
+// Test auction lifecycle
 #[test]
 fn test_auction_lifecycle() {
     let (env, client, admin, seller, bidder1) = setup_test();
@@ -109,9 +115,9 @@ fn test_auction_lifecycle() {
 
     // Check bid was recorded
     let auction = client.get_auction(&auction_id).unwrap();
-    let highest_bid = auction.current_highest_bid.unwrap();
-    assert_eq!(highest_bid.bidder, bidder1);
-    assert_eq!(highest_bid.amount, 1200);
+    assert!(auction.has_highest_bid);
+    assert_eq!(auction.highest_bidder, bidder1);
+    assert_eq!(auction.highest_bid_amount, 1200);
 
     // Higher bid from second bidder
     env.mock_all_auths();
@@ -119,7 +125,8 @@ fn test_auction_lifecycle() {
 
     // Verify second bidder is now highest
     let auction = client.get_auction(&auction_id).unwrap();
-    assert_eq!(auction.current_highest_bid.unwrap().bidder, bidder2);
+    assert_eq!(auction.highest_bidder, bidder2);
+    assert!(auction.has_highest_bid);
 
     // End auction
     env.ledger().set_timestamp(auction.end_time + 10);
@@ -151,7 +158,8 @@ fn test_auction_lifecycle() {
     client.update_shipping_status(&auction_id, &ShippingStatus::InTransit);
 
     let auction = client.get_auction(&auction_id).unwrap();
-    assert_eq!(auction.shipping.unwrap().status, ShippingStatus::InTransit);
+    assert!(auction.has_shipping);
+    assert_eq!(auction.shipping_status, ShippingStatus::InTransit);
 
     // Mark as delivered
     env.mock_all_auths();
@@ -162,6 +170,7 @@ fn test_auction_lifecycle() {
     assert_eq!(auction.status, crate::datatype::AuctionStatus::Completed);
 }
 
+// Test dispute resolution
 #[test]
 fn test_dispute_resolution() {
     let (env, client, admin, seller, buyer) = setup_test();
@@ -197,6 +206,8 @@ fn test_dispute_resolution() {
     let auction = client.get_auction(&auction_id).unwrap();
     assert_eq!(auction.dispute_status, DisputeStatus::Open);
     assert_eq!(auction.status, crate::datatype::AuctionStatus::Disputed);
+    assert!(auction.has_dispute_reason);
+    assert_eq!(auction.dispute_reason, reason);
 
     // Resolver resolves in favor of buyer
     env.mock_all_auths();

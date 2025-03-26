@@ -1,4 +1,4 @@
-use crate::datatype::{Auction, StorageKey};
+use crate::datatype::{Auction, SerializableAuction, StorageKey};
 use soroban_sdk::{Address, BytesN, Env, Map, Vec};
 
 // Get admin address
@@ -38,7 +38,6 @@ pub fn get_auction(env: &Env, auction_id: &BytesN<32>) -> Auction {
         .get(auction_id.clone())
         .unwrap_or_else(|| panic!("Auction not found"))
 }
-
 // Save auction
 pub fn save_auction(env: &Env, auction_id: &BytesN<32>, auction: &Auction) {
     let mut auctions: Map<BytesN<32>, Auction> = env
@@ -48,6 +47,7 @@ pub fn save_auction(env: &Env, auction_id: &BytesN<32>, auction: &Auction) {
         .unwrap_or_else(|| Map::<BytesN<32>, Auction>::new(env));
 
     auctions.set(auction_id.clone(), auction.clone());
+
     env.storage()
         .instance()
         .set(&StorageKey::Auctions, &auctions);
