@@ -1,9 +1,8 @@
 #![no_std]
 use soroban_sdk::{
-    contract, contractimpl, token, Address, Env, Map, Vec,
+    contract, contractimpl, symbol_short, Address, Env, Symbol, Vec
 };
-
-
+use soroban_sdk::token::Client as TokenClient;
 
 mod educator_contract {
     soroban_sdk::contractimport!( 
@@ -11,23 +10,28 @@ mod educator_contract {
     );
 }
 use educator_contract::Client as EducatorClient;
-use datatypes::{EducatorTipInfo, TipRecord, Error};
-use interfaces:: TippingRewardsInterface;
-use crate::educator_contract::Review;
+use datatypes::{TipRecord, Error, TIPS_HISTORY};
+use interfaces::TippingRewardsInterface;
 
 
 
 #[contract]
 pub struct TippingRewards;
 
+const EDUCATOR_CONTRACT: Symbol = symbol_short!("EDU_CONT");
 
 #[contractimpl]
 impl TippingRewardsInterface for TippingRewards {
 
+    // Constructor to save the educator-verification-nft contract address on deployment
+    fn __constructor(env: &Env, educator_contract: Address) {
+        env.storage().instance().set(&EDUCATOR_CONTRACT, &educator_contract);
+    }
+
     // Send a tip to an educator
-    pub fn send_tip(
+    fn send_tip(
         env: &Env,
-        token_id: Address,
+        token: Address,
         from: Address,
         educator: Address,
         amount: i128,
@@ -38,115 +42,208 @@ impl TippingRewardsInterface for TippingRewards {
             return Err(Error::InvalidAmount);
         }
 
-        let mut educators: Map<Address, EducatorTipInfo> = env.storage().get(&EDUCATORS).unwrap_or(Map::new(&env));
-        
-        if !educators.contains_key(educator.clone()) {
-            return Err(Error::InvalidEducator);
-        }
+        // Check if educator exists in the educator contract
+        let educator_client = EducatorClient::new(&env, &env.storage().instance().get(&EDUCATOR_CONTRACT).unwrap());
+        educator_client.get_educator(&educator)
+            .ok_or(Error::InvalidEducator)?;
 
         // Transfer tokens
-        let token = token::Client::new(&env, &token_id);
+        let token = TokenClient::new(&env, &token);
         token.transfer(&from, &educator, &amount);
 
-        // Update educator tip info
-        let mut info = educators.get(educator.clone()).unwrap();
-        info.total_tips_received += amount;
-        educators.set(educator.clone(), info);
-        env.storage().set(&EDUCATORS, &educators);
-
         // Record the tip
-        let mut tips_history: Vec<TipRecord> = env.storage().get(&TIPS_HISTORY).unwrap_or(Vec::new(&env));
+        let mut tips_history: Vec<TipRecord> = env.storage().instance().get(&TIPS_HISTORY).unwrap_or(Vec::new(&env));
         tips_history.push_back(TipRecord {
             from: from.clone(),
             to: educator.clone(),
             amount,
             timestamp: env.ledger().timestamp(),
         });
-        env.storage().set(&TIPS_HISTORY, &tips_history);
+        env.storage().instance().set(&TIPS_HISTORY, &tips_history);
+
+        // Publish event
+        env.events().publish(
+            (TIPS_HISTORY, symbol_short!("send")),
+            (from, educator, amount)
+        );
 
         Ok(())
     }
 
+    
     // Get top educators by reputation
-    pub fn get_top_educators(env: &Env, educator_contract: Address, limit: u32) -> Vec<Address> {
-        let educators: Map<Address, EducatorTipInfo> = env.storage().get(&EDUCATORS).unwrap_or(Map::new(&env));
-        let mut all_educators: Vec<(Address, i128)> = Vec::new(&env);
-        
+    fn get_top_educators(
+        env: &Env, 
+        limit: u32
+    ) -> Vec<educator_contract::Educator> {
+        // Get educator contract address from storage
+        let educator_contract = env.storage().instance().get(&EDUCATOR_CONTRACT).unwrap();
         let educator_client = EducatorClient::new(&env, &educator_contract);
         
-        // Get reputation data for each educator
-        for (addr, tip_info) in educators.iter() {
-            // Get reviews from educator contract
-            let reviews = educator_client.get_educator_reviews(&addr);
-            let avg_rating = Self::calculate_average_rating(&env, &reviews);
-            
-            // Combine tips and ratings for ranking
-            let reputation_score = Self::combine_reputation_metrics(tip_info.total_tips_received, avg_rating);
-            all_educators.push_back((addr, reputation_score));
-        }
-
-        // Sort by reputation score (descending)
-        all_educators.sort_by(|a, b| b.1.cmp(&a.1));
+        // Get all educators from educator contract
+        let all_educators = educator_client.get_verified_educators();
+        let mut educator_scores: Vec<(Address, i128)> = Vec::new(&env);
         
-        // Return top N addresses
-        let mut result = Vec::new(&env);
-        for (addr, _) in all_educators.iter().take(limit as usize) {
-            result.push_back(addr.clone());
+        // Calculate tip amounts for each educator
+        for educator in all_educators.iter() {
+            // Get tips history
+            let tips_history: Vec<TipRecord> = env.storage().instance().get(&TIPS_HISTORY).unwrap_or(Vec::new(&env));
+            let mut total_tips = 0_i128;
+            
+            // Sum up all tips for this educator
+            for tip in tips_history.iter() {
+                if tip.to == educator {
+                    total_tips += tip.amount;
+                }
+            }
+            
+            // Get reviews from educator contract
+            let reviews = educator_client.get_educator_reviews(&educator);
+           
+            let mut ratings = Vec::new(&env);
+            for review in reviews.iter() {
+                ratings.push_back(review.rating);
+            }
+            let avg_rating = Self::calculate_average_rating(ratings);
+            
+            // Calculate reputation score
+            let reputation_score = Self::combine_reputation_metrics(total_tips, avg_rating);
+            
+            educator_scores.push_back((educator.clone(), reputation_score));
         }
+        
+        // Sort by reputation score (descending)
+        for _i in 0..educator_scores.len() {
+            for j in 0..educator_scores.len() - 1 {
+                if educator_scores.get_unchecked(j).1 < educator_scores.get_unchecked(j + 1).1 {
+                    let temp = educator_scores.get_unchecked(j);
+                    educator_scores.set(j, educator_scores.get_unchecked(j + 1));
+                    educator_scores.set(j + 1, temp);
+                }
+            }
+        }
+        
+        // Return top N educators
+        let mut result = Vec::new(&env);
+        for (addr, _) in educator_scores.iter().take(limit as usize) {
+            if let Some(educator) = educator_client.get_educator(&addr) {
+                result.push_back(educator);
+            }
+        }
+        
+        // Publish event with top educators
+        env.events().publish(
+            (symbol_short!("TOP_EDU"), symbol_short!("list")),
+            (limit, result.clone())
+        );
         
         result
     }
 
-    // Get educator info combining local tip data and educator contract data
-    pub fn get_educator_info(
-        env: &Env, 
-        educator_contract: Address, 
-        educator: Address
-    ) -> Option<(EducatorTipInfo, Vec<Review>)> {
-        let educators: Map<Address, EducatorTipInfo> = env.storage().get(&EDUCATORS).unwrap_or(Map::new(&env));
-        let educator_client = EducatorClient::new(&env, &educator_contract);
-        
-        if let Some(tip_info) = educators.get(educator.clone()) {
-            let reviews = educator_client.get_educator_reviews(&educator);
-            Some((tip_info, reviews))
-        } else {
-            None
-        }
-    }
-
-    // Get tips history for an educator
-    pub fn get_educator_tips(env: &Env, educator: Address) -> Vec<TipRecord> {
-        let tips_history: Vec<TipRecord> = env.storage().get(&TIPS_HISTORY).unwrap_or(Vec::new(&env));
-        let mut educator_tips = Vec::new(&env);
-        
-        for tip in tips_history.iter() {
-            if tip.to == educator {
-                educator_tips.push_back(tip.clone());
-            }
-        }
-        
-        educator_tips
-    }
 
     // Helper function to calculate average rating from reviews
-    fn calculate_average_rating(env: &Env, reviews: &Vec<Review>) -> i128 {
-        if reviews.is_empty() {
+    fn calculate_average_rating(ratings: Vec<u32>) -> i128 {
+        if ratings.len() == 0 {
             return 0;
         }
         
         let mut total = 0_i128;
-        for review in reviews.iter() {
-            total += review.rating as i128;
+        for i in 0..ratings.len() {
+            total += ratings.get_unchecked(i) as i128;
         }
-        
-        total / reviews.len() as i128
+        total / (ratings.len() as i128)
     }
 
+
     // Helper function to combine different reputation metrics
-    fn combine_reputation_metrics(tips: i128, rating: i128) -> i128 {
-        // Custom formula to weight both tips and ratings
-        // Adjust weights based on your requirements
-        (tips / 1000000) + (rating * 100)
+    fn combine_reputation_metrics(total_tips: i128, avg_rating: i128) -> i128 {
+        // Weight factors (adjustable)
+        let tip_weight = 1;      // Base weight for tips
+        let rating_weight = 50;  // Higher weight for ratings (1-5 scale)
+        
+        // Use raw tip amount without assumptions about decimal places
+        let weighted_tips = total_tips * tip_weight;
+        let weighted_rating = avg_rating * rating_weight;
+        
+        weighted_tips + weighted_rating
+    }
+
+    
+
+    fn get_educator_reputation(
+        env: &Env,
+        educator: Address,
+    ) -> Result<(i128, i128, i128, educator_contract::Educator), Error> {
+        // Get educator contract address from storage
+        let educator_contract = env.storage().instance().get(&EDUCATOR_CONTRACT).unwrap();
+        let educator_client = EducatorClient::new(&env, &educator_contract);
+        
+        // Get educator data and verify they exist
+        let educator_data = educator_client.get_educator(&educator)
+            .ok_or(Error::InvalidEducator)?;
+        
+        // Get tips history
+        let tips_history: Vec<TipRecord> = env.storage().instance().get(&TIPS_HISTORY).unwrap_or(Vec::new(&env));
+        let mut total_tips = 0_i128;
+        
+        // Sum up all tips for this educator
+        for tip in tips_history.iter() {
+            if tip.to == educator {
+                total_tips += tip.amount;
+            }
+        }
+        
+        // Get reviews and calculate rating
+        let reviews = educator_client.get_educator_reviews(&educator);
+        let mut ratings = Vec::new(&env);
+        for review in reviews.iter() {
+            ratings.push_back(review.rating);
+        }
+        let avg_rating = Self::calculate_average_rating(ratings);
+        
+        // Calculate reputation score
+        let reputation_score = Self::combine_reputation_metrics(total_tips, avg_rating);
+        
+        Ok((total_tips, avg_rating, reputation_score, educator_data))
+    }
+
+    
+    // Get tips sent by a user
+    fn get_tips_sent(env: &Env, user: Address) -> Vec<TipRecord> {
+        let tips_history: Vec<TipRecord> = env.storage().instance().get(&TIPS_HISTORY).unwrap_or(Vec::new(&env));
+        let mut user_tips = Vec::new(&env);
+
+        for tip in tips_history.iter() {
+            if tip.from == user {
+                user_tips.push_back(tip);
+            }
+        }
+
+        env.events().publish(
+            (TIPS_HISTORY, symbol_short!("tips_sent")),
+            user
+        );
+
+        user_tips
+    }
+
+    // Get tips received by a user
+    fn get_tips_received(env: &Env, user: Address) -> Vec<TipRecord> {
+        let tips_history: Vec<TipRecord> = env.storage().instance().get(&TIPS_HISTORY).unwrap_or(Vec::new(&env));
+        let mut user_tips = Vec::new(&env);
+
+        for tip in tips_history.iter() {
+            if tip.to == user {
+                user_tips.push_back(tip);
+            }
+        }
+
+        env.events().publish(
+            (TIPS_HISTORY, symbol_short!("tips_recv")),
+            user
+        );
+
+        user_tips
     }
 }
 
