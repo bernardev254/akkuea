@@ -1,11 +1,11 @@
-use soroban_sdk::{contracterror, contracttype, Address, String, Vec, BytesN};
+use soroban_sdk::{Address, BytesN, String, Vec, contracterror, contracttype};
 
 /// Categories specific to educational content for segmented ratings
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Category {
     ContentQuality,    // Quality of educational material
-    InstructorSupport, // Instructor responsiveness and help       
+    InstructorSupport, // Instructor responsiveness and help
 }
 
 /// Star rating system (1-5 stars)
@@ -38,17 +38,18 @@ pub struct MediaAttachment {
 }
 
 /// Storage keys for ledger data
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone)]
+#[contracttype]
 pub enum DataKey {
     Admin,
     PaymentContract,
-    Purchase(Address, u64),         // (user, product_id) -> Purchase
-    Review(u64, u32),               // (product_id, review_id) -> Review
-    ReviewCount(u64),               // product_id -> Next review_id
-    ReviewSummary(u64),             // product_id -> Rating summary
-    HelpfulVoteSet(u64, u32),       // (product_id, review_id) -> Voters
-    ProductOwner(u64),              // product_id -> Owner
-    Dispute(u32),                   // dispute_id -> Dispute
+    Purchase(Address, u64),   // (user, product_id) -> Purchase
+    Review(u64, u32),         // (product_id, review_id) -> Review
+    ReviewCount(u64),         // product_id -> Next review_id
+    ReviewSummary(u64),       // product_id -> Rating summary
+    HelpfulVoteSet(u64, u32), // (product_id, review_id) -> Voters
+    ProductOwner(u64),        // product_id -> Owner
+    Dispute(u32),             // dispute_id -> Dispute
 }
 
 /// Errors for review operations
@@ -69,6 +70,14 @@ pub enum ReviewError {
     DisputeNotFound = 11,
     InvalidCategory = 12,
     InvalidAttachment = 13,
+    PurchaseAlreadyExists = 14,
+}
+
+#[contracterror]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+#[repr(u32)]
+pub enum PurchaseError {
+    PurchaseAlreadyExists = 1,
 }
 
 /// Purchase record
@@ -78,7 +87,7 @@ pub struct Purchase {
     pub user: Address,
     pub product_id: u64,
     pub purchase_time: u64,
-    pub review_id: Option<u32>,     // Links to Review
+    pub review_id: Option<u32>,        // Links to Review
     pub purchase_link: Option<String>, // Proof of purchase (e.g., tx ID)
 }
 
@@ -94,8 +103,8 @@ pub struct Review {
     pub responses: Vec<Response>,
     pub status: ReviewStatus,
     pub dispute_id: Option<u32>,
-    pub up_votes: u32,
-    pub down_votes: u32,
+    pub helpful_votes: u32,
+    pub not_helpful_votes: u32,
 }
 
 /// Response to a review
