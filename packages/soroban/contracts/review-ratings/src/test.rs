@@ -5,11 +5,12 @@ use crate::datatype::{
     Category, CategoryRating, DataKey, Purchase, Review, ReviewError, ReviewStatus,
 };
 use crate::{AkkueaReviews, AkkueaReviewsClient};
-use soroban_sdk::IntoVal;
 use soroban_sdk::vec;
+use soroban_sdk::IntoVal;
 use soroban_sdk::{
-    Address, Env, String, Vec, symbol_short,
+    symbol_short,
     testutils::{Address as _, Events, Ledger},
+    Address, Env, String, Vec,
 };
 
 // Helper function to set up the test environment
