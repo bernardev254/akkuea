@@ -1,4 +1,6 @@
 use soroban_sdk::{contractimpl, Address, Env, String, Vec, Map};
+use crate::AkkueaPurchaseNFTClient;
+use crate::AkkueaPurchaseNFTArgs;
 
 #[contractimpl]
 impl super::AkkueaPurchaseNFT {

@@ -1,7 +1,10 @@
-use soroban_sdk::{contractimpl, Address, Env, String, Vec, Map, BytesN};
+use soroban_sdk::{contractimpl, Address, Env, String, Map, BytesN};
+use crate::{TRANSACTION_MAPPING, AkkueaPurchaseNFT};
+use crate::AkkueaPurchaseNFTClient;
+use crate::AkkueaPurchaseNFTArgs;
 
 #[contractimpl]
-impl super::AkkueaPurchaseNFT {
+impl AkkueaPurchaseNFT {
     /// Validate and verify an NFT's authenticity
     pub fn verify_nft(env: Env, token_id: u32) -> bool {
         // Check if NFT exists
@@ -15,11 +18,14 @@ impl super::AkkueaPurchaseNFT {
         // Check transaction mapping consistency
         let txn_map: Map<BytesN<32>, u32> = env.storage().instance().get(&TRANSACTION_MAPPING).unwrap();
         
-        if !txn_map.contains_key(&nft.transaction_id) {
+        // Clone the transaction_id before moving it
+        let txn_id = nft.transaction_id.clone();
+        
+        if !txn_map.contains_key(txn_id.clone()) {
             return false;
         }
         
-        let mapped_token_id = txn_map.get(&nft.transaction_id).unwrap();
+        let mapped_token_id = txn_map.get(txn_id).unwrap();
         if mapped_token_id != token_id {
             return false;
         }
@@ -58,7 +64,7 @@ impl super::AkkueaPurchaseNFT {
     
     /// Get a comprehensive validation report
     pub fn validation_report(env: Env, token_id: u32) -> Map<String, bool> {
-        let result: Map<String, bool> = Map::new(&env);
+        let mut result: Map<String, bool> = Map::new(&env);  // Make the map mutable
         
         // Check if NFT exists
         if !env.storage().persistent().has(&token_id) {
@@ -73,8 +79,12 @@ impl super::AkkueaPurchaseNFT {
         
         // Check transaction mapping
         let txn_map: Map<BytesN<32>, u32> = env.storage().instance().get(&TRANSACTION_MAPPING).unwrap();
-        let txn_consistency = txn_map.contains_key(&nft.transaction_id) && 
-                              txn_map.get(&nft.transaction_id).unwrap() == token_id;
+        
+        // Clone the transaction_id before moving it
+        let txn_id = nft.transaction_id.clone();
+        
+        let txn_consistency = txn_map.contains_key(txn_id.clone()) && 
+                              txn_map.get(txn_id).unwrap() == token_id;
         
         // Build the report
         result.set(String::from_str(&env, "exists"), exists);

@@ -7,6 +7,7 @@ use soroban_sdk::{
 use soroban_sdk::testutils::{MockAuth, MockAuthInvoke};
 
 use crate::{AkkueaPurchaseNFT, AkkueaPurchaseNFTClient, NFTDetail, NFTMetadata, PurchaseMetadata};
+use crate::minting::{PurchaseNFTData, ProductInfo, NFTMetaInput};
 
 #[test]
 fn test_initialize() {
@@ -66,26 +67,38 @@ fn test_mint_nft() {
             contract: &contract_id,
             fn_name: "mint_proof_of_purchase",
             args: (
-                &buyer, &seller, &txn_id, 
-                &String::from_str(&env, "PUR-12345"),
-                &100_000_000i128, &String::from_str(&env, "XLM"),
-                &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-                &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-                &Vec::<String>::new(&env), &attributes
+                &purchase_data,
             ).into_val(&env),
             auth_amount: None,
         }),
     ]);
     
+    // Create purchase data
+    let product_info = ProductInfo {
+        product_id: String::from_str(&env, "PROD-001"),
+        product_name: String::from_str(&env, "Premium Widget"),
+    };
+    
+    let nft_meta = NFTMetaInput {
+        name: String::from_str(&env, "Purchase NFT"),
+        description: String::from_str(&env, "Proof of purchase for Widget"),
+        attributes: Vec::<String>::new(&env),
+        additional_attributes: attributes,
+    };
+    
+    let purchase_data = PurchaseNFTData {
+        buyer,
+        seller,
+        transaction_id: txn_id,
+        purchase_id: String::from_str(&env, "PUR-12345"),
+        amount: 100_000_000i128,
+        currency: String::from_str(&env, "XLM"),
+        product_info,
+        nft_metadata: nft_meta,
+    };
+    
     // Mint the NFT
-    let token_id = client.mint_proof_of_purchase(
-        &buyer, &seller, &txn_id,
-        &String::from_str(&env, "PUR-12345"),
-        &100_000_000i128, &String::from_str(&env, "XLM"),
-        &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-        &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-        &Vec::<String>::new(&env), &attributes
-    );
+    let token_id = client.mint_proof_of_purchase(&purchase_data);
     
     // Verify the NFT was minted with ID 1
     assert_eq!(token_id, 1);
@@ -130,14 +143,12 @@ fn test_double_mint_same_transaction() {
         // First mint auth
         (&MockAuthInvoke {
             contract: &contract_id,
-            fn_name: "mint_proof_of_purchase",
+            fn_name: "simple_mint",
             args: (
                 &buyer, &seller, &txn_id, 
                 &String::from_str(&env, "PUR-12345"),
-                &100_000_000i128, &String::from_str(&env, "XLM"),
-                &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-                &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-                &Vec::<String>::new(&env), &attributes
+                &100_000_000i128, 
+                &String::from_str(&env, "Premium Widget")
             ).into_val(&env),
             auth_amount: None,
         }),
@@ -168,14 +179,7 @@ fn test_double_mint_same_transaction() {
     );
     
     // Second mint with same transaction (should panic)
-    client.mint_proof_of_purchase(
-        &buyer, &seller, &txn_id,
-        &String::from_str(&env, "PUR-12345"),
-        &100_000_000i128, &String::from_str(&env, "XLM"),
-        &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-        &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-        &Vec::<String>::new(&env), &attributes
-    );
+    client.mint_proof_of_purchase(&purchase_data);
 }
 
 #[test]
@@ -215,14 +219,12 @@ fn test_transfer_nft() {
         }),
     ]);
     
-    // Mint the NFT
-    let token_id = client.mint_proof_of_purchase(
+    // Use the simple mint function for testing transfers
+    let token_id = client.simple_mint(
         &buyer, &seller, &txn_id,
         &String::from_str(&env, "PUR-12345"),
-        &100_000_000i128, &String::from_str(&env, "XLM"),
-        &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-        &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-        &Vec::<String>::new(&env), &attributes
+        &100_000_000i128, 
+        &String::from_str(&env, "Premium Widget")
     );
     
     // Mock auth for buyer to transfer
@@ -287,14 +289,12 @@ fn test_unauthorized_transfer() {
         }),
     ]);
     
-    // Mint the NFT
-    let token_id = client.mint_proof_of_purchase(
+    // Use the simple mint function for testing burns
+    let token_id = client.simple_mint(
         &buyer, &seller, &txn_id,
         &String::from_str(&env, "PUR-12345"),
-        &100_000_000i128, &String::from_str(&env, "XLM"),
-        &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-        &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-        &Vec::<String>::new(&env), &attributes
+        &100_000_000i128, 
+        &String::from_str(&env, "Premium Widget")
     );
     
     // Mock auth for attacker trying to transfer
@@ -349,14 +349,12 @@ fn test_burn_nft() {
         }),
     ]);
     
-    // Mint the NFT
-    let token_id = client.mint_proof_of_purchase(
+    // Use the simple mint function for testing metadata
+    let token_id = client.simple_mint(
         &buyer, &seller, &txn_id,
         &String::from_str(&env, "PUR-12345"),
-        &100_000_000i128, &String::from_str(&env, "XLM"),
-        &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-        &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-        &Vec::<String>::new(&env), &attributes
+        &100_000_000i128, 
+        &String::from_str(&env, "Premium Widget")
     );
     
     // Mock auth for buyer to burn
@@ -414,14 +412,12 @@ fn test_update_metadata() {
         }),
     ]);
     
-    // Mint the NFT
-    let token_id = client.mint_proof_of_purchase(
+    // Use the simple mint function for testing validation
+    let token_id = client.simple_mint(
         &buyer, &seller, &txn_id,
         &String::from_str(&env, "PUR-12345"),
-        &100_000_000i128, &String::from_str(&env, "XLM"),
-        &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-        &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-        &Vec::<String>::new(&env), &attributes
+        &100_000_000i128, 
+        &String::from_str(&env, "Premium Widget")
     );
     
     // New attributes for update
@@ -634,25 +630,19 @@ fn test_admin_batch_mint() {
     let attributes1 = Map::new(&env);
     let attributes2 = Map::new(&env);
     
-    // Create batch data
+    // Create batch data with simplified parameters
     let batch_data = Vec::from_array(
         &env,
         [
             (
                 buyer1.clone(), seller.clone(), txn_id1.clone(), 
                 String::from_str(&env, "PUR-0001"),
-                100_000_000i128, String::from_str(&env, "XLM"),
-                String::from_str(&env, "PROD-001"), String::from_str(&env, "Widget A"),
-                String::from_str(&env, "NFT A"), String::from_str(&env, "Description A"),
-                Vec::<String>::new(&env), attributes1
+                100_000_000i128, String::from_str(&env, "Widget A")
             ),
             (
                 buyer2.clone(), seller.clone(), txn_id2.clone(), 
                 String::from_str(&env, "PUR-0002"),
-                200_000_000i128, String::from_str(&env, "XLM"),
-                String::from_str(&env, "PROD-002"), String::from_str(&env, "Widget B"),
-                String::from_str(&env, "NFT B"), String::from_str(&env, "Description B"),
-                Vec::<String>::new(&env), attributes2
+                200_000_000i128, String::from_str(&env, "Widget B")
             ),
         ],
     );

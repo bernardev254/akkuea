@@ -1,11 +1,11 @@
 #![no_std]
 use soroban_sdk::{contract, contractimpl, contracttype, symbol_short, Address, Env, String, Symbol, Vec, Map, BytesN};
-use soroban_sdk::{log, ConversionError, TryFromVal, Val};
 
 mod minting;
 mod distribution;
 mod metadata;
 mod validation;
+mod test;
 
 // Contract storage keys
 const ADMIN_KEY: Symbol = symbol_short!("ADMIN");
@@ -77,14 +77,18 @@ impl AkkueaPurchaseNFT {
     // Check if transaction already has an NFT
     pub fn has_transaction_nft(env: Env, transaction_id: BytesN<32>) -> bool {
         let txn_map: Map<BytesN<32>, u32> = env.storage().instance().get(&TRANSACTION_MAPPING).unwrap();
-        txn_map.contains_key(&transaction_id)
+        txn_map.contains_key(transaction_id)
     }
     
     // Get NFT token ID from transaction ID
     pub fn get_nft_by_transaction(env: Env, transaction_id: BytesN<32>) -> Option<u32> {
         let txn_map: Map<BytesN<32>, u32> = env.storage().instance().get(&TRANSACTION_MAPPING).unwrap();
-        if txn_map.contains_key(&transaction_id) {
-            Some(txn_map.get(&transaction_id).unwrap())
+        
+        // Clone the transaction_id before using it to avoid ownership issues
+        let txn_id = transaction_id.clone();
+        
+        if txn_map.contains_key(txn_id.clone()) {
+            Some(txn_map.get(txn_id).unwrap())
         } else {
             None
         }
