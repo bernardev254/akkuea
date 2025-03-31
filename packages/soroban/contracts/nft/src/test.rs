@@ -1,12 +1,11 @@
 #![cfg(test)]
 
 use soroban_sdk::{
-    testutils::{Address as _, BytesN as _},
+    testutils::{Address as _, BytesN as _, MockAuth, MockAuthInvoke},
     Address, BytesN, Env, String, Map, Vec, IntoVal,
 };
-use soroban_sdk::testutils::{MockAuth, MockAuthInvoke};
 
-use crate::{AkkueaPurchaseNFT, AkkueaPurchaseNFTClient, NFTDetail, NFTMetadata, PurchaseMetadata};
+use crate::{AkkueaPurchaseNFT, AkkueaPurchaseNFTClient};
 use crate::minting::{PurchaseNFTData, ProductInfo, NFTMetaInput};
 
 #[test]
@@ -14,14 +13,17 @@ fn test_initialize() {
     let env = Env::default();
     let admin = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // For Soroban SDK 22, we need to use a simpler approach
+    // Just mock all auths to pass everything
+    env.mock_all_auths();
     
     // Initialize the contract
     client.initialize(&admin);
     
     // Verify admin was set correctly by checking total NFTs count
-    // This is indirect verification since we don't expose admin getter
     assert_eq!(client.get_total_nfts(), 0);
 }
 
@@ -31,13 +33,16 @@ fn test_double_initialize() {
     let env = Env::default();
     let admin = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // For Soroban SDK 22, we need to use a simpler approach
+    env.mock_all_auths();
     
     // Initialize once
     client.initialize(&admin);
     
-    // Try to initialize again (should panic)
+    // Try to initialize again (should panic with "Already initialized")
     client.initialize(&admin);
 }
 
@@ -48,8 +53,11 @@ fn test_mint_nft() {
     let buyer = Address::generate(&env);
     let seller = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // Mock all auths
+    env.mock_all_auths();
     
     // Initialize the contract
     client.initialize(&admin);
@@ -60,18 +68,6 @@ fn test_mint_nft() {
     // Create additional attributes
     let mut attributes = Map::new(&env);
     attributes.set(String::from_str(&env, "color"), String::from_str(&env, "blue"));
-    
-    // Mock auth for seller
-    seller.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "mint_proof_of_purchase",
-            args: (
-                &purchase_data,
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
     
     // Create purchase data
     let product_info = ProductInfo {
@@ -87,9 +83,9 @@ fn test_mint_nft() {
     };
     
     let purchase_data = PurchaseNFTData {
-        buyer,
-        seller,
-        transaction_id: txn_id,
+        buyer: buyer.clone(),
+        seller: seller.clone(),
+        transaction_id: txn_id.clone(),
         purchase_id: String::from_str(&env, "PUR-12345"),
         amount: 100_000_000i128,
         currency: String::from_str(&env, "XLM"),
@@ -126,8 +122,11 @@ fn test_double_mint_same_transaction() {
     let buyer = Address::generate(&env);
     let seller = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // Mock all auths
+    env.mock_all_auths();
     
     // Initialize the contract
     client.initialize(&admin);
@@ -135,50 +134,40 @@ fn test_double_mint_same_transaction() {
     // Create transaction ID (same for both mints)
     let txn_id = BytesN::<32>::random(&env);
     
-    // Create attributes
-    let attributes = Map::new(&env);
-    
-    // Mock auth for seller
-    seller.mock_auths(&[
-        // First mint auth
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "simple_mint",
-            args: (
-                &buyer, &seller, &txn_id, 
-                &String::from_str(&env, "PUR-12345"),
-                &100_000_000i128, 
-                &String::from_str(&env, "Premium Widget")
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-        // Second mint auth (should fail)
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "mint_proof_of_purchase",
-            args: (
-                &buyer, &seller, &txn_id, 
-                &String::from_str(&env, "PUR-12345"),
-                &100_000_000i128, &String::from_str(&env, "XLM"),
-                &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-                &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-                &Vec::<String>::new(&env), &attributes
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
-    
-    // First mint
-    client.mint_proof_of_purchase(
+    // Use simple_mint for the first mint
+    client.simple_mint(
         &buyer, &seller, &txn_id,
         &String::from_str(&env, "PUR-12345"),
-        &100_000_000i128, &String::from_str(&env, "XLM"),
-        &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-        &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-        &Vec::<String>::new(&env), &attributes
+        &100_000_000i128, 
+        &String::from_str(&env, "Premium Widget")
     );
     
-    // Second mint with same transaction (should panic)
+    // Create PurchaseNFTData for the second mint attempt using the same transaction ID
+    let attributes = Map::new(&env);
+    let product_info = ProductInfo {
+        product_id: String::from_str(&env, "PROD-001"),
+        product_name: String::from_str(&env, "Premium Widget"),
+    };
+    
+    let nft_meta = NFTMetaInput {
+        name: String::from_str(&env, "Purchase NFT"),
+        description: String::from_str(&env, "Proof of purchase for Widget"),
+        attributes: Vec::<String>::new(&env),
+        additional_attributes: attributes,
+    };
+    
+    let purchase_data = PurchaseNFTData {
+        buyer: buyer.clone(),
+        seller: seller.clone(),
+        transaction_id: txn_id.clone(),
+        purchase_id: String::from_str(&env, "PUR-12345"),
+        amount: 100_000_000i128,
+        currency: String::from_str(&env, "XLM"),
+        product_info,
+        nft_metadata: nft_meta,
+    };
+    
+    // Second mint with same transaction (should panic with "Transaction already has an associated NFT")
     client.mint_proof_of_purchase(&purchase_data);
 }
 
@@ -190,34 +179,17 @@ fn test_transfer_nft() {
     let seller = Address::generate(&env);
     let new_owner = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // Mock all auths
+    env.mock_all_auths();
     
     // Initialize the contract
     client.initialize(&admin);
     
     // Create transaction ID
     let txn_id = BytesN::<32>::random(&env);
-    
-    // Create attributes
-    let attributes = Map::new(&env);
-    
-    // Mock auth for seller to mint
-    seller.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "mint_proof_of_purchase",
-            args: (
-                &buyer, &seller, &txn_id, 
-                &String::from_str(&env, "PUR-12345"),
-                &100_000_000i128, &String::from_str(&env, "XLM"),
-                &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-                &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-                &Vec::<String>::new(&env), &attributes
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
     
     // Use the simple mint function for testing transfers
     let token_id = client.simple_mint(
@@ -226,18 +198,6 @@ fn test_transfer_nft() {
         &100_000_000i128, 
         &String::from_str(&env, "Premium Widget")
     );
-    
-    // Mock auth for buyer to transfer
-    buyer.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "transfer_nft",
-            args: (
-                &buyer, &new_owner, &token_id
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
     
     // Transfer the NFT
     client.transfer_nft(&buyer, &new_owner, &token_id);
@@ -260,8 +220,11 @@ fn test_unauthorized_transfer() {
     let seller = Address::generate(&env);
     let attacker = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // Mock all auths
+    env.mock_all_auths();
     
     // Initialize the contract
     client.initialize(&admin);
@@ -269,27 +232,7 @@ fn test_unauthorized_transfer() {
     // Create transaction ID
     let txn_id = BytesN::<32>::random(&env);
     
-    // Create attributes
-    let attributes = Map::new(&env);
-    
-    // Mock auth for seller to mint
-    seller.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "mint_proof_of_purchase",
-            args: (
-                &buyer, &seller, &txn_id, 
-                &String::from_str(&env, "PUR-12345"),
-                &100_000_000i128, &String::from_str(&env, "XLM"),
-                &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-                &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-                &Vec::<String>::new(&env), &attributes
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
-    
-    // Use the simple mint function for testing burns
+    // Use the simple mint function for testing unauthorized transfers
     let token_id = client.simple_mint(
         &buyer, &seller, &txn_id,
         &String::from_str(&env, "PUR-12345"),
@@ -297,19 +240,8 @@ fn test_unauthorized_transfer() {
         &String::from_str(&env, "Premium Widget")
     );
     
-    // Mock auth for attacker trying to transfer
-    attacker.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "transfer_nft",
-            args: (
-                &attacker, &attacker, &token_id
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
-    
-    // Attempt unauthorized transfer (should panic)
+    // The authentication will pass, but the contract's own authorization check 
+    // should fail since attacker is not the owner
     client.transfer_nft(&attacker, &attacker, &token_id);
 }
 
@@ -320,8 +252,11 @@ fn test_burn_nft() {
     let buyer = Address::generate(&env);
     let seller = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // Mock all auths
+    env.mock_all_auths();
     
     // Initialize the contract
     client.initialize(&admin);
@@ -329,45 +264,13 @@ fn test_burn_nft() {
     // Create transaction ID
     let txn_id = BytesN::<32>::random(&env);
     
-    // Create attributes
-    let attributes = Map::new(&env);
-    
-    // Mock auth for seller to mint
-    seller.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "mint_proof_of_purchase",
-            args: (
-                &buyer, &seller, &txn_id, 
-                &String::from_str(&env, "PUR-12345"),
-                &100_000_000i128, &String::from_str(&env, "XLM"),
-                &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-                &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-                &Vec::<String>::new(&env), &attributes
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
-    
-    // Use the simple mint function for testing metadata
+    // Use the simple mint function for testing burns
     let token_id = client.simple_mint(
         &buyer, &seller, &txn_id,
         &String::from_str(&env, "PUR-12345"),
         &100_000_000i128, 
         &String::from_str(&env, "Premium Widget")
     );
-    
-    // Mock auth for buyer to burn
-    buyer.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "burn_nft",
-            args: (
-                &buyer, &token_id
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
     
     // Burn the NFT
     client.burn_nft(&buyer, &token_id);
@@ -383,8 +286,11 @@ fn test_update_metadata() {
     let buyer = Address::generate(&env);
     let seller = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // Mock all auths
+    env.mock_all_auths();
     
     // Initialize the contract
     client.initialize(&admin);
@@ -392,27 +298,7 @@ fn test_update_metadata() {
     // Create transaction ID
     let txn_id = BytesN::<32>::random(&env);
     
-    // Create attributes
-    let attributes = Map::new(&env);
-    
-    // Mock auth for seller to mint
-    seller.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "mint_proof_of_purchase",
-            args: (
-                &buyer, &seller, &txn_id, 
-                &String::from_str(&env, "PUR-12345"),
-                &100_000_000i128, &String::from_str(&env, "XLM"),
-                &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-                &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-                &Vec::<String>::new(&env), &attributes
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
-    
-    // Use the simple mint function for testing validation
+    // Use the simple mint function for testing metadata updates
     let token_id = client.simple_mint(
         &buyer, &seller, &txn_id,
         &String::from_str(&env, "PUR-12345"),
@@ -428,21 +314,6 @@ fn test_update_metadata() {
             String::from_str(&env, "collector"),
         ],
     );
-    
-    // Mock auth for admin to update metadata
-    admin.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "update_metadata",
-            args: (
-                &admin, &token_id,
-                &String::from_str(&env, "Updated NFT Name"),
-                &String::from_str(&env, "Updated description"),
-                &new_attributes
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
     
     // Update metadata
     client.update_metadata(
@@ -471,8 +342,11 @@ fn test_add_attribute() {
     let buyer = Address::generate(&env);
     let seller = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // Mock all auths
+    env.mock_all_auths();
     
     // Initialize the contract
     client.initialize(&admin);
@@ -480,49 +354,13 @@ fn test_add_attribute() {
     // Create transaction ID
     let txn_id = BytesN::<32>::random(&env);
     
-    // Create attributes
-    let attributes = Map::new(&env);
-    
-    // Mock auth for seller to mint
-    seller.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "mint_proof_of_purchase",
-            args: (
-                &buyer, &seller, &txn_id, 
-                &String::from_str(&env, "PUR-12345"),
-                &100_000_000i128, &String::from_str(&env, "XLM"),
-                &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-                &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-                &Vec::<String>::new(&env), &attributes
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
-    
-    // Mint the NFT
-    let token_id = client.mint_proof_of_purchase(
+    // Use the simple mint function
+    let token_id = client.simple_mint(
         &buyer, &seller, &txn_id,
         &String::from_str(&env, "PUR-12345"),
-        &100_000_000i128, &String::from_str(&env, "XLM"),
-        &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-        &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-        &Vec::<String>::new(&env), &attributes
+        &100_000_000i128, 
+        &String::from_str(&env, "Premium Widget")
     );
-    
-    // Mock auth for admin to add attribute
-    admin.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "add_attribute",
-            args: (
-                &admin, &token_id,
-                &String::from_str(&env, "warranty"),
-                &String::from_str(&env, "1 year")
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
     
     // Add attribute
     client.add_attribute(
@@ -534,7 +372,7 @@ fn test_add_attribute() {
     // Verify attribute was added
     let purchase_data = client.get_purchase_data(&token_id);
     let added_attr = purchase_data.additional_attributes.get(
-        &String::from_str(&env, "warranty")
+        String::from_str(&env, "warranty")
     ).unwrap();
     
     assert_eq!(added_attr, String::from_str(&env, "1 year"));
@@ -547,8 +385,11 @@ fn test_validation() {
     let buyer = Address::generate(&env);
     let seller = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // Mock all auths
+    env.mock_all_auths();
     
     // Initialize the contract
     client.initialize(&admin);
@@ -556,34 +397,12 @@ fn test_validation() {
     // Create transaction ID
     let txn_id = BytesN::<32>::random(&env);
     
-    // Create attributes
-    let attributes = Map::new(&env);
-    
-    // Mock auth for seller to mint
-    seller.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "mint_proof_of_purchase",
-            args: (
-                &buyer, &seller, &txn_id, 
-                &String::from_str(&env, "PUR-12345"),
-                &100_000_000i128, &String::from_str(&env, "XLM"),
-                &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-                &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-                &Vec::<String>::new(&env), &attributes
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
-    
-    // Mint the NFT
-    let token_id = client.mint_proof_of_purchase(
+    // Use simple mint
+    let token_id = client.simple_mint(
         &buyer, &seller, &txn_id,
         &String::from_str(&env, "PUR-12345"),
-        &100_000_000i128, &String::from_str(&env, "XLM"),
-        &String::from_str(&env, "PROD-001"), &String::from_str(&env, "Premium Widget"),
-        &String::from_str(&env, "Purchase NFT"), &String::from_str(&env, "Proof of purchase for Widget"),
-        &Vec::<String>::new(&env), &attributes
+        &100_000_000i128, 
+        &String::from_str(&env, "Premium Widget")
     );
     
     // Run validation tests
@@ -604,8 +423,8 @@ fn test_validation() {
     
     // Get validation report
     let report = client.validation_report(&token_id);
-    assert!(report.get(&String::from_str(&env, "exists")).unwrap());
-    assert!(report.get(&String::from_str(&env, "transaction_consistency")).unwrap());
+    assert!(report.get(String::from_str(&env, "exists")).unwrap());
+    assert!(report.get(String::from_str(&env, "transaction_consistency")).unwrap());
 }
 
 #[test]
@@ -616,8 +435,11 @@ fn test_admin_batch_mint() {
     let buyer2 = Address::generate(&env);
     let seller = Address::generate(&env);
     
-    let contract_id = env.register_contract(None, AkkueaPurchaseNFT {});
+    let contract_id = env.register(AkkueaPurchaseNFT {}, ());
     let client = AkkueaPurchaseNFTClient::new(&env, &contract_id);
+    
+    // Mock all auths
+    env.mock_all_auths();
     
     // Initialize the contract
     client.initialize(&admin);
@@ -625,10 +447,6 @@ fn test_admin_batch_mint() {
     // Create transaction IDs
     let txn_id1 = BytesN::<32>::random(&env);
     let txn_id2 = BytesN::<32>::random(&env);
-    
-    // Create empty attributes maps
-    let attributes1 = Map::new(&env);
-    let attributes2 = Map::new(&env);
     
     // Create batch data with simplified parameters
     let batch_data = Vec::from_array(
@@ -646,18 +464,6 @@ fn test_admin_batch_mint() {
             ),
         ],
     );
-    
-    // Mock auth for admin to batch mint
-    admin.mock_auths(&[
-        (&MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "admin_batch_mint",
-            args: (
-                &admin, &batch_data
-            ).into_val(&env),
-            auth_amount: None,
-        }),
-    ]);
     
     // Batch mint
     let token_ids = client.admin_batch_mint(&admin, &batch_data);

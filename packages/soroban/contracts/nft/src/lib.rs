@@ -5,7 +5,6 @@ mod minting;
 mod distribution;
 mod metadata;
 mod validation;
-mod test;
 
 // Contract storage keys
 const ADMIN_KEY: Symbol = symbol_short!("ADMIN");
@@ -99,3 +98,6 @@ impl AkkueaPurchaseNFT {
         env.storage().instance().get(&COUNTER_KEY).unwrap_or(0u32)
     }
 }
+
+#[cfg(test)]
+mod test;
