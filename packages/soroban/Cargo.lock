@@ -1423,6 +1423,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "tipping-rewards"
+version = "0.0.0"
+dependencies = [
+ "soroban-sdk",
+]
+
+[[package]]
 name = "typenum"
 version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
