@@ -1,4 +1,4 @@
-use soroban_sdk::{Address, BytesN, String, Vec, contracterror, contracttype};
+use soroban_sdk::{contracterror, contracttype, Address, String, Vec};
 
 /// Categories specific to educational content for segmented ratings
 #[contracttype]
@@ -33,8 +33,7 @@ pub enum ReviewStatus {
 #[contracttype]
 #[derive(Clone, Debug)]
 pub struct MediaAttachment {
-    pub file_hash: BytesN<32>, // Hash for integrity
-    pub file_url: String,      // IPFS link or URL
+    pub file_url: String, // IPFS link or URL
 }
 
 /// Storage keys for ledger data
@@ -60,7 +59,7 @@ pub enum ReviewError {
     Unauthorized = 1,
     PurchaseNotFound = 2,
     ReviewAlreadyExists = 3,
-    InvalidRating = 4,
+    NoRatingsProvided = 4,
     ReviewWindowExpired = 5,
     MultimediaLimitExceeded = 6,
     TextTooLong = 7,
@@ -71,6 +70,7 @@ pub enum ReviewError {
     InvalidCategory = 12,
     InvalidAttachment = 13,
     PurchaseAlreadyExists = 14,
+    InvalidRating = 15,
 }
 
 #[contracterror]
@@ -80,7 +80,6 @@ pub enum PurchaseError {
     PurchaseAlreadyExists = 1,
 }
 
-/// Purchase record
 #[contracttype]
 #[derive(Clone)]
 pub struct Purchase {

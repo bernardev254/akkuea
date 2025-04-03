@@ -1,5 +1,5 @@
 #![no_std]
-use soroban_sdk::{Address, Env, String, Symbol, Vec, contract, contractimpl};
+use soroban_sdk::{contract, contractimpl, Address, Env, String, Symbol, Vec};
 
 mod datatype;
 mod dispute;
@@ -40,7 +40,10 @@ impl AkkueaReviews {
             .persistent()
             .set(&DataKey::PaymentContract, &payment_contract);
 
-        env.events().publish(("initialize", "admin"), admin.clone());
+        env.events().publish(
+            (Symbol::new(&env, "contract_initialized"), admin),
+            payment_contract,
+        );
 
         Ok(())
     }
@@ -130,6 +133,10 @@ impl RatingOperations for AkkueaReviews {
     ) -> Result<u32, ReviewError> {
         user.require_auth();
 
+        if category_ratings.is_empty() {
+            return Err(ReviewError::NoRatingsProvided);
+        }
+
         for rating in category_ratings.iter() {
             match rating.rating {
                 Rating::OneStar
@@ -139,6 +146,7 @@ impl RatingOperations for AkkueaReviews {
                 | Rating::FiveStars => {}
             }
         }
+
         if multimedia.len() > MAX_MULTIMEDIA {
             return Err(ReviewError::MultimediaLimitExceeded);
         }

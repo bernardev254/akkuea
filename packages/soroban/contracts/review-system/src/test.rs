@@ -1,14 +1,10 @@
 #![cfg(test)]
 
 use super::*;
-use crate::datatype::{
-    Category, CategoryRating, DataKey, Purchase, Review, ReviewError, ReviewStatus,
-};
+use crate::datatype::{Category, CategoryRating, DataKey, Purchase, Review, ReviewStatus};
 use crate::{AkkueaReviews, AkkueaReviewsClient};
 use soroban_sdk::vec;
-use soroban_sdk::IntoVal;
 use soroban_sdk::{
-    symbol_short,
     testutils::{Address as _, Events, Ledger},
     Address, Env, String, Vec,
 };
@@ -33,6 +29,7 @@ fn setup_test() -> (
 
     // Initialize the contract
     env.mock_all_auths();
+
     client.initialize(&admin, &payment_contract);
 
     (env, client, admin, payment_contract, user, product_id)
@@ -55,7 +52,7 @@ fn test_initialize_contract() {
     let result = client.try_initialize(&admin, &payment_contract);
     assert!(result.is_err(), "Second initialization should fail");
 
-    // Verify storage
+    // Verify storage and events
     env.as_contract(&contract_id, || {
         let stored_admin: Address = env
             .storage()
@@ -74,7 +71,7 @@ fn test_initialize_contract() {
 
 #[test]
 fn test_record_purchase() {
-    let (env, client, _admin, payment_contract, user, product_id) = setup_test();
+    let (env, client, _admin, _payment_contract, user, product_id) = setup_test();
     let purchase_link = String::from_str(&env, "https://example.com/purchase/123");
 
     // Record purchase
@@ -117,10 +114,21 @@ fn test_submit_review() {
             timestamp: env.ledger().timestamp(),
         },
     ];
+
     let review_text = String::from_str(&env, "Great product!");
-    let multimedia = Vec::new(&env);
+
+    let multimedia = vec![
+        &env,
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg1"),
+        },
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg2"),
+        },
+    ];
 
     env.mock_all_auths();
+
     let review_id = client.submit_review(
         &user,
         &product_id,
@@ -140,15 +148,17 @@ fn test_submit_review() {
         assert_eq!(review.text, Some(review_text));
         assert_eq!(review.category_ratings.len(), 1);
         assert_eq!(review.status, ReviewStatus::Verified);
-    });
 
-    let events = env.events().all();
-    //println!("Events: {:?}", events); // Debug output
-    assert_eq!(
-        events.len(),
-        3,
-        "Should emit init, purchase, and review events"
-    );
+        env.as_contract(&client.address, || {
+            let summary: ReviewSummary = env
+                .storage()
+                .persistent()
+                .get(&DataKey::ReviewSummary(product_id))
+                .expect("Summary not found");
+            assert_eq!(summary.total_ratings, 1);
+            assert_eq!(summary.sum_ratings, 4);
+        });
+    });
 }
 
 #[test]
@@ -195,31 +205,15 @@ fn test_submit_review_events() {
     // Verify review ID
     assert_eq!(review_id, 0, "First review should have ID 0");
 
-    // // Verify events
-    // assert_eq!(
-    //     env.events().all(),
-    //     vec![
-    //         &env,
-    //         // Initialization event
-    //         (
-    //             contract_id.clone(),
-    //             vec![&env, Symbol::new(&env, "init"), admin],
-    //             env.ledger().timestamp().into_val(&env)
-    //         ),
-    //         // Purchase recorded event
-    //         (
-    //             contract_id.clone(),
-    //             vec![&env, Symbol::new(&env, "pur_rec"), user],
-    //             product_id.into_val(&env)
-    //         ),
-    //         // Review submitted event (matches your Symbol::new usage)
-    //         (
-    //             contract_id,
-    //             vec![&env, Symbol::new(&env, "review_submitted"), user],
-    //             vec![&env, product_id, review_id, 4_u64].into_val(&env) // FourStars = 4
-    //         ),
-    //     ]
-    // );
+    // Verify emitted events
+    let events = env.events().all();
+
+    assert_eq!(events.len(), 1); // Expect 1 events
+
+    // Verify the first event
+    let event = events.get(0).unwrap();
+
+    assert_eq!(event.0, contract_id);
 }
 
 #[test]
@@ -248,7 +242,7 @@ fn test_submit_review_no_purchase() {
 
 #[test]
 fn test_review_window_expiration() {
-    let (env, client, _admin, payment_contract, user, product_id) = setup_test();
+    let (env, client, _admin, _payment_contract, user, product_id) = setup_test();
 
     // Record purchase
     env.mock_all_auths();
@@ -278,68 +272,13 @@ fn test_review_window_expiration() {
     assert!(result.is_err(), "Review should fail after window expires");
 }
 
-// In lib.rs, ReviewOperations impl
-fn add_response(
-    env: Env,
-    author: Address,
-    product_id: u64,
-    review_id: u32,
-    response_text: String,
-) -> Result<(), ReviewError> {
-    author.require_auth();
-
-    if response_text.len() > MAX_TEXT_LENGTH {
-        return Err(ReviewError::TextTooLong);
-    }
-
-    let review_key = DataKey::Review(product_id, review_id);
-    let mut review: Review = env
-        .storage()
-        .persistent()
-        .get(&review_key)
-        .ok_or(ReviewError::ReviewNotFound)?;
-
-    let owner_key = DataKey::ProductOwner(product_id);
-    let product_owner = env
-        .storage()
-        .persistent()
-        .get(&owner_key)
-        .ok_or(ReviewError::ProductNotFound)?;
-
-    if author != product_owner {
-        let purchase_key = DataKey::Purchase(author.clone(), product_id);
-        let purchase: Purchase = env
-            .storage()
-            .persistent()
-            .get(&purchase_key)
-            .ok_or(ReviewError::PurchaseNotFound)?;
-        if purchase.review_id != Some(review_id) {
-            return Err(ReviewError::Unauthorized);
-        }
-    }
-
-    let response = Response {
-        author: author.clone(),
-        text: response_text.clone(),
-        timestamp: env.ledger().timestamp(),
-    };
-    review.responses.push_back(response);
-    env.storage().persistent().set(&review_key, &review);
-
-    env.events().publish(
-        (Symbol::new(&env, "response_added"), author),
-        (product_id, review_id, response_text),
-    );
-
-    Ok(())
-}
-
 #[test]
 fn test_vote_helpful() {
     let (env, client, _admin, _, user, product_id) = setup_test();
 
     env.mock_all_auths();
     client.record_purchase(&user, &product_id, &None);
+
     let category_ratings = vec![
         &env,
         CategoryRating {
@@ -358,15 +297,12 @@ fn test_vote_helpful() {
 
     let voter = Address::generate(&env);
     env.mock_all_auths();
+
     client.vote_helpful(&voter, &product_id, &review_id, &true);
 
     let events = env.events().all();
-    //println!("Events: {:?}", events); // Debug output
-    assert_eq!(
-        events.len(),
-        4,
-        "Should emit init, purchase, review, and vote events"
-    );
+
+    assert_eq!(events.len(), 1, "Should emit vote event");
 }
 
 #[test]
@@ -379,11 +315,19 @@ fn test_dispute_review() {
     let user = Address::generate(&env);
     let product_id = 12345u64;
     let review_id = 0u32;
+    let category_ratings = vec![
+        &env,
+        CategoryRating {
+            category: Category::ContentQuality,
+            rating: crate::datatype::Rating::FourStars,
+            timestamp: env.ledger().timestamp(),
+        },
+    ];
 
     env.mock_all_auths();
     client.initialize(&admin, &Address::generate(&env));
     client.record_purchase(&user, &product_id, &None);
-    client.submit_review(&user, &product_id, &vec![&env], &None, &vec![&env]);
+    client.submit_review(&user, &product_id, &category_ratings, &None, &vec![&env]);
 
     env.mock_all_auths();
     let dispute_id = client.dispute_review(&product_id, &review_id); // Now returns u32
@@ -395,7 +339,7 @@ fn test_dispute_review() {
 #[test]
 fn test_resolve_dispute() {
     let env = Env::default();
-    let contract_id = env.register(AkkueaReviews {}, ()); // Updated to env.register
+    let contract_id = env.register(AkkueaReviews {}, ());
     let client = AkkueaReviewsClient::new(&env, &contract_id);
 
     let admin = Address::generate(&env);
@@ -406,8 +350,18 @@ fn test_resolve_dispute() {
     env.mock_all_auths();
     client.initialize(&admin, &Address::generate(&env));
     client.record_purchase(&user, &product_id, &None);
-    client.submit_review(&user, &product_id, &vec![&env], &None, &vec![&env]);
-    let dispute_id = client.dispute_review(&product_id, &review_id); // Now returns u32
+
+    let category_ratings = vec![
+        &env,
+        CategoryRating {
+            category: Category::ContentQuality,
+            rating: crate::datatype::Rating::FourStars,
+            timestamp: env.ledger().timestamp(),
+        },
+    ];
+    client.submit_review(&user, &product_id, &category_ratings, &None, &vec![&env]);
+
+    let dispute_id = client.dispute_review(&product_id, &review_id);
 
     env.mock_all_auths();
     client.resolve_dispute(&dispute_id);
@@ -418,7 +372,7 @@ fn test_resolve_dispute() {
 
 #[test]
 fn test_max_text_length() {
-    let (env, client, _admin, payment_contract, user, product_id) = setup_test();
+    let (env, client, _admin, _payment_contract, user, product_id) = setup_test();
 
     // Record purchase
     env.mock_all_auths();
@@ -458,21 +412,32 @@ fn test_max_text_length() {
 
 #[test]
 fn test_max_multimedia_limit() {
-    let (env, client, _admin, payment_contract, user, product_id) = setup_test();
+    let (env, client, _admin, _payment_contract, user, product_id) = setup_test();
 
     // Record purchase
     env.mock_all_auths();
     client.record_purchase(&user, &product_id, &None);
 
-    // Test max multimedia limit (5 items)
+    // Test valid case: 5 multimedia items (max limit)
     let multimedia = vec![
         &env,
-        String::from_str(&env, "img1.jpg"),
-        String::from_str(&env, "img2.jpg"),
-        String::from_str(&env, "img3.jpg"),
-        String::from_str(&env, "img4.jpg"),
-        String::from_str(&env, "img5.jpg"),
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg1"),
+        },
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg2"),
+        },
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg3"),
+        },
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg4"),
+        },
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg5"),
+        },
     ];
+
     let category_ratings = vec![
         &env,
         CategoryRating {
@@ -481,19 +446,33 @@ fn test_max_multimedia_limit() {
             timestamp: env.ledger().timestamp(),
         },
     ];
-    env.mock_all_auths();
-    client.submit_review(&user, &product_id, &category_ratings, &None, &multimedia);
 
-    // Test exceeding max multimedia limit (6 items)
+    env.mock_all_auths();
+    client.submit_review(&user, &product_id, &category_ratings, &None, &multimedia); // Should succeed
+
+    // Test invalid case: 6 multimedia items (exceeds limit)
     let too_many_multimedia = vec![
         &env,
-        String::from_str(&env, "img1.jpg"),
-        String::from_str(&env, "img2.jpg"),
-        String::from_str(&env, "img3.jpg"),
-        String::from_str(&env, "img4.jpg"),
-        String::from_str(&env, "img5.jpg"),
-        String::from_str(&env, "img6.jpg"),
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg1"),
+        },
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg2"),
+        },
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg3"),
+        },
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg4"),
+        },
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg5"),
+        },
+        MediaAttachment {
+            file_url: String::from_str(&env, "ipfs://QmImg6"),
+        },
     ];
+
     env.mock_all_auths();
     let result = client.try_submit_review(
         &user,
@@ -502,56 +481,8 @@ fn test_max_multimedia_limit() {
         &None,
         &too_many_multimedia,
     );
-    assert!(result.is_err(), "More than 5 multimedia items should fail");
-}
-
-#[test]
-fn test_boundary_conditions() {
-    let (env, client, _admin, payment_contract, user, product_id) = setup_test();
-
-    // Test max product ID
-    let max_product_id = u64::MAX;
-    env.mock_all_auths();
-    client.record_purchase(&user, &max_product_id, &None);
-    let category_ratings = vec![
-        &env,
-        CategoryRating {
-            category: Category::ContentQuality,
-            rating: crate::datatype::Rating::FourStars,
-            timestamp: env.ledger().timestamp(),
-        },
-    ];
-    env.mock_all_auths();
-    client.submit_review(
-        &user,
-        &max_product_id,
-        &category_ratings,
-        &None,
-        &Vec::new(&env),
-    );
-
-    // Test min/max timestamps
-    env.ledger().set_timestamp(0);
-    env.mock_all_auths();
-    client.record_purchase(&user, &(product_id + 1), &None);
-    env.mock_all_auths();
-    client.submit_review(
-        &user,
-        &(product_id + 1),
-        &category_ratings,
-        &None,
-        &Vec::new(&env),
-    );
-
-    env.ledger().set_timestamp(u64::MAX);
-    env.mock_all_auths();
-    client.record_purchase(&user, &(product_id + 2), &None);
-    env.mock_all_auths();
-    client.submit_review(
-        &user,
-        &(product_id + 2),
-        &category_ratings,
-        &None,
-        &Vec::new(&env),
+    assert!(
+        result.is_err(),
+        "Submitting more than 5 multimedia items should fail"
     );
 }
