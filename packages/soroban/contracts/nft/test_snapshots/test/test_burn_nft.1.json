@@ -40,7 +40,7 @@
                   "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M"
                 },
                 {
-                  "bytes": "5f9191cd1b5e6419ac521c5bacdce336a5a81321d596b940040d2a2243c186cf"
+                  "bytes": "96dc7501ef477b93a18cc413b4fe556c011dc997b5cdc81f2601c74b86734256"
                 },
                 {
                   "string": "PUR-12345"
@@ -241,7 +241,7 @@
                           "map": [
                             {
                               "key": {
-                                "bytes": "5f9191cd1b5e6419ac521c5bacdce336a5a81321d596b940040d2a2243c186cf"
+                                "bytes": "96dc7501ef477b93a18cc413b4fe556c011dc997b5cdc81f2601c74b86734256"
                               },
                               "val": {
                                 "u32": 1
