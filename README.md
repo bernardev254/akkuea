@@ -101,6 +101,12 @@ We invite you to leave a star on the repository if you find Akkuea useful! 🌟
 
 ---
 
+## 🫡 Thanks to all of you
+<a href="https://github.com/akkuea/akkuea/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=akkuea/akkuea" />
+</a>
+
+
 **Join the educational revolution! 🚀🎓**
 
 **Happy Coding! 🚀**
