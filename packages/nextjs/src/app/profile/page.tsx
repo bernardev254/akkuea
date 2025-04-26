@@ -1,12 +1,15 @@
+"use client"
 import React from 'react';
 import { Edit, MapPin, MessageCircle, Share2, Flag as LinkIcon, Calendar } from 'lucide-react';
 import { Flag } from 'lucide-react';
 import UserPost from '@/components/quickPost/post-grid/userprofilepost';
+import UserActivityDashboard from '@/components/Activity/UserActivity';
+import PublicationMain from '@/components/publication/PublicationMain';
 
 const ProfilePage = () => {
   return (
     <div className="bg-white md:h-screen  shadow-sm p-6 ">
-      <div className="flex flex-col md:flex-row items-start gap-6 md:pt-7 md:pl-10">
+      <div className="flex flex-col md:flex-row items-start gap-6 md:pt-7 md:pl-10 container mx-auto py-8 px-4">
         <div className="w-full md:w-auto flex flex-col items-center justify-between md:items-start md:h-[270px]  pt-6">
           <div className="w-32 h-32 md:w-44 md:h-44 rounded-full ring-4 ring-white bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden shadow-lg">
             <svg
@@ -101,7 +104,8 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
-      <UserPost />
+       <PublicationMain/>
+       <UserActivityDashboard/>
     </div>
   );
 };
