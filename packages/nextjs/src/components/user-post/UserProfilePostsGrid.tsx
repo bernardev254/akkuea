@@ -44,37 +44,40 @@ const UserProfilePostsGrid: React.FC<UserProfilePostsGridProps> = ({
   });
 
   // Wrap fetchPosts in useCallback
-  const fetchPosts = useCallback(async (pageNum: number) => {
-    if (!hasMore) return;
+  const fetchPosts = useCallback(
+    async (pageNum: number) => {
+      if (!hasMore) return;
 
-    setIsLoading(true);
-    try {
-      const mockData = Array(12)
-        .fill(null)
-        .map((_, index) => ({
-          id: `post-${pageNum}-${index}`,
-          userId,
-          contentType: ['image', 'text', 'video', 'link', 'mixed'][
-            Math.floor(Math.random() * 5)
-          ] as ContentType,
-          thumbnail: `https://via.placeholder.com/400x400?text=Post+${pageNum}-${index}`,
-          title: `Post ${pageNum}-${index}`,
-          description: `This is the description for post ${pageNum}-${index}`,
-          url: 'https://example.com',
-          content: 'Lorem ipsum dolor sit amet...',
-          videoUrl: 'https://example.com/video.mp4',
-          createdAt: new Date().toISOString(),
-        }));
+      setIsLoading(true);
+      try {
+        const mockData = Array(12)
+          .fill(null)
+          .map((_, index) => ({
+            id: `post-${pageNum}-${index}`,
+            userId,
+            contentType: ['image', 'text', 'video', 'link', 'mixed'][
+              Math.floor(Math.random() * 5)
+            ] as ContentType,
+            thumbnail: `https://via.placeholder.com/400x400?text=Post+${pageNum}-${index}`,
+            title: `Post ${pageNum}-${index}`,
+            description: `This is the description for post ${pageNum}-${index}`,
+            url: 'https://example.com',
+            content: 'Lorem ipsum dolor sit amet...',
+            videoUrl: 'https://example.com/video.mp4',
+            createdAt: new Date().toISOString(),
+          }));
 
-      setPosts((prevPosts) => (pageNum === 1 ? mockData : [...prevPosts, ...mockData]));
-      setHasMore(pageNum < 3); // Limitar a 3 páginas
-    } catch (error) {
-      setError('Failed to load posts. Please try again.');
-      console.error('Error fetching posts:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [hasMore, userId]);
+        setPosts((prevPosts) => (pageNum === 1 ? mockData : [...prevPosts, ...mockData]));
+        setHasMore(pageNum < 3); // Limitar a 3 páginas
+      } catch (error) {
+        setError('Failed to load posts. Please try again.');
+        console.error('Error fetching posts:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [hasMore, userId]
+  );
 
   // Load initial posts
   useEffect(() => {
