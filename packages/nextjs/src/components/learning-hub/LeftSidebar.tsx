@@ -44,25 +44,25 @@ export default function LeftSidebar() {
         icon: Home,
         label: 'Home',
         description: 'Your learning feed',
-        href: '/learning-hub',
+        href: '/',
       },
       {
         icon: Compass,
         label: 'Explore',
         description: 'Discover new content',
-        href: '/learning-hub/explore',
+        href: '/explore',  
       },
       {
         icon: Users,
         label: 'Communities',
         description: 'Join study groups',
-        href: '/learning-hub/communities',
+        href: '/communities',
       },
       {
         icon: Award,
         label: 'Achievements',
         description: 'Your learning progress',
-        href: '/learning-hub/achievements',
+        href: '/achievements',
       },
     ],
     metrics: {
@@ -91,7 +91,7 @@ export default function LeftSidebar() {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen bg-white dark:bg-[#111827] shadow-lg 
+      className={`fixed left-0 top-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-[#111827] shadow-lg 
         transition-all duration-300 ease-in-out
         ${isCollapsed ? 'w-16' : 'w-[256px]'}
         transform md:translate-x-0
