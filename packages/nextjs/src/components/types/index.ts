@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 export interface Author {
     id: string;
     name: string;
@@ -13,7 +15,7 @@ export interface Author {
     id: string;
     title: string;
     description: string;
-    image: string;
+    image: string | StaticImageData;
     date: string;
     category: Category;
     author: Author;

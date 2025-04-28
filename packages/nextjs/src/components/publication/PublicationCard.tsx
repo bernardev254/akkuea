@@ -2,13 +2,13 @@ import React from 'react';
 import Image from 'next/image';
 import { CategoryTag } from './CategoryTag';
 import { Publication } from '../types/index';
+import { ArrowRight } from "lucide-react";
 
 interface PublicationCardProps {
   publication: Publication;
 }
 
 export const PublicationCard: React.FC<PublicationCardProps> = ({ publication }) => {
-  console.log(publication);
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden flex flex-col h-full">
       {/* Card Image and Date */}
@@ -84,17 +84,9 @@ export const PublicationCard: React.FC<PublicationCardProps> = ({ publication })
             </div>
             <span className="text-sm text-gray-700">{publication.author.name}</span>
           </div>
-          <button className="text-[#00CED1] text-base  font-medium flex items-center">
+          <button className="text-[#00CED1] border p-2 rounded-lg shadow text-base  font-medium flex items-center">
             View
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 ml-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
+            <ArrowRight className='text-base ml-2'/>
           </button>
         </div>
       </div>

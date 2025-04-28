@@ -1,94 +1,111 @@
-const AnnualContributionsHeatmap = () => {
-    // Helper function to get activity level color
-    const getActivityColor = (level: number): string => {
-      switch(level) {
-        case 0: return "bg-gray-900";
-        case 1: return "bg-teal-900";
-        case 2: return "bg-teal-700";
-        case 3: return "bg-teal-500";
-        case 4: return "bg-teal-300";
-        default: return "bg-gray-900";
-      }
-    };
-  
-    // Generate sample heatmap data
-    const generateHeatmapData = () => {
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return months.map(month => ({
-        month,
-        days: Array(7).fill(0).map(() => Math.floor(Math.random() * 5))
-      }));
-    };
-  
-    const heatmapData = generateHeatmapData();
-    const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  
-    return (
-      <div className="mb-8">
-        <h2 className="text-base font-medium mb-4">Annual Contributions</h2>
-        
-        <div className="flex">
-          {/* Weekday labels column */}
-          <div className="flex flex-col mr-2 pt-6">
-            {weekdays.map(day => (
-              <div key={day} className="h-6 flex items-center justify-end text-xs text-gray-500 mb-1">
-                {day}
+// components/AnnualContributions.tsx
+
+import React from 'react';
+
+const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const heatmapData = [
+  { month: 'Jan' },
+  { month: 'Feb' },
+  { month: 'Mar' },
+  { month: 'Apr' },
+  { month: 'May' },
+  { month: 'Jun' },
+  { month: 'Jul' },
+  { month: 'Aug' },
+  { month: 'Sep' },
+  { month: 'Oct' },
+  { month: 'Nov' },
+  { month: 'Dec' },
+];
+
+// Function to determine the color based on activity level (0 to 4)
+const getActivityColor = (level: number): string => {
+  switch (level) {
+    case 0:
+      return 'bg-gray-200'; // Lightest (no activity)
+    case 1:
+      return 'bg-teal-100';
+    case 2:
+      return 'bg-teal-300';
+    case 3:
+      return 'bg-teal-500';
+    case 4:
+      return 'bg-teal-700'; // Darkest (highest activity)
+    default:
+      return 'bg-gray-200';
+  }
+};
+
+const AnnualContributions: React.FC = () => {
+  return (
+    <div className="mb-8 w-full border rounded-xl md:pl-8 p-3 md:w-[1400px] shadow-lg">
+      <h2 className="text-base font-medium mb-4 text-gray-800">Annual Contributions</h2>
+
+      <div className="flex">
+        {/* Weekday labels column */}
+        <div className="flex flex-col mr-2 pt-5">
+          {weekdays.map((day) => (
+            <div key={day} className="h-5 flex items-center justify-end text-xs text-gray-500 mt-1">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        {/* Main content area */}
+        <div className="flex-1">
+          {/* Month labels row */}
+          <div className="flex md:w-[1300px] justify-between mb-4 text-xs text-gray-500 ">
+            {heatmapData.map((month) => (
+              <div key={month.month} className="flex-1 text-center">
+                {month.month}
               </div>
             ))}
           </div>
-          
-          {/* Main content area */}
-          <div className="flex-1">
-            {/* Month labels row */}
-            <div className="flex justify-between w-[1350px] mb-2 text-xs text-gray-500">
-              {heatmapData.map(month => (
-                <div key={month.month}>{month.month}</div>
-              ))}
-            </div>
-            
-            {/* Activity grid */}
-            <div className="grid grid-rows-2 gap-1">
-              {weekdays.map((_, dayIndex) => (
-                <div key={`day-row-${dayIndex}`} className="grid grid-cols-12 gap-1">
-                  {heatmapData.map((month, monthIndex) => {
-                    // For demo purposes, generate a consistent pattern similar to the image
-                    const pattern = [
-                      [4, 0, 2, 2, 2, 0, 2, 2, 0, 2, 0, 2], // Mon
-                      [2, 0, 2, 2, 0, 2, 0, 0, 0, 2, 2, 2], // Tue
-                      [0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 4, 0], // Wed
-                      [0, 4, 0, 0, 4, 0, 4, 4, 4, 0, 0, 0], // Thu
-                      [2, 0, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0], // Fri
-                      [0, 2, 0, 0, 2, 0, 2, 0, 0, 2, 2, 0], // Sat
-                      [2, 0, 2, 0, 0, 2, 0, 2, 2, 0, 0, 2], // Sun
-                    ];
-                    
-                    const activityLevel = pattern[dayIndex][monthIndex];
-                    return (
-                      <div
-                        key={`${month.month}-${dayIndex}`}
-                        className={`h-4 w-4 rounded-sm ${getActivityColor(activityLevel)}`}
-                      />
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-            
-            {/* Legend */}
-            <div className="flex items-center justify-end mt-4">
-              <span className="text-xs text-gray-500 mr-2">Less</span>
-              {[0, 1, 2, 3, 4].map(level => (
-                <div
-                  key={`legend-${level}`}
-                  className={`h-3 w-3 rounded-sm mr-1 ${getActivityColor(level)}`}
-                />
-              ))}
-              <span className="text-xs text-gray-500 ml-1">More</span>
-            </div>
+
+          {/* Activity grid */}
+          <div className="grid grid-rows-5 md:w-[1300px] md:ml-10   gap-[2px]">
+            {weekdays.map((_, dayIndex) => (
+              <div key={`day-row-${dayIndex}`} className="grid grid-cols-12 grid-rows-2 gap-[2px]">
+                {heatmapData.map((month, monthIndex) => {
+                  // Pattern to match the image
+                  const pattern = [
+                    [2, 0, 2, 2, 2, 0, 2, 2, 0, 2, 0, 2], // Mon
+                    [2, 0, 2, 2, 0, 2, 0, 0, 0, 2, 2, 2], // Tue
+                    [0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 4, 0], // Wed
+                    [0, 4, 0, 0, 4, 0, 4, 4, 4, 0, 0, 0], // Thu
+                    [2, 0, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0], // Fri
+                    [0, 2, 0, 0, 2, 0, 2, 0, 0, 2, 2, 0], // Sat
+                    [2, 0, 2, 0, 0, 2, 0, 2, 2, 0, 0, 2], // Sun
+                  ];
+
+                  const activityLevel = pattern[dayIndex][monthIndex];
+                  return (
+                    <div
+                      key={`${month.month}-${dayIndex}`}
+                      className={`h-[10px] w-[10px] rounded-sm ${getActivityColor(activityLevel)}`}
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          {/* Legend */}
+          <div className="flex items-center justify-end mt-4">
+            <span className="text-xs text-gray-500 mr-2">Less</span>
+            {[0, 1, 2, 3, 4].map((level) => (
+              <div
+                key={`legend-${level}`}
+                className={`h-[10px] w-[10px] rounded-sm mr-1 ${getActivityColor(level)}`}
+              />
+            ))}
+            <span className="text-xs text-gray-500 ml-1">More</span>
           </div>
         </div>
       </div>
-    );
-  };
-  
-  export default AnnualContributionsHeatmap;
+    </div>
+  );
+};
+
+export default AnnualContributions;

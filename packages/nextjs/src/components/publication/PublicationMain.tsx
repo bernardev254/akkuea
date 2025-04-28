@@ -24,7 +24,7 @@
       author: {
         id: '1',
         name: 'Laura Martinez',
-        avatar: '/avatars/laura.jpg'
+        avatar: '/Javier Torres.png'
       }
     },
     {
@@ -40,7 +40,7 @@
       author: {
         id: '2',
         name: 'Carlos Rodriguez',
-        avatar: '/avatars/carlos.jpg'
+        avatar: '/Effective.png'
       },
       
     },
@@ -57,7 +57,7 @@
       author: {
         id: '3',
         name: 'Ana Lopez',
-        avatar: '/avatars/ana.jpg'
+        avatar: '/Container.png'
       }
     },
     {
@@ -73,7 +73,7 @@
       author: {
         id: '4',
         name: 'Miguel Sanchez',
-        avatar: '/avatars/miguel.jpg'
+        avatar: '/Effective.png'
       }
     },
     {
@@ -89,7 +89,7 @@
       author: {
         id: '5',
         name: 'Elena Gomez',
-        avatar: '/avatars/elena.jpg'
+        avatar: '/Elena Gomez.png'
       },
       hasVideo: true
     },
@@ -106,14 +106,14 @@
       author: {
         id: '6',
         name: 'Javier Torres',
-        avatar: '/avatars/javier.jpg'
+        avatar: '/Container.png'
       },
     },
   ];
   
   export default function PublicationMain() {
     return (
-      <div className="container mx-auto py-8 px-4">
+      <div className="container md:mx-auto py-8 md:px-4">
         <PublicationsSection publications={publicationsData} />
       </div>
     );
