@@ -103,7 +103,7 @@ const UserActivityDashboard = () => {
   };
 
   // Helper function to get icon for activity type
-  const getActivityIcon = (type: Activity['type'] | string): JSX.Element => {
+  const getActivityIcon = (type: Activity['type'] | string) => {
     switch (type) {
       case 'comment':
         return <MessageSquare size={16} className="text-teal-400" />;
