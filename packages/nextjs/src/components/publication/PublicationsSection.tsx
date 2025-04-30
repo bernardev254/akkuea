@@ -61,9 +61,9 @@ export const PublicationsSection: React.FC<PublicationsSectionProps> = ({ public
   }, [activeTab, searchQuery, publications]);
 
   return (
-    <div className="bg-gray-50  rounded-lg">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-3 gap-4 border-b h-[68.77px] px-6">
-        <h2 className="text-2xl font-bold">Publications</h2>
+    <div className="bg-gray-50 dark:bg-gray-900 rounded-lg transition-colors duration-300">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-3 gap-4 border-b border-gray-200 dark:border-gray-700 h-[68.77px] px-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Publications</h2>
         <div className="md:w-64">
           <SearchBar onSearch={setSearchQuery} />
         </div>

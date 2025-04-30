@@ -88,17 +88,17 @@ const UserActivityDashboard = () => {
   const getActivityColor = (level: number): string => {
     switch (level) {
       case 0:
-        return 'bg-gray-900';
+        return 'bg-gray-900 dark:bg-gray-200';
       case 1:
-        return 'bg-teal-900';
+        return 'bg-teal-900 dark:bg-teal-100';
       case 2:
-        return 'bg-teal-700';
+        return 'bg-teal-700 dark:bg-teal-300';
       case 3:
-        return 'bg-teal-500';
+        return 'bg-teal-500 dark:bg-teal-500';
       case 4:
-        return 'bg-teal-300';
+        return 'bg-teal-300 dark:bg-teal-700';
       default:
-        return 'bg-gray-900';
+        return 'bg-gray-900 dark:bg-gray-200';
     }
   };
 
@@ -121,22 +121,22 @@ const UserActivityDashboard = () => {
   };
 
   return (
-    <div className="container bg-white rounded-lg shadow mx-auto mb-10">
+    <div className="container bg-white dark:bg-gray-800 rounded-lg shadow mx-auto mb-10 transition-colors duration-300">
       {/* Header with title */}
-      <div className="flex items-center mb-4 text-teal-600 bg-[#00CED10D] h-[55.99px] px-3">
+      <div className="flex items-center mb-4 text-teal-600 dark:text-teal-400 bg-[#00CED10D] dark:bg-teal-900/20 h-[55.99px] px-3">
         <Calendar size={18} className="mr-2" />
         <h1 className="text-lg font-bold">User Activity</h1>
       </div>
 
       <div className="p-4">
-        <div className="flex bg-gray-100 rounded-lg p-1 mb-4">
+        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1 mb-4 transition-colors duration-300">
           {tabs.map((tab) => (
             <button
               key={tab}
-              className={`flex-1 py-2 px-4 text-sm font-medium rounded-md ${
+              className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-300 ${
                 activeTab === tab
-                  ? 'bg-white text-teal-600 shadow'
-                  : 'text-gray-600 hover:text-teal-500'
+                  ? 'bg-white dark:bg-gray-600 text-teal-600 dark:text-teal-300 shadow'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-teal-500 dark:hover:text-teal-400'
               }`}
               onClick={() => setActiveTab(tab)}
             >
@@ -153,23 +153,23 @@ const UserActivityDashboard = () => {
 
             {/* Recent Activity List */}
             <div className="mt-6">
-              <h2 className="text-base font-medium mb-3">Recent Activity</h2>
-              <div className='border rounded-xl px-4 py-6'>
+              <h2 className="text-base font-medium mb-3 text-gray-800 dark:text-gray-200">Recent Activity</h2>
+              <div className='border rounded-xl px-4 py-6 dark:border-gray-700 transition-colors duration-300'>
                 <div className="flex flex-col space-y-4">
                   {recentActivity.map((activity) => (
                     <div key={activity.id} className="flex items-start">
-                      <div className="mt-1 p-1 bg-teal-100 bg-opacity-20 rounded">
+                      <div className="mt-1 p-1 bg-teal-100 dark:bg-teal-900/30 bg-opacity-20 rounded">
                         {getActivityIcon(activity.type)}
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm">{activity.content}</p>
-                        <p className="text-xs text-gray-500">{activity.timeAgo}</p>
+                        <p className="text-sm text-gray-800 dark:text-gray-200">{activity.content}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{activity.timeAgo}</p>
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className="mt-4 text-right">
-                  <button className="text-sm text-teal-400 hover:text-teal-500">
+                  <button className="text-sm text-teal-400 hover:text-teal-500 dark:hover:text-teal-300">
                     View all activity history
                   </button>
                 </div>
@@ -179,18 +179,17 @@ const UserActivityDashboard = () => {
         )}
 
         {activeTab === 'Achievements' && (
-          <div className="h-52 flex items-center justify-center text-gray-500">
+          <div className="h-52 flex items-center justify-center text-gray-500 dark:text-gray-400">
             Achievements content would go here
           </div>
         )}
 
         {activeTab === 'Statistics' && (
-          <div className="h-52 flex items-center justify-center text-gray-500">
+          <div className="h-52 flex items-center justify-center text-gray-500 dark:text-gray-400">
             Statistics content would go here
           </div>
         )}
       </div>
-      {/* Tab navigation */}
     </div>
   );
 };
