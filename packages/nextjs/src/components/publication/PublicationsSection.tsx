@@ -69,7 +69,7 @@ export const PublicationsSection: React.FC<PublicationsSectionProps> = ({ public
         </div>
       </div>
 
-      <div className="p-6">
+      <div className="mt-8">
         <div className="mb-6">
           <FilterTabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
@@ -78,4 +78,4 @@ export const PublicationsSection: React.FC<PublicationsSectionProps> = ({ public
       </div>
     </div>
   );
-};
+}
