@@ -1,14 +1,12 @@
 #![no_std]
 
-use soroban_sdk::{
-    contract, contractimpl, Address, Env, String, Vec,
-};
+use soroban_sdk::{contract, contractimpl, Address, Env, String, Vec};
 
 mod fund;
 mod project;
+mod test;
 mod validate;
 mod vote;
-mod test;
 
 use crate::project::Milestone;
 use crate::validate::{validate_milestone_exists, validate_project_exists};
@@ -28,7 +26,15 @@ impl CrowdfundContract {
         total_funds: u64,
         milestones: Vec<Milestone>,
     ) {
-        project::register_project(&env, id, creator, title, description, total_funds, milestones);
+        project::register_project(
+            &env,
+            id,
+            creator,
+            title,
+            description,
+            total_funds,
+            milestones,
+        );
     }
 
     // Get public project metadata

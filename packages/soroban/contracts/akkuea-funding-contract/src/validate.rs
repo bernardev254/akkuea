@@ -27,7 +27,6 @@ pub fn _mark_voted(env: &Env, project_id: u64, voter: &Address) {
     env.storage().instance().set(&key, &tracker);
 }
 
-
 /// Validates the project ID input exists and is valid
 pub fn validate_project_exists<F>(env: &Env, project_id: u64, fetch_project_fn: F)
 where
@@ -48,10 +47,7 @@ pub fn validate_milestone_exists(
 ) {
     let project = fetch_project_fn(env, project_id).unwrap_or_else(|| panic!("Project not found"));
 
-    let found = project
-        .milestones
-        .iter()
-        .any(|m| m.id == milestone_id);
+    let found = project.milestones.iter().any(|m| m.id == milestone_id);
 
     if !found {
         panic!("Milestone not found");

@@ -1,6 +1,8 @@
-use soroban_sdk::{contract, contractimpl, contracttype, symbol_short, Address, Env, Map, Symbol, Vec};
+use soroban_sdk::{
+    contract, contractimpl, contracttype, symbol_short, Address, Env, Map, Symbol, Vec,
+};
 
-use crate::project::{Project, get_project, save_project};
+use crate::project::{get_project, save_project, Project};
 
 const REQUIRED_VOTES: u32 = 10;
 const VOTERS_KEY: Symbol = symbol_short!("voters");
@@ -20,8 +22,8 @@ impl VotingContract {
         voter.require_auth();
 
         // Retrieve the project
-        let mut project = get_project(&env, project_id)
-            .unwrap_or_else(|| panic!("Project not found"));
+        let mut project =
+            get_project(&env, project_id).unwrap_or_else(|| panic!("Project not found"));
 
         // Reject if already approved
         if project.is_approved {
