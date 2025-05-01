@@ -48,17 +48,17 @@ impl CrowdfundContract {
     }
 
     // Vote for a project
-    pub fn vote_for_project(env: Env, project_id: u64, voter: Address) {
+    pub fn vote_for_projects(env: Env, project_id: u64, voter: Address) {
         vote::VotingContract::vote_for_project(env, project_id, voter);
     }
 
     // Get vote count
-    pub fn get_votes(env: Env, project_id: u64) -> u32 {
+    pub fn get_vote(env: Env, project_id: u64) -> u32 {
         vote::VotingContract::get_votes(env, project_id)
     }
 
     // Get voter list
-    pub fn get_voters(env: Env, project_id: u64) -> Vec<Address> {
+    pub fn get_voter(env: Env, project_id: u64) -> Vec<Address> {
         vote::VotingContract::get_voters(env, project_id)
     }
 

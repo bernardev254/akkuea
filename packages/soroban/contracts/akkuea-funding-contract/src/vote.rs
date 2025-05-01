@@ -2,7 +2,7 @@ use soroban_sdk::{
     contract, contractimpl, contracttype, symbol_short, Address, Env, Map, Symbol, Vec,
 };
 
-use crate::project::{get_project, save_project, Project};
+use crate::project::{get_project, save_project};
 
 const REQUIRED_VOTES: u32 = 10;
 const VOTERS_KEY: Symbol = symbol_short!("voters");
