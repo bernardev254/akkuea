@@ -21,7 +21,7 @@
                   "string": "Smart Contracts 101"
                 },
                 {
-                  "bytes": "c4bd35dc8bef0b9df5fa806699adb1c50c3d95453f4c1ccf437ba933193f4781"
+                  "bytes": "992606eceb9162abd74b3a2958baa2c92452520d43bc336aa27ee1f074797b36"
                 },
                 {
                   "vec": [
@@ -112,7 +112,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "c4bd35dc8bef0b9df5fa806699adb1c50c3d95453f4c1ccf437ba933193f4781"
+                                "bytes": "992606eceb9162abd74b3a2958baa2c92452520d43bc336aa27ee1f074797b36"
                               }
                             },
                             {

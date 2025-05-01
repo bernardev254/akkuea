@@ -21,7 +21,7 @@
                   "string": "Solidity Security"
                 },
                 {
-                  "bytes": "bfa009adf24782f2e8c25180c9aff9664c23d5045b03faf68ff7427e23c93188"
+                  "bytes": "1ad8de52292a0fd12c9d286585045b763cd167a91352110eed7e02c9fb5c0b4b"
                 },
                 {
                   "vec": [
@@ -56,7 +56,7 @@
                   "string": "Rust for Blockchain"
                 },
                 {
-                  "bytes": "3d2a50c733b8f333c61ac1e664f45caabe361adf56908deac40da50cfc33457e"
+                  "bytes": "9e7b20c300ce8ba274bae72f1c1c1125db51998fa77df7c798519ad130e8dd8c"
                 },
                 {
                   "vec": [
@@ -261,7 +261,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "bfa009adf24782f2e8c25180c9aff9664c23d5045b03faf68ff7427e23c93188"
+                                "bytes": "1ad8de52292a0fd12c9d286585045b763cd167a91352110eed7e02c9fb5c0b4b"
                               }
                             },
                             {
@@ -348,7 +348,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "3d2a50c733b8f333c61ac1e664f45caabe361adf56908deac40da50cfc33457e"
+                                "bytes": "9e7b20c300ce8ba274bae72f1c1c1125db51998fa77df7c798519ad130e8dd8c"
                               }
                             },
                             {

@@ -21,7 +21,7 @@
                   "string": "Advanced Cryptography"
                 },
                 {
-                  "bytes": "9689170cafff02b98b1a4e28666964cb1017729884bbe2071b3b5e46961a1d72"
+                  "bytes": "eb37ec8b377115e101f3ea9f7e03ec56db90802a7750283aa9fdb426d6488a12"
                 },
                 {
                   "vec": [
@@ -116,7 +116,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "9689170cafff02b98b1a4e28666964cb1017729884bbe2071b3b5e46961a1d72"
+                                "bytes": "eb37ec8b377115e101f3ea9f7e03ec56db90802a7750283aa9fdb426d6488a12"
                               }
                             },
                             {

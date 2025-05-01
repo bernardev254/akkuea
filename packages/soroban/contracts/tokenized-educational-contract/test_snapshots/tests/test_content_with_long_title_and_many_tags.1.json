@@ -21,7 +21,7 @@
                   "string": "This is a very long title for educational content that tests the storage and retrieval of lengthy metadata strings in the Soroban smart contract platform"
                 },
                 {
-                  "bytes": "4fff7963d5163ab3480e6913fef5cd8a694757c279e7e31c9031b81a9e455be9"
+                  "bytes": "93f56b32affc3c47f137a547a6e3cf4f62210320ebd3cd950e9c9aaeacd7b4f7"
                 },
                 {
                   "vec": [
@@ -144,7 +144,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "4fff7963d5163ab3480e6913fef5cd8a694757c279e7e31c9031b81a9e455be9"
+                                "bytes": "93f56b32affc3c47f137a547a6e3cf4f62210320ebd3cd950e9c9aaeacd7b4f7"
                               }
                             },
                             {

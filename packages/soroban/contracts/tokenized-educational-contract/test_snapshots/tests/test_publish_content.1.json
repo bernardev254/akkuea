@@ -21,7 +21,7 @@
                   "string": "Introduction to Blockchain"
                 },
                 {
-                  "bytes": "b71e5972a15495cf9dc5a082f8c87a8070738d888d58592abdba6282a7a5c7b8"
+                  "bytes": "a268e6ede3377b51fc6854b326247925f5424dcdf3ab207e9ccc342b16eae686"
                 },
                 {
                   "vec": [
@@ -93,7 +93,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "b71e5972a15495cf9dc5a082f8c87a8070738d888d58592abdba6282a7a5c7b8"
+                                "bytes": "a268e6ede3377b51fc6854b326247925f5424dcdf3ab207e9ccc342b16eae686"
                               }
                             },
                             {

@@ -21,7 +21,7 @@
                   "string": "Content with no tags"
                 },
                 {
-                  "bytes": "02f5147bf0d4b995984a1cfd6106ba271a7a5b79c9710da63a98ae6dd4e82782"
+                  "bytes": "09f01c5a140fad28edd707b970294d3226d8ffbd9a9461ea68704ba2ce054c8b"
                 },
                 {
                   "vec": []
@@ -86,7 +86,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "02f5147bf0d4b995984a1cfd6106ba271a7a5b79c9710da63a98ae6dd4e82782"
+                                "bytes": "09f01c5a140fad28edd707b970294d3226d8ffbd9a9461ea68704ba2ce054c8b"
                               }
                             },
                             {

@@ -21,7 +21,7 @@
                   "string": "Blockchain Basics"
                 },
                 {
-                  "bytes": "3a354b7c0d71b98dc105c39b23d2fec3bd2bb918d1f0d7347a7754f510f28a69"
+                  "bytes": "ea59c3d687fc1dbae842313b30cfa8978a1f7a7057e6ca613e7d351847c4f182"
                 },
                 {
                   "vec": [
@@ -134,7 +134,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "3a354b7c0d71b98dc105c39b23d2fec3bd2bb918d1f0d7347a7754f510f28a69"
+                                "bytes": "ea59c3d687fc1dbae842313b30cfa8978a1f7a7057e6ca613e7d351847c4f182"
                               }
                             },
                             {

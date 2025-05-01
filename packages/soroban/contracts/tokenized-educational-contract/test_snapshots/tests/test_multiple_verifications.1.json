@@ -21,7 +21,7 @@
                   "string": "Cryptocurrency Fundamentals"
                 },
                 {
-                  "bytes": "d103bed487733ce3f1fdcc40b3c25bb4ec79d044170e62ad82dc22d1fee0128e"
+                  "bytes": "853eac6b86e0d8969f7c4e5f9955996394c7246565a0dc5272840a83ba3ac5b8"
                 },
                 {
                   "vec": [
@@ -134,7 +134,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "d103bed487733ce3f1fdcc40b3c25bb4ec79d044170e62ad82dc22d1fee0128e"
+                                "bytes": "853eac6b86e0d8969f7c4e5f9955996394c7246565a0dc5272840a83ba3ac5b8"
                               }
                             },
                             {
