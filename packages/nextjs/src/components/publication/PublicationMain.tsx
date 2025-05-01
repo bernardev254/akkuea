@@ -113,7 +113,7 @@
   
   export default function PublicationMain() {
     return (
-      <div className="container md:mx-auto py-8 md:px-4">
+      <div className="w-full py-8 ">
         <PublicationsSection publications={publicationsData} />
       </div>
     );

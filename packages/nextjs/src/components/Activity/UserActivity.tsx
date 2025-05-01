@@ -121,7 +121,7 @@ const UserActivityDashboard = () => {
   };
 
   return (
-    <div className="container bg-white dark:bg-gray-800 rounded-lg shadow mx-auto mb-10 transition-colors duration-300">
+    <div className="container bg-white dark:bg-black rounded-lg shadow mx-auto mb-10 transition-colors duration-300 border">
       {/* Header with title */}
       <div className="flex items-center mb-4 text-teal-600 dark:text-teal-400 bg-[#00CED10D] dark:bg-teal-900/20 h-[55.99px] px-3">
         <Calendar size={18} className="mr-2" />

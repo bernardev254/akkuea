@@ -21,7 +21,7 @@ const getActivityColor = (level: number): string => {
 
 const AnnualContributions: React.FC = () => {
   return (
-    <div className="mb-8 w-full border rounded-xl p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800 transition-colors duration-300 overflow-x-auto">
+    <div className="mb-8 w-full border rounded-xl p-3 shadow-lg dark:border-gray-700 dark:bg-black transition-colors duration-300 overflow-x-auto">
       <h2 className="text-base font-medium mb-4 text-gray-800 dark:text-gray-200">Annual Contributions</h2>
       
       <div className="flex" style={{ minWidth: 'fit-content' }}>
