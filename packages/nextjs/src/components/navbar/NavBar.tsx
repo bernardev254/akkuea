@@ -90,15 +90,15 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="w-full border-b bg-background text-foreground">
-      <div className="max-w-[1400px] mx-auto px-4 h-14 flex items-center justify-between">
+    <nav className="fixed top-0 right-0 left-0 border-b bg-background text-foreground z-50">
+      <div className="h-14 flex items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <AkkueaLogo className="h-8 w-auto" />
         </Link>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-3xl mx-auto relative" ref={searchRef}>
+        <form onSubmit={handleSearch} className="flex-1 max-w-3xl mx-4 relative" ref={searchRef}>
           <Input
             type="search"
             placeholder="Buscar posts..."

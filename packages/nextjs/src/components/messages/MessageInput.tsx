@@ -95,7 +95,7 @@ export const MessageInput = () => {
         onChange={(e) => {
           setNewMessage(e.target.value);
           handleTyping();
-          
+
           // Check for links in the message
           const urlRegex = /(https?:\/\/[^\s]+)/g;
           const urls = e.target.value.match(urlRegex);
@@ -107,11 +107,7 @@ export const MessageInput = () => {
         placeholder="Type a message..."
         className="flex-1"
       />
-      <Button
-        onClick={handleSendMessage}
-        disabled={!newMessage.trim() && !mediaUrl}
-        size="icon"
-      >
+      <Button onClick={handleSendMessage} disabled={!newMessage.trim() && !mediaUrl} size="icon">
         <Send className="h-4 w-4" />
       </Button>
     </div>

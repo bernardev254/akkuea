@@ -35,12 +35,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onUpload }) => {
         <div className="mt-2 flex gap-2">
           {previews.map((src, index) => (
             <div key={index} className="relative w-10 h-10">
-              <Image
-                src={src}
-                alt={`preview-${index}`}
-                fill
-                className="object-cover rounded-md"
-              />
+              <Image src={src} alt={`preview-${index}`} fill className="object-cover rounded-md" />
             </div>
           ))}
         </div>
