@@ -21,7 +21,7 @@
                   "string": "Introduction to Smart Contracts"
                 },
                 {
-                  "bytes": "27dd7f191291b838dcf8ee2f127f52fa49c298dd6aef4cf2a7e4c138be17df70"
+                  "bytes": "8d2e6a33b0aff8bd5acc028fc1f10743c4095436aadfe4c4c3c4421f9357c061"
                 },
                 {
                   "vec": [
@@ -56,7 +56,7 @@
                   "string": "Advanced Smart Contract Development"
                 },
                 {
-                  "bytes": "fa28e33534b3993fb6cc2790d7ae76aa551077750f48124528bfe8f1862a8e01"
+                  "bytes": "7a2f6352bbf05f2540581a4d5e3e62a1ac9fdcdaad5121fa873b1de0d15feed5"
                 },
                 {
                   "vec": [
@@ -129,7 +129,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "27dd7f191291b838dcf8ee2f127f52fa49c298dd6aef4cf2a7e4c138be17df70"
+                                "bytes": "8d2e6a33b0aff8bd5acc028fc1f10743c4095436aadfe4c4c3c4421f9357c061"
                               }
                             },
                             {
@@ -216,7 +216,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "fa28e33534b3993fb6cc2790d7ae76aa551077750f48124528bfe8f1862a8e01"
+                                "bytes": "7a2f6352bbf05f2540581a4d5e3e62a1ac9fdcdaad5121fa873b1de0d15feed5"
                               }
                             },
                             {

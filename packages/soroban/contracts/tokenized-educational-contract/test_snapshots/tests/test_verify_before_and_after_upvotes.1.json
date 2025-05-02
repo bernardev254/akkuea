@@ -21,7 +21,7 @@
                   "string": "Verification and Upvotes Interaction"
                 },
                 {
-                  "bytes": "3faeb396fa28c52ad70fb0734d951f3049bdd3cf5e59a2a2b6028da71dd3e0a2"
+                  "bytes": "cd1ff6b789221dae9f8646cfdd970c2a10d0865e32c90529e6db090dc8571a76"
                 },
                 {
                   "vec": [
@@ -146,7 +146,7 @@
                   "string": "Upvotes before Verification"
                 },
                 {
-                  "bytes": "c9045019d7134e04ecb9bbba66841d71fba64aae8380907b5a07a7cdd58dd71c"
+                  "bytes": "45c1c86737dd40cd1ad8a0d5a64ea3085123d45b956d184a07f724932759bbf6"
                 },
                 {
                   "vec": [
@@ -285,7 +285,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "3faeb396fa28c52ad70fb0734d951f3049bdd3cf5e59a2a2b6028da71dd3e0a2"
+                                "bytes": "cd1ff6b789221dae9f8646cfdd970c2a10d0865e32c90529e6db090dc8571a76"
                               }
                             },
                             {
@@ -372,7 +372,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "c9045019d7134e04ecb9bbba66841d71fba64aae8380907b5a07a7cdd58dd71c"
+                                "bytes": "45c1c86737dd40cd1ad8a0d5a64ea3085123d45b956d184a07f724932759bbf6"
                               }
                             },
                             {

@@ -21,7 +21,7 @@
                   "string": "Web3 Development"
                 },
                 {
-                  "bytes": "3970e36e17bac2a7fc6517e5ab25c62f28601c2c11e656408d063ee59ee13b80"
+                  "bytes": "cab5fd046cf9612e2b1a785a55a1f8c96ac407a90622dff86b1eb97ccdae9e86"
                 },
                 {
                   "vec": [
@@ -313,7 +313,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "3970e36e17bac2a7fc6517e5ab25c62f28601c2c11e656408d063ee59ee13b80"
+                                "bytes": "cab5fd046cf9612e2b1a785a55a1f8c96ac407a90622dff86b1eb97ccdae9e86"
                               }
                             },
                             {

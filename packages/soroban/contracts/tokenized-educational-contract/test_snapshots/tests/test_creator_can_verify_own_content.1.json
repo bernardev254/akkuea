@@ -21,7 +21,7 @@
                   "string": "Self-verified Content"
                 },
                 {
-                  "bytes": "0c33d73385ebe3cfae8a90215e6d92ead45d300e2b3dba3ba15393357a62271b"
+                  "bytes": "d9d9145dc7a8912105b896e9dd8998a31c27461dc5d847b7cf241b1fc7d24be1"
                 },
                 {
                   "vec": [
@@ -112,7 +112,7 @@
                                 "symbol": "content_hash"
                               },
                               "val": {
-                                "bytes": "0c33d73385ebe3cfae8a90215e6d92ead45d300e2b3dba3ba15393357a62271b"
+                                "bytes": "d9d9145dc7a8912105b896e9dd8998a31c27461dc5d847b7cf241b1fc7d24be1"
                               }
                             },
                             {
