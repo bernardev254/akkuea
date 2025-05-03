@@ -1,9 +1,10 @@
 'use client';
 import React from 'react';
-import { Edit, Flag as LinkIcon} from 'lucide-react';
-
+import { Edit, Flag as LinkIcon } from 'lucide-react';
 import UserActivityDashboard from '@/components/Activity/UserActivity';
 import PublicationMain from '@/components/publication/PublicationMain';
+import Link from 'next/link';
+
 
 const ProfilePage = () => {
   return (
@@ -23,7 +24,7 @@ const ProfilePage = () => {
 
         <div className="flex-1 pt-2 w-full mx-3">
           {/* username */}
-          <div className='border-b pb-4 dark:border-gray-700'>
+          <div className="border-b pb-4 dark:border-gray-700">
             <div className="flex flex-col justify-between sm:flex-row sm:items-center gap-4 mb-6">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-200">
@@ -31,10 +32,13 @@ const ProfilePage = () => {
                 </h1>
                 <div className="text-gray-500 dark:text-gray-400 font-normal">@xJeffx23</div>
               </div>
-              <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-sm flex items-center gap-2 text-gray-700 dark:text-gray-300">
+              <Link
+                href="/edit-profile"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-sm flex items-center gap-2 text-gray-700 dark:text-gray-300"
+              >
                 <Edit size={16} />
                 Edit Profile
-              </button>
+              </Link>
             </div>
 
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 md:w-1/2">
@@ -68,8 +72,12 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          <p className='font-normal text-gray-500 dark:text-gray-400 mb-2'>National University of Design</p>
-          <span className='text-[#00CED1] dark:text-teal-400 font-normal mt-5'>"Creating the future through design and technology"</span>
+          <p className="font-normal text-gray-500 dark:text-gray-400 mb-2">
+            National University of Design
+          </p>
+          <span className="text-[#00CED1] dark:text-teal-400 font-normal mt-5">
+            "Creating the future through design and technology"
+          </span>
         </div>
       </div>
       <PublicationMain />

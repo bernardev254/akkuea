@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Bell, Eye, Lock, User, Palette, LucideIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { NavButton } from './nav-button';
-import { AppearanceTab } from './appearance-tab';
+import { AppearanceTab } from './AppearanceTab';
 import { PrivacyTab } from './privacy';
 import { GenericSettingsTab } from './generic-settings';
 
@@ -17,7 +17,7 @@ interface NavItem {
     // State
     const [mounted, setMounted] = useState(false);
     const { resolvedTheme } = useTheme();
-    const [activeTab, setActiveTab] = useState('privacy');
+    const [activeTab, setActiveTab] = useState('appearance');
     
     
     useEffect(() => {
@@ -52,7 +52,8 @@ interface NavItem {
     const renderContent = () => {
       switch (activeTab) {
         case 'appearance':
-          return <AppearanceTab isDarkMode={isDarkMode} />;
+          return <AppearanceTab />;
+
         case 'privacy':
           return <PrivacyTab isDarkMode={isDarkMode} />;
         default:
