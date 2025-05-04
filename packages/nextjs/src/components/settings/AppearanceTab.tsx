@@ -188,6 +188,9 @@ export const LanguageSection = () => {
 };
 
 export const AppearanceTab = () => {
+  const { setTheme } = useTheme();
+  setTheme('dark'); // Esto forzará el dark mode
+
   return (
     <>
       <ThemeSection />
