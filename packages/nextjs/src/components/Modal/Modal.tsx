@@ -4,12 +4,7 @@ import React from 'react';
 import { useModalStore } from '@/store/useModalStore';
 import { X } from 'lucide-react';
 import { Button } from '../ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-} from '../ui/dialog';
+import { Dialog, DialogContent, DialogOverlay, DialogPortal } from '../ui/dialog';
 
 export const Modal = () => {
   const { isOpen, view, onClose } = useModalStore();

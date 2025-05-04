@@ -15,6 +15,16 @@ import { useGlobalAuthenticationStore } from '@/components/auth/store/data';
 import { Button } from '@/components/ui/button';
 import { usePostsStore } from '@/store/postsStore';
 import { useRouter } from 'next/navigation';
+import { LogOut, Settings, UserCircle } from 'lucide-react';
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -90,15 +100,15 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="w-full border-b bg-background text-foreground">
-      <div className="max-w-[1400px] mx-auto px-4 h-14 flex items-center justify-between">
+    <nav className="fixed top-0 right-0 left-0 border-b bg-background text-foreground z-50">
+      <div className="h-14 flex items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <AkkueaLogo className="h-8 w-auto" />
         </Link>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-3xl mx-auto relative" ref={searchRef}>
+        <form onSubmit={handleSearch} className="flex-1 max-w-3xl mx-4 relative" ref={searchRef}>
           <Input
             type="search"
             placeholder="Buscar posts..."
@@ -155,9 +165,31 @@ const Navbar = () => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <Link href="/edit-profile" className="p-2 hover:bg-muted rounded-full transition-colors">
-            <User className="h-5 w-5 text-muted-foreground" />
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <User className="h-5 w-5 text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="font-semibold text-teal-500 dark:text-teal-400">
+                Jefferson Calderon
+                <div className="text-xs text-muted-foreground">@xJeffx23</div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => router.push('/profile')} className="gap-2">
+                <User className="h-4 w-4" /> My Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/settings')} className="gap-2">
+                <Settings className="h-4 w-4" /> Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleDisconnect} className="text-red-500 gap-2">
+                <LogOut className="h-4 w-4" /> Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {address ? (
             <Button
               onClick={handleDisconnect}
