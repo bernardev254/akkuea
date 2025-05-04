@@ -1,4 +1,4 @@
-use soroban_sdk::{Env, Address, Vec, Map, Symbol, BytesN, Bytes, contracttype};
+use soroban_sdk::{contracttype, Address, Bytes, BytesN, Env, Map, Symbol, Vec};
 
 /// Struct that represents a registered user
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -72,11 +72,11 @@ impl UserStorage {
             .get(&Self::key(env))
             .unwrap_or(Map::new(env));
         let keys = storage.keys();
-let mut result = soroban_sdk::Vec::new(env);
-for key in keys {
-    result.push_back(key);
-}
-result
+        let mut result = soroban_sdk::Vec::new(env);
+        for key in keys {
+            result.push_back(key);
+        }
+        result
     }
 
     // Get users registered in the last N seconds
@@ -135,7 +135,7 @@ result
             .persistent()
             .get(&Self::key(env))
             .unwrap_or(Map::new(env));
-        
+
         for (user, _) in storage.iter() {
             Self::remove(env, &user);
         }
@@ -159,7 +159,11 @@ result
     // Remove expertise from a user's profile
     pub fn remove_expertise(env: &Env, user: &Address, expertise_to_remove: &Symbol) {
         let mut user_data = Self::get(env, user).expect("User not registered");
-        if let Some(index) = user_data.expertise.iter().position(|expertise| expertise == *expertise_to_remove) {
+        if let Some(index) = user_data
+            .expertise
+            .iter()
+            .position(|expertise| expertise == *expertise_to_remove)
+        {
             user_data.expertise.remove(index.try_into().unwrap());
         }
         Self::set(env, user, &user_data);
@@ -203,3 +207,4 @@ result
         BytesN::from_array(&env, &hash.to_array())
     }
 }
+
