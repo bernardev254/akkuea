@@ -28,9 +28,9 @@ export function AccountTab({ email, isEmailVerified, username, onVerifyEmail }: 
           <span className="text-[#00CED1] dark:text-teal-400">
             <User className="w-5 h-5" aria-hidden="true" />
           </span>
-          <h2 className="text-lg xl:text-2xl font-semibold">Account Information</h2>
+          <h2 className="text-lg xl:text-2xl font-semibold ">Account Information</h2>
         </div>
-        <p className="text-sm text-white dark:text-[#71717A] mb-4">Manage your account details</p>
+        <p className="text-sm text-[#71717A] dark:text-white mb-4">Manage your account details</p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
