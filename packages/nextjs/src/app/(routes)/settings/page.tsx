@@ -50,7 +50,14 @@ export default function SettingsPage() {
           </TabContent>
 
           <TabContent value="account">
-            <AccountTab />
+            <AccountTab
+              email="jefferson@example.com"
+              isEmailVerified={false}
+              username="xJeffx23"
+              onVerifyEmail={() => {
+                /* trigger verification flow */
+              }}
+            />
           </TabContent>
 
           <TabContent value="accessibility">
