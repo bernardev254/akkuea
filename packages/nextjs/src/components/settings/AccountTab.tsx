@@ -52,7 +52,8 @@ export function AccountTab({ email, isEmailVerified, username, onVerifyEmail }: 
               onClick={onVerifyEmail}
               disabled={isEmailVerified}
               aria-disabled={isEmailVerified}
-              className="bg-transparent border-[#D1D5DB] h-9 border-2 dark:border-[#374151] text-[#111827] dark:text-white mb-0.5 rounded-l-none"
+              className="bg-transparent border-[#D1D5DB] h-9 border dark:border-[#374151] text-[#111827] dark:text-white rounded-l-none shadow-none
+              "
               aria-label={isEmailVerified ? 'Email already verified' : 'Verify email'}
             >
               Verify
@@ -86,7 +87,7 @@ export function AccountTab({ email, isEmailVerified, username, onVerifyEmail }: 
             readOnly
             aria-readonly="true"
             aria-label="Username"
-            className="bg-white dark:bg-[#1F2937] border-white"
+            className="bg-white dark:bg-[#1F2937] border-[#E4E4E7] dark:border-white"
           />
         </div>
       </div>
@@ -110,7 +111,7 @@ export function AccountTab({ email, isEmailVerified, username, onVerifyEmail }: 
             </p>
           </div>
           <div className="flex gap-2 items-center">
-            <Button variant="outline" className="bg-transparent border-2 border-[#D1D5DB]">
+            <Button variant="outline" className="bg-transparent border border-[#D1D5DB]">
               <RefreshCcw />
               Change Wallet
             </Button>
