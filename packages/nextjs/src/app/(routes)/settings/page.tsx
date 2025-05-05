@@ -8,6 +8,7 @@ import { AppearanceTab } from '@/components/settings/AppearanceTab';
 import { EmptyTabContent } from '@/components/settings/EmptyTabContent';
 import AccessibilityTab from '@/components/settings/AccessibilityTab';
 import Navbar from '@/components/navbar/NavBar';
+import { AccountTab } from '@/components/settings/AccountTab';
 
 export default function SettingsPage() {
   const [mounted, setMounted] = useState(false);
@@ -49,7 +50,7 @@ export default function SettingsPage() {
           </TabContent>
 
           <TabContent value="account">
-            <EmptyTabContent title="Account" />
+            <AccountTab />
           </TabContent>
 
           <TabContent value="accessibility">
