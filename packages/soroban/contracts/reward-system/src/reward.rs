@@ -1,9 +1,7 @@
 use soroban_sdk::symbol_short;
 use soroban_sdk::{contractimpl, Address, Env};
 
-use crate::datatype::RewardEvent;
 use crate::datatype::RewardType;
-use crate::events::emit_reward_issued;
 use crate::interface::RewardTrait;
 use crate::{BalanceTrait, Error, RewardSystem, RewardSystemArgs, RewardSystemClient};
 
@@ -21,23 +19,10 @@ impl RewardTrait for RewardSystem {
 
         <RewardSystem as BalanceTrait>::update_balance(env.clone(), recipient.clone(), amount)?;
 
-        // let event = RewardEvent {
-        //     recipient: recipient.clone(),
-        //     reward_type,
-        //     amount,
-        //     timestamp: env.ledger().timestamp(),
-        // };
-
-        // env.events().publish(
-        //     ("reward_issued", recipient),
-        //     (reward_type, amount, env.ledger().timestamp()),
-        // );
-        // emit_reward_issued(&env, &event)?;
         env.events().publish(
             (symbol_short!("rd_issued"), recipient),
             (reward_type, amount, env.ledger().timestamp()),
         );
-        // Self::log_reward_event(env.clone(), recipient.clone(), reward_type, amount);
         
         Ok(())
     }

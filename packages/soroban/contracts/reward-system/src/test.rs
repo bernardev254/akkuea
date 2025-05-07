@@ -1,6 +1,6 @@
 #![cfg(test)]
 
-use soroban_sdk::{testutils::{Address as _, Events}, vec, Address, Env, Symbol, IntoVal};
+use soroban_sdk::{testutils::{Address as _}, Address, Env};
 
 use crate::{RewardSystem, RewardSystemClient, RewardType};
 
@@ -11,7 +11,6 @@ fn test_distribute_rewards() {
     let client = RewardSystemClient::new(&env, &contract_id);
 
     // Create test addresses
-    let admin = Address::generate(&env);
     let user1 = Address::generate(&env);
     let user2 = Address::generate(&env);
 
