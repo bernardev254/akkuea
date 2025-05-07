@@ -1,6 +1,6 @@
 use soroban_sdk::{Address, Env, Symbol};
 
-use crate::storage::{User, UserStorage, ReputationEvent};
+use crate::storage::{ReputationEvent, User, UserStorage};
 
 /// Update a user's reputation with a delta score and reason.
 ///
@@ -50,10 +50,6 @@ pub fn update_reputation(env: &Env, user: Address, score_delta: i64, reason: Sym
 fn emit_reputation_event(env: &Env, event: ReputationEvent) {
     env.events().publish(
         (Symbol::short("reputation_update"), event.to.clone()),
-        (
-            event.score_delta,
-            event.reason,
-            event.timestamp,
-        ),
+        (event.score_delta, event.reason, event.timestamp),
     );
 }

@@ -1,5 +1,5 @@
-use soroban_sdk::{Env, Address, Symbol, Vec, String};
 use crate::storage::{User, UserStorage};
+use soroban_sdk::{Address, Env, String, Symbol, Vec};
 
 /// Registers a new user with optional expertise and default values.
 pub fn register_user(env: Env, user: Address, expertise: Vec<Symbol>) {
@@ -30,7 +30,6 @@ pub fn deregister_user(env: Env, user: Address) {
     }
 
     UserStorage::remove(&env, &user);
-
 }
 
 /// Update expertise field for user profile.

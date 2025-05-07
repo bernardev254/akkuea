@@ -207,4 +207,3 @@ impl UserStorage {
         BytesN::from_array(&env, &hash.to_array())
     }
 }
-
