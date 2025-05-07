@@ -2,6 +2,8 @@
 
 use soroban_sdk::{contract, contractimpl, vec, Address, Env, String, Symbol, Vec};
 
+use soroban_sdk::symbol_short;
+
 mod register;
 mod reputation;
 mod storage;
@@ -21,7 +23,7 @@ impl Contract {
         register::register_user(env.clone(), user.clone(), expertise.clone());
 
         env.events()
-            .publish((Symbol::short("user_registered"), user.clone()), expertise);
+            .publish((symbol_short!("usr_reg"), user.clone()), expertise);
     }
 
     /// Update user's expertise and emit event
@@ -29,7 +31,7 @@ impl Contract {
         register::update_expertise(env.clone(), user.clone(), new_expertise.clone());
 
         env.events().publish(
-            (Symbol::short("expertise_updated"), user.clone()),
+            (symbol_short!("expertise"), user.clone()),
             new_expertise,
         );
     }
@@ -50,7 +52,7 @@ impl Contract {
 
         // Emit reputation change event
         env.events().publish(
-            (Symbol::short("reputation_modified"), user.clone()),
+            (symbol_short!("rep_upt"), user.clone()),
             (score_delta, reason),
         );
     }
@@ -64,7 +66,7 @@ impl Contract {
         );
 
         env.events()
-            .publish((Symbol::short("reputation_reset"), user), ());
+            .publish((symbol_short!("rep_reset"), user), ());
     }
 
     /// Remove a user and emit event
@@ -72,7 +74,7 @@ impl Contract {
         storage::UserStorage::remove(&env, &user);
 
         env.events()
-            .publish((Symbol::short("user_removed"), user), ());
+            .publish((symbol_short!("usr_rem"), user), ());
     }
 
     /// Get all registered users
@@ -95,7 +97,7 @@ impl Contract {
         storage::UserStorage::add_expertise(&env, &user, &expertise);
 
         env.events()
-            .publish((Symbol::short("expertise_added"), user), expertise);
+            .publish((symbol_short!("exp_added"), user), expertise);
     }
 
     /// Remove expertise from a user's profile and emit event
@@ -103,7 +105,7 @@ impl Contract {
         storage::UserStorage::remove_expertise(&env, &user, &expertise);
 
         env.events()
-            .publish((Symbol::short("expertise_removed"), user), expertise);
+            .publish((symbol_short!("exp_rem"), user), expertise);
     }
 
     /// Reset all reputations and emit event
@@ -112,7 +114,7 @@ impl Contract {
 
         env.events().publish(
             (
-                Symbol::short("all_reputations_reset"),
+                symbol_short!("rep_reset"),
                 env.current_contract_address(),
             ),
             (),
@@ -125,7 +127,7 @@ impl Contract {
 
         env.events().publish(
             (
-                Symbol::short("all_users_removed"),
+                symbol_short!("usr_rem"),
                 env.current_contract_address(),
             ),
             (),

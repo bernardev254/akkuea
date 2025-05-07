@@ -1,5 +1,5 @@
 use crate::storage::{User, UserStorage};
-use soroban_sdk::{Address, Env, String, Symbol, Vec};
+use soroban_sdk::{Address, Env, Symbol, Vec};
 
 /// Registers a new user with optional expertise and default values.
 pub fn register_user(env: Env, user: Address, expertise: Vec<Symbol>) {
@@ -22,7 +22,7 @@ pub fn register_user(env: Env, user: Address, expertise: Vec<Symbol>) {
 }
 
 /// Deregisters a user by removing from storage.
-pub fn deregister_user(env: Env, user: Address) {
+pub fn _deregister_user(env: Env, user: Address) {
     user.require_auth();
 
     if !is_registered(env.clone(), user.clone()) {
@@ -42,14 +42,14 @@ pub fn update_expertise(env: Env, user: Address, new_expertise: Vec<Symbol>) {
 }
 
 /// Increment contribution count for a user.
-pub fn increment_contributions(env: Env, user: Address) {
+pub fn _increment_contributions(env: Env, user: Address) {
     let mut user_data = UserStorage::get(&env, &user).expect("User not registered");
     user_data.contributions += 1;
     UserStorage::set(&env, &user, &user_data);
 }
 
 /// Reset the user's reputation to 0.
-pub fn reset_reputation(env: Env, user: Address) {
+pub fn _reset_reputation(env: Env, user: Address) {
     user.require_auth();
 
     let mut user_data = UserStorage::get(&env, &user).expect("User not registered");
@@ -63,18 +63,18 @@ pub fn is_registered(env: Env, user: Address) -> bool {
 }
 
 /// Get user full profile or panic.
-pub fn get_user_profile(env: Env, user: Address) -> User {
+pub fn _get_user_profile(env: Env, user: Address) -> User {
     UserStorage::get(&env, &user).expect("User not registered")
 }
 
 /// Get only user's expertise tags.
-pub fn get_expertise(env: Env, user: Address) -> Vec<Symbol> {
+pub fn _get_expertise(env: Env, user: Address) -> Vec<Symbol> {
     let user_data = UserStorage::get(&env, &user).expect("User not registered");
     user_data.expertise
 }
 
 /// Get user's registration timestamp.
-pub fn get_registration_time(env: Env, user: Address) -> u64 {
+pub fn _get_registration_time(env: Env, user: Address) -> u64 {
     let user_data = UserStorage::get(&env, &user).expect("User not registered");
     user_data.registered_at
 }

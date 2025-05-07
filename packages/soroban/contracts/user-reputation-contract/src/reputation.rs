@@ -1,6 +1,6 @@
-use soroban_sdk::{Address, Env, Symbol};
+use soroban_sdk::{symbol_short, Address, Env, Symbol};
 
-use crate::storage::{ReputationEvent, User, UserStorage};
+use crate::storage::{ReputationEvent, UserStorage};
 
 /// Update a user's reputation with a delta score and reason.
 ///
@@ -8,7 +8,7 @@ use crate::storage::{ReputationEvent, User, UserStorage};
 /// - Ensures reputation never goes below 0
 /// - Increments contributions for positive deltas
 /// - Emits an event on change
-pub fn update_reputation(env: &Env, user: Address, score_delta: i64, reason: Symbol) {
+pub fn _update_reputation(env: &Env, user: Address, score_delta: i64, reason: Symbol) {
     // Ensure user is registered
     let Some(mut user_data) = UserStorage::get(env, &user) else {
         panic!("User not registered");
@@ -43,13 +43,13 @@ pub fn update_reputation(env: &Env, user: Address, score_delta: i64, reason: Sym
         reason,
         timestamp: env.ledger().timestamp(),
     };
-    emit_reputation_event(env, event);
+    _emit_reputation_event(env, event);
 }
 
 /// Emit a structured reputation change event.
-fn emit_reputation_event(env: &Env, event: ReputationEvent) {
+fn _emit_reputation_event(env: &Env, event: ReputationEvent) {
     env.events().publish(
-        (Symbol::short("reputation_update"), event.to.clone()),
+        (symbol_short!("rep_upt"), event.to.clone()),
         (event.score_delta, event.reason, event.timestamp),
     );
 }

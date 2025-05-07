@@ -26,7 +26,7 @@ pub struct ReputationEvent {
 pub struct UserStorage;
 
 impl UserStorage {
-    const STORAGE_KEY: &'static str = "user_storage";
+    const _STORAGE_KEY: &'static str = "user_storage";
 
     pub fn get(env: &Env, user: &Address) -> Option<User> {
         let storage: Map<Address, User> = env
@@ -142,7 +142,7 @@ impl UserStorage {
     }
 
     // Check if a user has expertise in a specific area
-    pub fn has_expertise(env: &Env, user: &Address, expertise: &Symbol) -> bool {
+    pub fn _has_expertise(env: &Env, user: &Address, expertise: &Symbol) -> bool {
         let user_data = Self::get(env, user).expect("User not registered");
         user_data.expertise.contains(expertise)
     }
@@ -170,13 +170,13 @@ impl UserStorage {
     }
 
     // Get the user's most recent contribution
-    pub fn get_most_recent_contribution(env: &Env, user: &Address) -> Option<u64> {
+    pub fn _get_most_recent_contribution(env: &Env, user: &Address) -> Option<u64> {
         let user_data = Self::get(env, user).expect("User not registered");
         Some(user_data.contributions)
     }
 
     // Reset user's contributions to 0
-    pub fn reset_contributions(env: &Env, user: &Address) {
+    pub fn _reset_contributions(env: &Env, user: &Address) {
         let mut user_data = Self::get(env, user).expect("User not registered");
         user_data.contributions = 0;
         Self::set(env, user, &user_data);
@@ -194,7 +194,7 @@ impl UserStorage {
     }
 
     // Get registration timestamp of the user
-    pub fn get_registration_time(env: &Env, user: &Address) -> u64 {
+    pub fn _get_registration_time(env: &Env, user: &Address) -> u64 {
         let user_data = Self::get(env, user).expect("User not registered");
         user_data.registered_at
     }
