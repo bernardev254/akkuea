@@ -1,3 +1,5 @@
+#![no_std]
+
 mod error;
 mod metadata;
 mod search;
@@ -6,7 +8,7 @@ mod validate;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contract, contractimpl, Env, String as SorobanString, Vec};
+use soroban_sdk::{contract, contractimpl, Env, String as SorobanString, Vec, Symbol};
 
 use crate::error::Error;
 use crate::metadata::Content;
@@ -28,11 +30,9 @@ impl ContentSearchContract {
         subject_tags: Vec<SorobanString>,
         content_url: SorobanString,
     ) -> Result<u64, Error> {
-        // Generar un nuevo ID para el contenido
-        let id = env.storage().instance().get::<u64>(&b"next_id").unwrap_or(0) + 1;
-        env.storage().instance().set(&b"next_id", &id);
+        let id = env.storage().instance().get::<Symbol, u64>(&Symbol::new(&env, "next_id")).unwrap_or(0) + 1;
+        env.storage().instance().set(&Symbol::new(&env, "next_id"), &id);
 
-        // Crear el nuevo contenido
         let content = Content {
             id,
             title,
@@ -41,10 +41,7 @@ impl ContentSearchContract {
             content_url,
         };
 
-        // Validar el contenido
         crate::validate::validate_content(&content)?;
-
-        // Guardar el contenido
         crate::metadata::ContentStorage::set_content(&env, &content);
 
         Ok(id)

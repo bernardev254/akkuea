@@ -1,13 +1,10 @@
-use soroban_sdk::{Env, String as SorobanString, Vec};
+use soroban_sdk::String as SorobanString;
 
 use crate::error::Error;
 use crate::metadata::Content;
 
-pub fn validate_subject(subject: &SorobanString) -> Result<(), Error> {
-    if subject.is_empty() {
-        return Err(Error::InvalidInput);
-    }
-    Ok(())
+pub fn validate_subject(subject: &SorobanString) -> bool {
+    !subject.is_empty()
 }
 
 pub fn validate_content(content: &Content) -> Result<(), Error> {
@@ -21,5 +18,5 @@ pub fn validate_content(content: &Content) -> Result<(), Error> {
 }
 
 pub fn is_valid_tag(tag: &SorobanString) -> bool {
-    !tag.is_empty() && tag.len() <= 50
+    !tag.is_empty()
 } 

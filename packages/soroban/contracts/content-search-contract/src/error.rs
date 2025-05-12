@@ -1,4 +1,4 @@
-use soroban_sdk::{contracterror, contracttype};
+use soroban_sdk::{contracterror, contracttype, String as SorobanString};
 
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -11,7 +11,7 @@ pub enum Error {
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CustomError {
-    pub message: String,
+    pub message: SorobanString,
 }
 
 impl From<Error> for CustomError {
@@ -21,7 +21,7 @@ impl From<Error> for CustomError {
             Error::InvalidInput => "The provided input is invalid",
         };
         CustomError {
-            message: message.to_string(),
+            message: SorobanString::from_str(&soroban_sdk::Env::default(), message),
         }
     }
 } 
