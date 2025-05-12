@@ -1,56 +1,80 @@
-# Contrato de Búsqueda de Contenido Educativo
+# Educational Content Search Contract
 
-Un contrato inteligente Soroban para buscar y gestionar contenido educativo basado en etiquetas de tema.
+A Soroban smart contract for searching and managing educational content based on subject tags.
 
-## Características
+## Features
 
-- Búsqueda de contenido educativo por etiquetas de tema
-- Coincidencia parcial y case-insensitive de etiquetas
-- Validación robusta de entrada y contenido
-- Almacenamiento eficiente de metadatos de contenido
-- Manejo de errores informativo
+- Educational content search by subject tags
+- Robust input and content validation
+- Efficient metadata storage
+- Informative error handling
 
-## Construcción del Contrato
+## Requirements
 
-Puedes construir el contrato de dos maneras:
+- Rust 1.70.0 or higher
+- [Soroban CLI](https://developers.stellar.org/docs/tools/cli/stellar-cli)
+- Stellar Testnet account
 
-Desde el directorio del contrato:
+## Installation
+
+1. Install Rust:
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+2. Install Soroban CLI:
+```bash
+cargo install soroban-cli
+```
+
+3. Generate a test account:
+```bash
+soroban keys generate alice
+```
+
+## Building and Deployment
+
+1. Build the contract:
 ```bash
 cd packages/soroban/contracts/content-search-contract
 soroban contract build
 ```
 
-Desde la raíz del proyecto:
+2. Deploy the contract:
 ```bash
-soroban contract build --manifest-path ./packages/soroban/contracts/content-search-contract/Cargo.toml
+soroban contract deploy \
+  --wasm target/wasm32-unknown-unknown/release/content_search_contract.wasm \
+  --network testnet \
+  --source-account alice
 ```
 
-## Pruebas
-
-Para ejecutar las pruebas:
-
+3. Initialize the contract:
 ```bash
-cargo test --features testutils
+soroban contract invoke \
+  --id <CONTRACT_ID> \
+  --source-account alice \
+  --network testnet \
+  -- \
+  initialize
 ```
 
-## Funciones del Contrato
+## Contract Functions
 
 ### `search_content(subject: String) -> Vec<Content>`
-Busca contenido educativo basado en etiquetas de tema.
-- `subject`: La etiqueta o palabra clave a buscar
-- Retorna: Lista de contenido que coincide con la búsqueda
+Searches for educational content based on subject tags.
+- `subject`: The tag or keyword to search for
+- Returns: List of content matching the search
 
 ### `add_content(title: String, description: String, subject_tags: Vec<String>, content_url: String) -> u64`
-Agrega nuevo contenido educativo al sistema.
-- `title`: Título del contenido
-- `description`: Descripción del contenido
-- `subject_tags`: Lista de etiquetas de tema
-- `content_url`: URL del contenido
-- Retorna: ID del contenido agregado
+Adds new educational content to the system.
+- `title`: Content title (max 200 characters)
+- `description`: Content description (max 1000 characters)
+- `subject_tags`: List of subject tags (max 50 characters per tag)
+- `content_url`: Content URL (max 500 characters)
+- Returns: ID of the added content
 
-## Estructura de Datos
+## Data Structure
 
-### Content
 ```rust
 struct Content {
     id: u64,
@@ -61,70 +85,16 @@ struct Content {
 }
 ```
 
-## Manejo de Errores
+## Error Handling
 
-El contrato define varios tipos de error para manejar diferentes escenarios de fallo:
+The contract handles the following errors:
 
-- `NoMatchingContent`: Cuando no se encuentra contenido que coincida con la búsqueda
-- `InvalidInput`: Cuando la entrada proporcionada no es válida
-  - Título vacío
-  - Descripción vacía
-  - URL vacía
-  - Sin etiquetas de tema
-  - Etiquetas inválidas
+- `NoMatchingContent`: No content found matching the search criteria
+- `InvalidInput`: Provided input does not meet validation requirements
+- `NotInitialized`: Contract has not been initialized
 
-## Requisitos
+## Additional Documentation
 
-- Rust 1.70.0 o superior
-- Soroban CLI
-- Stellar Development Environment
-
-## Instalación
-
-1. Instala Rust:
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-2. Instala Soroban CLI:
-```bash
-cargo install soroban-cli
-```
-
-3. Clona el repositorio:
-```bash
-git clone https://github.com/akkuea/akkuea.git
-cd akkuea
-```
-
-4. Construye el contrato:
-```bash
-soroban contract build --manifest-path ./packages/soroban/contracts/content-search-contract/Cargo.toml
-```
-
-## Ejemplo de Uso
-
-```rust
-// Agregar contenido
-let content_id = contract.add_content(
-    "Introducción a Blockchain",
-    "Conceptos básicos de blockchain y criptomonedas",
-    vec!["blockchain", "criptomonedas", "tecnología"],
-    "https://ejemplo.com/blockchain"
-);
-
-// Buscar contenido
-let results = contract.search_content("blockchain");
-```
-
-## Contribución
-
-1. Haz fork del repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## Licencia
-
-Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles. 
+- [Soroban Documentation](https://soroban.stellar.org/docs)
+- [Stellar CLI Guide](https://developers.stellar.org/docs/tools/cli/stellar-cli)
+- [Stellar Smart Contracts](https://developers.stellar.org/docs/build/smart-contracts/overview)
