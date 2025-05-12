@@ -4,7 +4,6 @@ use soroban_sdk::{contract, contractimpl, Address, Env, String, Vec};
 
 mod fund;
 mod project;
-mod test;
 mod validate;
 mod vote;
 
