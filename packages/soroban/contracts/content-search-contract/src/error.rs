@@ -1,4 +1,4 @@
-use soroban_sdk::{contracterror, contracttype, String as SorobanString};
+use soroban_sdk::{contracterror, contracttype, String as SorobanString, Env};
 
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -6,6 +6,7 @@ use soroban_sdk::{contracterror, contracttype, String as SorobanString};
 pub enum Error {
     NoMatchingContent = 1,
     InvalidInput = 2,
+    NotInitialized = 3,
 }
 
 #[contracttype]
@@ -16,12 +17,14 @@ pub struct CustomError {
 
 impl From<Error> for CustomError {
     fn from(error: Error) -> Self {
+        let env = Env::default();
         let message = match error {
             Error::NoMatchingContent => "No content found matching the search criteria",
             Error::InvalidInput => "The provided input is invalid",
+            Error::NotInitialized => "Contract has not been initialized",
         };
         CustomError {
-            message: SorobanString::from_str(&soroban_sdk::Env::default(), message),
+            message: SorobanString::from_str(&env, message),
         }
     }
 } 
