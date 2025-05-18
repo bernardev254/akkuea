@@ -42,10 +42,7 @@ soroban contract build
 
 2. Deploy the contract:
 ```bash
-soroban contract deploy \
-  --wasm target/wasm32-unknown-unknown/release/content_search_contract.wasm \
-  --network testnet \
-  --source-account alice
+soroban contract deploy --source-account alice --wasm ../../target/wasm32v1-none/release/content_search_contract.wasm
 ```
 
 3. Initialize the contract:
@@ -56,6 +53,11 @@ soroban contract invoke \
   --network testnet \
   -- \
   initialize
+```
+
+4. To read the contract:
+```bash
+soroban contract read --id <CONTRACT_ID> --network testnet
 ```
 
 ## Contract Functions
@@ -72,6 +74,44 @@ Adds new educational content to the system.
 - `subject_tags`: List of subject tags (max 50 characters per tag)
 - `content_url`: Content URL (max 500 characters)
 - Returns: ID of the added content
+
+## Usage Examples
+
+### Adding Content
+```bash
+soroban contract invoke \
+  --id <CONTRACT_ID> \
+  --source-account alice \
+  --network testnet \
+  -- \
+  add_content \
+  --title "Test Content" \
+  --description "This is a test content" \
+  --subject_tags '["math"]' \
+  --content_url "https://example.com/test"
+```
+
+### Searching Content
+```bash
+soroban contract invoke \
+  --id <CONTRACT_ID> \
+  --source-account alice \
+  --network testnet \
+  -- \
+  search_content \
+  --subject "math"
+```
+
+Output:
+```json
+[{
+  "content_url": "https://example.com/test",
+  "description": "This is a test content",
+  "id": 1,
+  "subject_tags": ["math"],
+  "title": "Test Content"
+}]
+```
 
 ## Data Structure
 
