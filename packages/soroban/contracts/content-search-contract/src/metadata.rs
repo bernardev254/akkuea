@@ -1,4 +1,4 @@
-use soroban_sdk::{contracttype, Env, String as SorobanString, Vec, Symbol, symbol_short};
+use soroban_sdk::{contracttype, Env, String, Vec, Symbol, symbol_short};
 
 const CONTENT_KEY: Symbol = symbol_short!("CONTENT");
 const NEXT_ID_KEY: Symbol = symbol_short!("NEXT_ID");
@@ -7,10 +7,10 @@ const NEXT_ID_KEY: Symbol = symbol_short!("NEXT_ID");
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Content {
     pub id: u64,
-    pub title: SorobanString,
-    pub description: SorobanString,
-    pub subject_tags: Vec<SorobanString>,
-    pub content_url: SorobanString,
+    pub title: String,
+    pub description: String,
+    pub subject_tags: Vec<String>,
+    pub content_url: String,
 }
 
 #[contracttype]
@@ -22,16 +22,6 @@ pub struct ContentList {
 pub struct ContentStorage;
 
 impl ContentStorage {
-    pub fn get_content(env: &Env, id: u64) -> Option<Content> {
-        let storage = env.storage().instance();
-        if !storage.has(&CONTENT_KEY) {
-            return None;
-        }
-        
-        let content_list: ContentList = storage.get(&CONTENT_KEY).unwrap();
-        content_list.contents.iter().find(|c| c.id == id).map(|c| c.clone())
-    }
-
     pub fn set_content(env: &Env, content: &Content) {
         let storage = env.storage().instance();
         let mut content_list = if storage.has(&CONTENT_KEY) {

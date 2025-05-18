@@ -1,9 +1,9 @@
-use soroban_sdk::{String as SorobanString, Vec, Env};
+use soroban_sdk::String;
 
 use crate::error::Error;
 use crate::metadata::Content;
 
-pub fn validate_subject(subject: &SorobanString) -> bool {
+pub fn validate_subject(subject: &String) -> bool {
     !subject.is_empty() && subject.len() <= 100
 }
 
@@ -38,18 +38,6 @@ pub fn validate_content(content: &Content) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn is_valid_tag(tag: &SorobanString) -> bool {
+pub fn is_valid_tag(tag: &String) -> bool {
     !tag.is_empty() && tag.len() <= 50
-}
-
-pub fn create_soroban_string(env: &Env, s: &str) -> SorobanString {
-    SorobanString::from_str(env, s)
-}
-
-pub fn create_soroban_string_vec(env: &Env, strings: &[&str]) -> Vec<SorobanString> {
-    let mut vec = Vec::new(env);
-    for s in strings {
-        vec.push_back(create_soroban_string(env, s));
-    }
-    vec
 } 

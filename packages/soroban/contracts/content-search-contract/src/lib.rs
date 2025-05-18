@@ -8,12 +8,11 @@ mod validate;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contract, contractimpl, Env, String as SorobanString, Vec, Symbol, symbol_short};
+use soroban_sdk::{contract, contractimpl, Env, String, Vec, Symbol, symbol_short};
 
 use crate::error::Error;
 use crate::metadata::{Content, ContentStorage};
 use crate::search::search_content;
-use crate::validate::{create_soroban_string, create_soroban_string_vec};
 
 const INITIALIZED_KEY: Symbol = symbol_short!("INIT");
 
@@ -38,7 +37,7 @@ impl ContentSearchContract {
         storage.extend_ttl(50, 100);
     }
 
-    pub fn search_content(env: Env, subject: SorobanString) -> Result<Vec<Content>, Error> {
+    pub fn search_content(env: Env, subject: String) -> Result<Vec<Content>, Error> {
         // Verificar que el contrato está inicializado
         if !env.storage().instance().has(&INITIALIZED_KEY) {
             return Err(Error::NotInitialized);
@@ -54,10 +53,10 @@ impl ContentSearchContract {
 
     pub fn add_content(
         env: Env,
-        title: SorobanString,
-        description: SorobanString,
-        subject_tags: Vec<SorobanString>,
-        content_url: SorobanString,
+        title: String,
+        description: String,
+        subject_tags: Vec<String>,
+        content_url: String,
     ) -> Result<u64, Error> {
         // Verificar que el contrato está inicializado
         if !env.storage().instance().has(&INITIALIZED_KEY) {

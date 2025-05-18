@@ -1,4 +1,4 @@
-use soroban_sdk::{contracterror, contracttype, String as SorobanString, Env};
+use soroban_sdk::{contracterror, contracttype, String, Env};
 
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -12,7 +12,7 @@ pub enum Error {
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CustomError {
-    pub message: SorobanString,
+    pub message: String,
 }
 
 impl From<Error> for CustomError {
@@ -24,7 +24,7 @@ impl From<Error> for CustomError {
             Error::NotInitialized => "Contract has not been initialized",
         };
         CustomError {
-            message: SorobanString::from_str(&env, message),
+            message: String::from_str(&env, message),
         }
     }
 } 
