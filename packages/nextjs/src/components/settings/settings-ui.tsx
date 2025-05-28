@@ -4,7 +4,7 @@ import { Bell, Eye, Lock, User, Palette, LucideIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { NavButton } from './nav-button';
 import { AppearanceTab } from './AppearanceTab';
-import { PrivacyTab } from './privacy';
+import { PrivacyTab } from '@/components/settings/privacy';
 import { GenericSettingsTab } from './generic-settings';
 
 interface NavItem {
