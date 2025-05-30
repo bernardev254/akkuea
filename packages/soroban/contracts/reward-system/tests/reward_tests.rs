@@ -17,7 +17,6 @@ fn test_reward_distribution_success() {
     let reward_type = RewardType::ContentCreation;
     let amount = 100_i128;
 
-    println!("Calling distribute_rewards for {:?}", reward_type);
     let result = client.try_distribute_rewards(&user, &reward_type, &amount);
     assert!(
         result.is_ok(),
@@ -25,7 +24,6 @@ fn test_reward_distribution_success() {
         reward_type,
         result.err()
     );
-    println!("Result for {:?}: {:?}", reward_type, "Success");
 
     assert_eq!(
         client.get_balance(&user),
@@ -44,9 +42,7 @@ fn test_event_emission() {
 
     let user = Address::generate(&env);
 
-    println!("Testing event emission for ContentCreation");
     let result = client.try_distribute_rewards(&user, &RewardType::ContentCreation, &100);
-    println!("Result for ContentCreation: {:?}", result);
     assert!(
         result.is_ok(),
         "distribute_rewards failed: {:?}",
@@ -54,7 +50,6 @@ fn test_event_emission() {
     );
 
     let events = env.events().all();
-    println!("Events: {:?}", events);
     assert!(!events.is_empty(), "No events emitted for ContentCreation");
 }
 
@@ -66,10 +61,8 @@ fn test_raw_event_emission() {
     let client = RewardSystemClient::new(&env, &contract_id);
 
     let user = Address::generate(&env);
-    println!("Emitting raw event");
     client.log_reward_event(&user, &RewardType::ContentCreation, &100);
     let events = env.events().all();
-    println!("Raw events: {:?}", events);
     assert!(!events.is_empty(), "No raw events emitted");
 }
 
@@ -81,10 +74,12 @@ fn test_alternative_event_emission() {
     let client = RewardSystemClient::new(&env, &contract_id);
 
     let user = Address::generate(&env);
-    println!("Emitting alternative event");
     client.distribute_rewards(&user, &RewardType::ContentCreation, &100);
-    let events = env.events().all();
-    println!("Alternative events: {:?}", events);
+    let events: soroban_sdk::Vec<(
+        Address,
+        soroban_sdk::Vec<soroban_sdk::Val>,
+        soroban_sdk::Val,
+    )> = env.events().all();
     assert!(!events.is_empty(), "No alternative events emitted");
 }
 
@@ -96,10 +91,8 @@ fn test_contract_event_emission() {
     let client = RewardSystemClient::new(&env, &contract_id);
 
     let user = Address::generate(&env);
-    println!("Emitting contract event");
     client.distribute_rewards(&user, &RewardType::ContentCreation, &100);
     let events = env.events().all();
-    println!("Contract events: {:?}", events);
     assert!(!events.is_empty(), "No contract events emitted");
 }
 
