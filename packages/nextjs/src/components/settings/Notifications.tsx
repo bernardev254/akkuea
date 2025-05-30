@@ -91,7 +91,7 @@ const NotificationSettings = () => {
       <div className="flex flex-col items-start mb-6 text-teal-600 dark:text-teal-400 mt-4  h-[55.99px] px-4">
         <div className='flex flex-row items-center'>
           <Bell size={18} className="mr-2" />
-          <h1 className="text-lg text-[#09090B] font-bold">Notification Preferences</h1>
+          <h1 className="text-lg text-[#09090B] font-bold dark:text-white">Notification Preferences</h1>
         </div>
 
         <div>
