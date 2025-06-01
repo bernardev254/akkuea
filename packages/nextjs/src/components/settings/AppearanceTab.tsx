@@ -188,7 +188,6 @@ export const LanguageSection = () => {
 };
 
 export const AppearanceTab = () => {
-
   return (
     <>
       <ThemeSection />

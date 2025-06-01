@@ -9,7 +9,7 @@ interface TabNavProps {
 
 export const TabNav: React.FC<TabNavProps> = ({ children }) => {
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start sm:justify-center gap-2 sm:space-x-2 mb-6 overflow-x-auto p-2 bg-[#F4F4F5] dark:bg-gray-800/50 rounded-lg w-full">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start sm:justify-center gap-2 sm:gap-1 p-2 sm:p-4 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 rounded-t-lg overflow-x-auto">
       {children}
     </div>
   );
@@ -27,16 +27,19 @@ export const TabItem: React.FC<TabItemProps> = ({ icon, label, value }) => {
 
   return (
     <button
-      className={`flex items-center gap-2 px-4 sm:px-6 md:px-8 py-2 rounded-lg font-medium w-full sm:w-auto
+      className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 ease-in-out
         ${
           isActive
-            ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm transition-all duration-200 ease-in-out'
-            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-        }`}
+            ? 'bg-white dark:bg-gray-700 text-teal-600 dark:text-teal-400 shadow-sm'
+            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50'
+        }
+        focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800`}
       onClick={() => setActiveTab(value)}
+      role="tab"
+      aria-selected={isActive}
     >
       {icon}
-      <span>{label}</span>
+      <span className="whitespace-nowrap">{label}</span>
     </button>
   );
 };

@@ -99,7 +99,7 @@ export default function LeftSidebar() {
     >
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3 top-1/2 -translate-y-1/2 bg-white dark:bg-[#111827] rounded-full p-1.5 shadow-lg z-50 hover:bg-gray-50 dark:hover:bg-gray-800"
+        className="absolute -right-3 top-1/2 -translate-y-1/2 bg-white dark:bg-transparent rounded-full p-1.5 shadow-lg z-50 hover:bg-gray-50 dark:hover:bg-gray-800"
         aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         {isCollapsed ? (
@@ -140,7 +140,7 @@ export default function LeftSidebar() {
                   ${
                     isActive
                       ? 'bg-[#0D9488]/10 dark:bg-[#0D9488]/20'
-                      : 'bg-white dark:bg-black hover:bg-[#0D9488]/5 dark:hover:bg-[#0D9488]/10'
+                      : 'bg-white dark:bg-transparent hover:bg-[#0D9488]/5 dark:hover:bg-[#0D9488]/10'
                   }
                   transform hover:scale-[1.02] hover:shadow-sm`}
                 >
