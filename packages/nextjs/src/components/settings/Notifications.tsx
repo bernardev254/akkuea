@@ -50,18 +50,18 @@ const NotificationSettings = () => {
   }
 
   const Toggle: React.FC<ToggleProps> = ({ enabled, onChange }) => (
-    <button
+    <div
       onClick={onChange}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
-        enabled ? 'bg-teal-500 dark:bg-teal-400' : 'bg-gray-300 dark:bg-gray-600'
+      className={`relative w-10 h-5 rounded-full transition-colors duration-300 ease-in-out  cursor-pointer ${
+        enabled ? 'bg-teal-500' : 'bg-gray-300 dark:bg-gray-600'
       }`}
     >
-      <span
-        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-          enabled ? 'translate-x-6' : 'translate-x-1'
+      <div
+        className={`absolute top-0.5 left-0.5 bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${
+          enabled ? 'translate-x-5' : ''
         }`}
       />
-    </button>
+    </div>
   );
 
   const SettingItem: React.FC<SettingItemProps> = ({
@@ -69,11 +69,11 @@ const NotificationSettings = () => {
     title,
     description,
     settingKey,
-    iconColor = 'text-gray-600 dark:text-gray-400',
+    iconColor = 'text-gray-600 dark:text-[#00D1B2]',
   }) => (
     <div className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200">
       <div className="flex items-center space-x-3">
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 bg-[#00D1B21A] p-3 rounded">
           <Icon size={20} className={iconColor} />
         </div>
         <div>
@@ -86,16 +86,16 @@ const NotificationSettings = () => {
   );
 
   return (
-    <div className="container bg-white dark:bg-gray-900 rounded-lg shadow mx-auto mb-10 transition-colors duration-300 border dark:border-gray-700">
+    <div className="container bg-white dark:bg-gray-800/50 rounded-lg shadow mx-auto mb-10 transition-colors duration-300 border  dark:border-gray-700">
       {/* Header */}
       <div className="flex flex-col items-start mb-6 text-teal-600 dark:text-teal-400 mt-4  h-[55.99px] px-4">
         <div className='flex flex-row items-center'>
-          <Bell size={18} className="mr-2" />
-          <h1 className="text-lg text-[#09090B] font-bold dark:text-white">Notification Preferences</h1>
+          <Bell size={22} className="mr-2 " />
+          <h1 className="text-xl text-[#09090B] font-bold dark:text-white">Notification Preferences</h1>
         </div>
 
         <div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 font-normal">
+          <p className="text-base text-gray-600 dark:text-gray-400 font-normal">
             Control how and when you receive notifications
           </p>
         </div>
@@ -103,7 +103,7 @@ const NotificationSettings = () => {
 
       <div className="px-4 pb-6">
         {/* Master Toggle */}
-        <div className="mb-8 border rounded-lg">
+        <div className="mb-8 border dark:border-none rounded-lg">
           <SettingItem
             icon={Bell}
             title="Enable Notifications"
@@ -122,30 +122,30 @@ const NotificationSettings = () => {
             Choose how you want to receive notifications
           </p>
 
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div className="border border-gray-200 dark:border-none rounded-lg overflow-hidden">
             <SettingItem
               icon={Mail}
               title="Email Notifications"
               description="Receive notifications via email"
               settingKey="emailNotifications"
-              iconColor="text-blue-600 dark:text-blue-400"
+              iconColor="text-blue-600 dark:text-[#00D1B2]"
             />
-            <div className="border-t border-gray-200 dark:border-gray-700">
+            <div className="border-t border-gray-200 dark:border-none">
               <SettingItem
                 icon={Smartphone}
                 title="Push Notifications"
                 description="Receive notifications on your device"
                 settingKey="pushNotifications"
-                iconColor="text-green-600 dark:text-green-400"
+                iconColor="text-green-600 dark:text-[#00D1B2]"
               />
             </div>
-            <div className="border-t border-gray-200 dark:border-gray-700">
+            <div className="border-t border-gray-200 dark:border-none">
               <SettingItem
                 icon={Volume2}
                 title="Sound"
                 description="Play sound for notifications"
                 settingKey="sound"
-                iconColor="text-yellow-600 dark:text-yellow-400"
+                iconColor="text-yellow-600 dark:text-[#00D1B2]"
               />
             </div>
           </div>
@@ -160,9 +160,9 @@ const NotificationSettings = () => {
             Select which events you want to be notified about
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4  dark:md:gap-0">
             {/* Left Column */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div className="border border-gray-200 dark:border-none rounded-lg overflow-hidden">
               <SettingItem
                 icon={MessageSquare}
                 title="Comments"
@@ -170,7 +170,7 @@ const NotificationSettings = () => {
                 settingKey="comments"
                 iconColor="text-teal-600 dark:text-teal-400"
               />
-              <div className="border-t border-gray-200 dark:border-gray-700">
+              <div className="border-t border-gray-200 dark:border-none">
                 <SettingItem
                   icon={AtSign}
                   title="Mentions"
@@ -179,7 +179,7 @@ const NotificationSettings = () => {
                   iconColor="text-teal-600 dark:text-teal-400"
                 />
               </div>
-              <div className="border-t border-gray-200 dark:border-gray-700">
+              <div className="border-t border-gray-200 dark:border-none">
                 <SettingItem
                   icon={MessageCircle}
                   title="Direct messages"
@@ -191,7 +191,7 @@ const NotificationSettings = () => {
             </div>
 
             {/* Right Column */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div className="border border-gray-200 dark:border-none rounded-lg overflow-hidden">
               <SettingItem
                 icon={Heart}
                 title="Likes"
@@ -199,7 +199,7 @@ const NotificationSettings = () => {
                 settingKey="likes"
                 iconColor="text-teal-600 dark:text-teal-400"
               />
-              <div className="border-t border-gray-200 dark:border-gray-700">
+              <div className="border-t border-gray-200 dark:border-none">
                 <SettingItem
                   icon={Users}
                   title="New followers"
@@ -208,7 +208,7 @@ const NotificationSettings = () => {
                   iconColor="text-teal-600 dark:text-teal-400"
                 />
               </div>
-              <div className="border-t border-gray-200 dark:border-gray-700">
+              <div className="border-t border-gray-200 dark:border-none">
                 <SettingItem
                   icon={Info}
                   title="Platform updates"
