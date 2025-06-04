@@ -1,4 +1,4 @@
-use soroban_sdk::{Address, Env, Symbol, Map};
+use soroban_sdk::{Address, Env, Symbol, Vec};
 
 use crate::types::{EducatorStats, TipHistory};
 
@@ -47,16 +47,39 @@ pub fn set_tip_history(env: &Env, educator: &Address, history: &TipHistory) {
 }
 
 // Top educators management
-pub fn get_top_educators(env: &Env) -> Map<Address, EducatorStats> {
-    env.storage().instance().get(&get_top_educators_key(env)).unwrap_or(Map::new(env))
+pub fn get_top_educators(env: &Env) -> Vec<(Address, EducatorStats)> {
+    env.storage().instance().get(&get_top_educators_key(env)).unwrap_or(Vec::new(env))
 }
 
-pub fn set_top_educators(env: &Env, educators: &Map<Address, EducatorStats>) {
+pub fn set_top_educators(env: &Env, educators: &Vec<(Address, EducatorStats)>) {
     env.storage().instance().set(&get_top_educators_key(env), educators);
 }
 
 pub fn update_top_educators(env: &Env, educator: &Address, stats: &EducatorStats) {
     let mut top_educators = get_top_educators(env);
-    top_educators.set(educator.clone(), stats.clone());
+    
+    // Find if educator already exists and remove it
+    for i in 0..top_educators.len() {
+        let (addr, _) = top_educators.get(i).unwrap();
+        if addr == *educator {
+            top_educators.remove(i);
+            break;
+        }
+    }
+    
+    // Find the correct position to insert based on total_amount
+    let mut insert_idx = 0;
+    for i in 0..top_educators.len() {
+        let (_, current_stats) = top_educators.get(i).unwrap();
+        if stats.total_amount > current_stats.total_amount {
+            insert_idx = i;
+            break;
+        }
+        insert_idx = i + 1;
+    }
+    
+    // Insert the educator at the correct position
+    top_educators.insert(insert_idx, (educator.clone(), stats.clone()));
+    
     set_top_educators(env, &top_educators);
 }

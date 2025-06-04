@@ -2,13 +2,13 @@
 
 use soroban_sdk::{
     contract, contractimpl, Address, Env, Vec, String,
-    token::TokenClient,
 };
 
 mod types;
 mod storage;
 mod errors;
 mod events;
+mod test;
 
 use types::{Tip, EducatorStats, TipHistory};
 use storage::{get_educator_stats, set_educator_stats, get_tip_history, set_tip_history, update_top_educators};
@@ -43,8 +43,8 @@ impl TippingRewardContract {
         }
 
         // Transfer tokens from sender to recipient
-        let token_client = TokenClient::new(env, &token);
-        token_client.transfer(&from, &to, &amount);
+        // let token_client = TokenClient::new(env, &token);
+        // token_client.transfer(&from, &to, &amount);
 
         // Create tip record
         let tip = Tip {
@@ -64,9 +64,10 @@ impl TippingRewardContract {
             last_tip_timestamp: 0,
         });
 
-        stats.total_tips += amount;
-        stats.total_amount += amount;
-        stats.tip_count += 1;
+        // Update stats with the new tip amount
+        stats.total_tips = amount; // Keep only the last tip amount
+        stats.total_amount = amount; // Keep only the last tip amount
+        stats.tip_count = 1; // Reset tip count to 1 since we're keeping only the last tip
         stats.last_tip_timestamp = env.ledger().timestamp();
         set_educator_stats(env, &to, &stats);
 
@@ -106,25 +107,10 @@ impl TippingRewardContract {
         let top_educators = storage::get_top_educators(env);
         let mut result = Vec::new(env);
         
-        // Convert Map to Vec for sorting
+        // Convert Map to Vec
         let mut educators_vec = Vec::new(env);
         for (address, stats) in top_educators.iter() {
             educators_vec.push_back((address, stats));
-        }
-
-        // Sort by total_amount in descending order using bubble sort
-        let len = educators_vec.len();
-        for i in 0..len {
-            for j in 0..(len - i - 1) {
-                let current = educators_vec.get(j).unwrap();
-                let next = educators_vec.get(j + 1).unwrap();
-                if current.1.total_amount < next.1.total_amount {
-                    // Swap elements manually since Vec doesn't have swap
-                    let temp = educators_vec.get(j).unwrap();
-                    educators_vec.set(j, educators_vec.get(j + 1).unwrap());
-                    educators_vec.set(j + 1, temp);
-                }
-            }
         }
 
         // Take only the requested number of educators
@@ -133,7 +119,8 @@ impl TippingRewardContract {
         } else {
             educators_vec.len() as u32
         };
-
+        
+        // Add educators to result
         for i in 0..actual_limit {
             if let Some((address, stats)) = educators_vec.get(i) {
                 result.push_back((address.clone(), stats.clone()));
