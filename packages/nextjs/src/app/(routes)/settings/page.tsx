@@ -45,9 +45,9 @@ export default function SettingsPage() {
                   <AppearanceTab />
                 </TabContent>
 
-          <TabContent value="notifications">
-            <Notifications/>
-          </TabContent>
+                <TabContent value="notifications">
+                  <Notifications />
+                </TabContent>
 
                 <TabContent value="privacy">
                   <EmptyTabContent title="Privacy" />
