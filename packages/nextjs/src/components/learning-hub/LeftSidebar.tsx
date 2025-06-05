@@ -5,8 +5,6 @@ import {
   Home,
   Compass,
   Users,
-  Trophy,
-  BarChart2,
   ChevronLeft,
   ChevronRight,
   Bookmark,

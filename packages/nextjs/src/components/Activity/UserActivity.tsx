@@ -4,10 +4,7 @@ import { useState } from 'react';
 import AnnualContributions from './AnnualContributionsHeatmap';
 import { Calendar, Clock, MessageSquare, ThumbsUp, FileText, Award, Users } from 'lucide-react';
 
-interface HeatmapDay {
-  month: string;
-  days: number[][];
-}
+// Activity type definition
 
 interface Activity {
   id: number;
@@ -48,7 +45,8 @@ const UserActivityDashboard = () => {
     }));
   };
 
-  const heatmapData = generateHeatmapData();
+  // Generate data but only use it in the component when needed
+  generateHeatmapData();
 
   // Sample recent activity data
   const recentActivity = [
@@ -84,23 +82,7 @@ const UserActivityDashboard = () => {
     },
   ];
 
-  // Helper function to get activity level color
-  const getActivityColor = (level: number): string => {
-    switch (level) {
-      case 0:
-        return 'bg-gray-900 dark:bg-gray-200';
-      case 1:
-        return 'bg-teal-900 dark:bg-teal-100';
-      case 2:
-        return 'bg-teal-700 dark:bg-teal-300';
-      case 3:
-        return 'bg-teal-500 dark:bg-teal-500';
-      case 4:
-        return 'bg-teal-300 dark:bg-teal-700';
-      default:
-        return 'bg-gray-900 dark:bg-gray-200';
-    }
-  };
+  // Activity color function is handled in the AnnualContributions component
 
   // Helper function to get icon for activity type
   const getActivityIcon = (type: Activity['type'] | string) => {

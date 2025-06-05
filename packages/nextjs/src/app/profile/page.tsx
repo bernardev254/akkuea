@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Edit, Flag as LinkIcon } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import UserActivityDashboard from '@/components/Activity/UserActivity';
 import PublicationMain from '@/components/publication/PublicationMain';
 import Link from 'next/link';
@@ -75,7 +75,7 @@ const ProfilePage = () => {
             National University of Design
           </p>
           <span className="text-[#00CED1] dark:text-teal-400 font-normal mt-5">
-            "Creating the future through design and technology"
+            &quot;Creating the future through design and technology&quot;
           </span>
         </div>
       </div>

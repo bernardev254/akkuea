@@ -7,7 +7,7 @@ import { ProfileAvatar } from './ProfileAvatar';
 import { ProfileForm } from './ProfileForm';
 import { RoleSelector } from './RoleSelector';
 import { ActionButtons } from './ActionButtons';
-import Link from 'next/link';
+
 const roles = [
   { id: 'teacher', label: 'Teacher' },
   { id: 'director', label: 'Director' },
