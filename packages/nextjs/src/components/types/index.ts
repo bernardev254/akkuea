@@ -28,19 +28,19 @@ export interface Publication {
   hasVideo?: boolean;
 }
 export interface NotificationSettingsState {
-    enableNotifications: boolean;
-    emailNotifications: boolean;
-    pushNotifications: boolean;
-    sound: boolean;
-    comments: boolean;
-    likes: boolean;
-    mentions: boolean;
-    newFollowers: boolean;
-    directMessages: boolean;
-    platformUpdates: boolean;
+  enableNotifications: boolean;
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  sound: boolean;
+  comments: boolean;
+  likes: boolean;
+  mentions: boolean;
+  newFollowers: boolean;
+  directMessages: boolean;
+  platformUpdates: boolean;
 }
 
 export interface ToggleProps {
-    enabled: boolean;
-    onChange: () => void;
+  enabled: boolean;
+  onChange: () => void;
 }

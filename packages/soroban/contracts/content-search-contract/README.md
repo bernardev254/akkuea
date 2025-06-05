@@ -18,16 +18,19 @@ A Soroban smart contract for searching and managing educational content based on
 ## Installation
 
 1. Install Rust:
+
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
 2. Install Soroban CLI:
+
 ```bash
 cargo install soroban-cli
 ```
 
 3. Generate a test account:
+
 ```bash
 soroban keys generate alice
 ```
@@ -35,17 +38,20 @@ soroban keys generate alice
 ## Building and Deployment
 
 1. Build the contract:
+
 ```bash
 cd packages/soroban/contracts/content-search-contract
 soroban contract build
 ```
 
 2. Deploy the contract:
+
 ```bash
 soroban contract deploy --source-account alice --wasm ../../target/wasm32v1-none/release/content_search_contract.wasm
 ```
 
 3. Initialize the contract:
+
 ```bash
 soroban contract invoke \
   --id <CONTRACT_ID> \
@@ -56,6 +62,7 @@ soroban contract invoke \
 ```
 
 4. To read the contract:
+
 ```bash
 soroban contract read --id <CONTRACT_ID> --network testnet
 ```
@@ -63,12 +70,16 @@ soroban contract read --id <CONTRACT_ID> --network testnet
 ## Contract Functions
 
 ### `search_content(subject: String) -> Vec<Content>`
+
 Searches for educational content based on subject tags.
+
 - `subject`: The tag or keyword to search for
 - Returns: List of content matching the search
 
 ### `add_content(title: String, description: String, subject_tags: Vec<String>, content_url: String) -> u64`
+
 Adds new educational content to the system.
+
 - `title`: Content title (max 200 characters)
 - `description`: Content description (max 1000 characters)
 - `subject_tags`: List of subject tags (max 50 characters per tag)
@@ -78,6 +89,7 @@ Adds new educational content to the system.
 ## Usage Examples
 
 ### Adding Content
+
 ```bash
 soroban contract invoke \
   --id <CONTRACT_ID> \
@@ -92,6 +104,7 @@ soroban contract invoke \
 ```
 
 ### Searching Content
+
 ```bash
 soroban contract invoke \
   --id <CONTRACT_ID> \
@@ -103,14 +116,17 @@ soroban contract invoke \
 ```
 
 Output:
+
 ```json
-[{
-  "content_url": "https://example.com/test",
-  "description": "This is a test content",
-  "id": 1,
-  "subject_tags": ["math"],
-  "title": "Test Content"
-}]
+[
+  {
+    "content_url": "https://example.com/test",
+    "description": "This is a test content",
+    "id": 1,
+    "subject_tags": ["math"],
+    "title": "Test Content"
+  }
+]
 ```
 
 ## Data Structure
