@@ -1,4 +1,4 @@
-name: Soroban Smart Contract CI
+name: Soroban Smart Contracts CI
 
 on:
   push:
