@@ -12,7 +12,7 @@ pub fn mint_credential_token(env: Env, caller: Address, user_id: u64) -> Result<
         .get(&DataKey::User(user_id))
         .ok_or(Error::UserNotFound)?;
     if !user.verified {
-        return Err(Error::UserNotFound);
+        return Err(Error::NotVerified);
     }
 
     // Get next token ID

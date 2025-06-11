@@ -1,4 +1,3 @@
-use crate::credentials::mint_credential_token;
 use crate::error::Error;
 use crate::types::*;
 use soroban_sdk::{Address, Env, String};
@@ -8,7 +7,7 @@ pub fn verify_user(
     caller: Address,
     user_id: u64,
     verification_details: String,
-) -> Result<u64, Error> {
+) -> Result<(), Error> {
     caller.require_auth();
 
     // Verify user exists and is not already verified
@@ -31,8 +30,7 @@ pub fn verify_user(
     user.verified = true;
     env.storage().instance().set(&DataKey::User(user_id), &user);
 
-    // Mint credential token for the user
-    mint_credential_token(env, caller, user_id)
+    Ok(())
 }
 
 pub fn verify_content(

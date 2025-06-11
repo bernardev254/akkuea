@@ -87,7 +87,7 @@ impl ContributorReputation {
         caller: Address,
         user_id: u64,
         verification_details: String,
-    ) -> Result<u64, Error> {
+    ) -> Result<(), Error> {
         verify::verify_user(env, caller, user_id, verification_details)
     }
 
