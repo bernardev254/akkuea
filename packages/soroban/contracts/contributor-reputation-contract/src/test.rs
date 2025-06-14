@@ -21,7 +21,22 @@ fn test_initialize_user() {
 }
 
 #[test]
-fn test_mint_credential_token() {
+#[should_panic(expected = "Error(Auth, InvalidAction)")]
+fn test_initialize_user_unauthorized() {
+    let env = Env::default();
+
+    let contract_id = env.register(ContributorReputation, ());
+    let contract_client = ContributorReputationClient::new(&env, &contract_id);
+
+    let caller = Address::generate(&env);
+    let name = String::from_str(&env, "Bob");
+
+    // Try to initialize without authentication
+    contract_client.initialize_user(&caller, &name);
+}
+
+#[test]
+fn test_mint_credential_token_for_verified() {
     let env = Env::default();
     let caller = Address::generate(&env);
 
@@ -29,7 +44,14 @@ fn test_mint_credential_token() {
     let contract_client = ContributorReputationClient::new(&env, &contract_address);
 
     env.mock_all_auths();
-    let user_id = contract_client.initialize_user(&caller, &String::from_str(&env, "Alice"));
+    let user = String::from_str(&env, "Alice");
+    let user_id = contract_client.initialize_user(&caller, &user);
+
+    // Verify user first
+    let verification_details = String::from_str(&env, "valid credentials");
+    contract_client.verify_user(&caller, &user_id, &verification_details);
+
+    // Now mint the credential token
     let token_id = contract_client.mint_credential_token(&caller, &user_id);
 
     assert_eq!(token_id, 1, "Token ID should be 1");
@@ -51,8 +73,8 @@ fn test_mint_credential_token_non_existent_user() {
 }
 
 #[test]
-#[should_panic(expected = "HostError: Error(Contract, #3)")]
-fn test_mint_credential_token_already_verified() {
+#[should_panic(expected = "HostError: Error(Contract, #4)")]
+fn test_mint_credential_token_for_unverified() {
     let env = Env::default();
     let caller = Address::generate(&env);
 
@@ -61,12 +83,11 @@ fn test_mint_credential_token_already_verified() {
 
     env.mock_all_auths();
     let user_id = contract_client.initialize_user(&caller, &String::from_str(&env, "Alice"));
-    contract_client.mint_credential_token(&caller, &user_id);
     contract_client.mint_credential_token(&caller, &user_id);
 }
 
 #[test]
-fn test_update_reputation() {
+fn test_update_reputation_for_verified() {
     let env = Env::default();
     let caller = Address::generate(&env);
 
@@ -75,6 +96,7 @@ fn test_update_reputation() {
 
     env.mock_all_auths();
     let user_id = contract_client.initialize_user(&caller, &String::from_str(&env, "Alice"));
+    contract_client.verify_user(&caller, &user_id, &String::from_str(&env, "Valid details"));
     contract_client.mint_credential_token(&caller, &user_id);
     contract_client.update_reputation(
         &caller,
@@ -83,6 +105,7 @@ fn test_update_reputation() {
         &100,
     );
 
+    // Check if the reputation was updated correctly
     let score = contract_client.get_reputation(&user_id, &String::from_str(&env, "Mathematics"));
     assert_eq!(score, 100);
 }
@@ -117,6 +140,7 @@ fn test_update_expertise_areas() {
     env.mock_all_auths();
     let user_id = contract_client.initialize_user(&caller, &String::from_str(&env, "Alice"));
     let mut expertise_areas = Map::new(&env);
+
     expertise_areas.set(String::from_str(&env, "Mathematics"), 5);
     expertise_areas.set(String::from_str(&env, "Physics"), 3);
     contract_client.update_expertise_areas(&caller, &user_id, &expertise_areas);
@@ -152,8 +176,8 @@ fn test_update_expertise_areas_non_existent_user() {
 }
 
 #[test]
-#[should_panic(expected = "HostError: Error(Contract, #4)")]
-fn test_verify_user_unverified_caller() {
+#[should_panic(expected = "HostError: Error(Contract, #3)")]
+fn test_reverify_verified_user() {
     let env = Env::default();
     let caller = Address::generate(&env);
 
@@ -162,6 +186,7 @@ fn test_verify_user_unverified_caller() {
 
     env.mock_all_auths();
     let user_id = contract_client.initialize_user(&caller, &String::from_str(&env, "Alice"));
+    contract_client.verify_user(&caller, &user_id, &String::from_str(&env, "Valid details"));
     contract_client.verify_user(&caller, &user_id, &String::from_str(&env, "Valid details"));
 }
 
@@ -175,7 +200,9 @@ fn test_verify_content() {
 
     env.mock_all_auths();
     let user_id = contract_client.initialize_user(&caller, &String::from_str(&env, "Alice"));
+    contract_client.verify_user(&caller, &user_id, &String::from_str(&env, "Valid details"));
     contract_client.mint_credential_token(&caller, &user_id);
+
     let mut expertise_areas = Map::new(&env);
     expertise_areas.set(String::from_str(&env, "Mathematics"), 5);
     contract_client.update_expertise_areas(&caller, &user_id, &expertise_areas);
@@ -200,7 +227,7 @@ fn test_verify_content_unverified_user() {
 }
 
 #[test]
-#[should_panic(expected = "HostError: Error(Contract, #1)")]
+#[should_panic(expected = "HostError: Error(Contract, #4)")]
 fn test_verify_content_no_expertise() {
     let env = Env::default();
     let caller = Address::generate(&env);
@@ -239,4 +266,56 @@ fn test_get_expertise_areas_non_existent_user() {
 
     env.mock_all_auths();
     contract_client.get_expertise_areas(&999);
+}
+
+#[test]
+fn test_verify_user_success() {
+    let env = Env::default();
+    let caller = Address::generate(&env);
+
+    let contract_address = env.register(ContributorReputation, ());
+    let contract_client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    let user_id = contract_client.initialize_user(&caller, &String::from_str(&env, "Alice"));
+    contract_client.verify_user(&caller, &user_id, &String::from_str(&env, "Valid details"));
+    contract_client.mint_credential_token(&caller, &user_id);
+
+    let user = contract_client.get_user(&user_id);
+    assert!(user.verified, "User should be verified");
+}
+
+#[test]
+#[should_panic(expected = "HostError: Error(Contract, #5)")]
+fn test_verify_user_rejection() {
+    let env = Env::default();
+    let caller = Address::generate(&env);
+
+    let contract_address = env.register(ContributorReputation, ());
+    let contract_client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    let user_id = contract_client.initialize_user(&caller, &String::from_str(&env, "Alice"));
+
+    // Attempt to verify without valid or empty details
+    contract_client.verify_user(&caller, &user_id, &String::from_str(&env, ""));
+}
+
+#[test]
+fn test_multiple_tokens_mint_same_user() {
+    let env = Env::default();
+    let caller = Address::generate(&env);
+
+    let contract_address = env.register(ContributorReputation, ());
+    let contract_client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+    let user_id = contract_client.initialize_user(&caller, &String::from_str(&env, "Alice"));
+    contract_client.verify_user(&caller, &user_id, &String::from_str(&env, "Valid details"));
+    contract_client.mint_credential_token(&caller, &user_id);
+
+    // Attempt to remint the token for the same user
+    contract_client.mint_credential_token(&caller, &user_id);
 }
