@@ -89,7 +89,7 @@ export default function LeftSidebar() {
 
   return (
     <aside
-      className={`fixed left-0 top-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-[#000000] shadow-lg 
+      className={`fixed left-0 top-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-[#000000] dark:border-gray-600 border-r shadow-lg 
         transition-all duration-300 ease-in-out
         ${isCollapsed ? 'w-16' : 'w-[256px]'}
         transform md:translate-x-0

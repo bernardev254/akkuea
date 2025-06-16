@@ -139,7 +139,7 @@ export default function RightSidebar() {
 
   return (
     <aside
-      className={`fixed right-0 top-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-[#000000] shadow-lg dark:shadow-gray-900/30
+      className={`fixed right-0 top-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-[#000000] dark:border-gray-600 border-l shadow-lg dark:shadow-gray-900/30
         transition-all duration-300 ease-in-out 
         ${isCollapsed ? 'w-16' : 'w-[256px]'}
         transform md:translate-x-0
