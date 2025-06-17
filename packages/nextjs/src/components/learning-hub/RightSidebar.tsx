@@ -139,7 +139,7 @@ export default function RightSidebar() {
 
   return (
     <aside
-      className={`fixed right-0 top-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-gray-900 shadow-lg dark:shadow-gray-900/30
+      className={`fixed right-0 top-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-[#000000] dark:border-gray-600 border-l shadow-lg dark:shadow-gray-900/30
         transition-all duration-300 ease-in-out 
         ${isCollapsed ? 'w-16' : 'w-[256px]'}
         transform md:translate-x-0
@@ -213,7 +213,7 @@ export default function RightSidebar() {
         // Expanded State
         <div className="h-full flex flex-col">
           <div className="p-4">
-            <h2 className="text-lg font-semibold text-[#0D9488] dark:text-[#0D9488]">Discovery</h2>
+            <h2 className="text-lg font-semibold text-[#0D9488] dark:text-white">Discovery</h2>
           </div>
 
           <div
@@ -223,7 +223,7 @@ export default function RightSidebar() {
             <div className="space-y-6">
               {/* Recommendations Section */}
               <section ref={recommendationsRef}>
-                <h3 className="flex items-center gap-2 text-sm font-medium text-[#0D9488] dark:text-[#0D9488] mb-4">
+                <h3 className="flex items-center gap-2 text-sm font-medium text-[#0D9488] dark:text-white mb-4">
                   <Sparkles size={16} className="text-[#0D9488] dark:text-[#0D9488]" />
                   Recommendations
                 </h3>
@@ -234,7 +234,7 @@ export default function RightSidebar() {
                       key={item.id}
                       className="border border-gray-100 dark:border-gray-800 rounded-lg p-3 
                         hover:border-[#0D9488]/20 dark:hover:border-[#0D9488]/40 
-                        bg-white dark:bg-gray-900 group
+                        bg-white dark:bg-gray-700 group
                         hover:bg-[#0D9488]/5 dark:hover:bg-[#0D9488]/10
                         transform hover:scale-[1.02] hover:shadow-sm
                         transition-all duration-200 cursor-pointer"
@@ -282,8 +282,8 @@ export default function RightSidebar() {
 
               {/* Trending Section */}
               <section ref={trendingRef}>
-                <h3 className="flex items-center gap-2 text-sm font-medium text-[#0D9488] dark:text-[#0D9488] mb-4">
-                  <Flame size={16} className="text-[#0D9488] dark:text-[#0D9488]" />
+                <h3 className="flex items-center gap-2 text-sm font-medium text-[#0D9488] dark:text-white mb-4">
+                  <Flame size={16} className="text-[#0D9488] dark:text-white" />
                   Trending
                 </h3>
 
@@ -293,7 +293,7 @@ export default function RightSidebar() {
                       key={item.id}
                       className="border border-gray-100 dark:border-gray-800 rounded-lg p-3 
                         hover:border-[#0D9488]/20 dark:hover:border-[#0D9488]/40 
-                        bg-white dark:bg-gray-900 group
+                        bg-white dark:bg-gray-700 group
                         hover:bg-[#0D9488]/5 dark:hover:bg-[#0D9488]/10
                         transform hover:scale-[1.02] hover:shadow-sm
                         transition-all duration-200 cursor-pointer"
