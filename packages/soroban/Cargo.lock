@@ -262,13 +262,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "contract1"
-version = "0.0.0"
-dependencies = [
- "soroban-sdk",
-]
-
-[[package]]
 name = "contributor-reputation-contract"
 version = "0.0.0"
 dependencies = [
@@ -547,6 +540,13 @@ name = "ethnum"
 version = "1.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca81e6b4777c89fd810c25a4be2b1bd93ea034fbe58e6a75216a34c6b82c539b"
+
+[[package]]
+name = "example-of-contract"
+version = "0.0.0"
+dependencies = [
+ "soroban-sdk",
+]
 
 [[package]]
 name = "ff"
@@ -1453,7 +1453,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "tipping-rewards"
+name = "tipping-reward"
 version = "0.0.0"
 dependencies = [
  "soroban-sdk",
