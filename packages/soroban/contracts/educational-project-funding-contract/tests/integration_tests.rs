@@ -1,7 +1,7 @@
 mod test_helpers;
 
 use soroban_sdk::{testutils::Address as _, Address, String, Vec};
-use akkuea_funding_contract::{CrowdfundContract, CrowdfundContractClient};
+use educational_project_funding_contract::{CrowdfundContract, CrowdfundContractClient};
 use test_helpers::helpers::setup_minimal_env;
 
 #[cfg(test)]

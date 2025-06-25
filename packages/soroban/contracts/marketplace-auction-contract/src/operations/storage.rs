@@ -83,6 +83,7 @@ pub fn add_to_user_selling(env: &Env, seller: &Address, auction_id: &BytesN<32>)
 }
 
 // Add auction to user's bidding list
+#[allow(dead_code)]
 pub fn add_to_user_bidding(env: &Env, bidder: &Address, auction_id: &BytesN<32>) {
     let user_key = StorageKey::UserBidding(bidder.clone());
     let mut user_auctions: Vec<BytesN<32>> = env

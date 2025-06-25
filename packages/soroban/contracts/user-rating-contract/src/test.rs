@@ -18,7 +18,7 @@ fn setup_test() -> (
     BytesN<32>, // transaction_id
 ) {
     let env = Env::default();
-    let contract_id = env.register_contract(None, RatingSystem);
+    let contract_id = env.register(RatingSystem, ());
     let client = RatingSystemClient::new(&env, &contract_id);
 
     let rater = Address::generate(&env);

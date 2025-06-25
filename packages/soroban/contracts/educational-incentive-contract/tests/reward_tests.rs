@@ -1,6 +1,6 @@
 #![cfg(test)]
 
-use reward_system::{RewardSystem, RewardSystemClient, RewardType};
+use educational_incentive_contract::{RewardSystem, RewardSystemClient, RewardType};
 use soroban_sdk::{
     testutils::{Address as _, Events},
     Address, Env,
@@ -149,7 +149,7 @@ fn test_reward_invalid_amount() {
 
         assert_eq!(
             result.err().unwrap(),
-            Ok(reward_system::Error::InvalidAmount),
+            Ok(educational_incentive_contract::Error::InvalidAmount),
             "Expected InvalidAmount error for amount {}",
             amount
         );

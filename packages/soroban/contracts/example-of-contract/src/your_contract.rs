@@ -2,30 +2,36 @@ use soroban_sdk::{contract, contractimpl, Address, Bytes, Env, Symbol, Map, U256
 
 // Define the contract structure
 #[contract]
+#[allow(dead_code)]
 pub struct YourContract;
 
 // Helper functions to generate storage keys
 // These keys are used to store and retrieve data in the contract's persistent storage
+#[allow(dead_code)]
 fn get_greeting_key(env: &Env) -> Symbol {
     // Create a new `Symbol` for the greeting key
     Symbol::new(env, "greeting")
 }
 
+#[allow(dead_code)]
 fn get_premium_key(env: &Env) -> Symbol {
     // Create a new `Symbol` for the premium status key
     Symbol::new(env, "premium")
 }
 
+#[allow(dead_code)]
 fn get_total_counter_key(env: &Env) -> Symbol {
     // Create a new `Symbol` for the total counter key
     Symbol::new(env, "total_counter")
 }
 
+#[allow(dead_code)]
 fn get_user_greeting_counter_key(env: &Env) -> Symbol {
     // Create a new `Symbol` for the user-specific greeting counter key
     Symbol::new(env, "user_greeting_counter")
 }
 
+#[allow(dead_code)]
 fn get_owner_key(env: &Env) -> Symbol {
     // Create a new `Symbol` for the owner key
     Symbol::new(env, "owner")
@@ -33,6 +39,7 @@ fn get_owner_key(env: &Env) -> Symbol {
 
 // Implementation of the contract logic
 #[contractimpl]
+#[allow(dead_code)]
 impl YourContract {
     // Initialize the contract
     // This function sets up the initial state of the contract

@@ -1,4 +1,4 @@
-use super::storage::{add_to_user_bidding, get_auction, save_auction};
+use super::storage::{get_auction, save_auction};
 use crate::datatype::{AuctionStatus, Bid};
 use soroban_sdk::{Address, BytesN, Env, Symbol};
 
