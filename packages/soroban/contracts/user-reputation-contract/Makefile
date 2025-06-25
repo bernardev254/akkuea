@@ -14,3 +14,13 @@ fmt:
 
 clean:
 	cargo clean
+
+check-snapshots:
+	cargo test -- --nocapture
+
+build-optimized:
+	CARGO_TARGET_DIR=target/optimized cargo build \
+		--target wasm32-unknown-unknown \
+		--release \
+		-Z build-std=std,panic_abort \
+		-Z build-std-features=panic_immediate_abort
