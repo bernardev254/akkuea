@@ -40,4 +40,4 @@ pub fn validate_content(content: &Content) -> Result<(), Error> {
 
 pub fn is_valid_tag(tag: &String) -> bool {
     !tag.is_empty() && tag.len() <= 50
-} 
+}

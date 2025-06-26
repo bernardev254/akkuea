@@ -30,34 +30,47 @@ pub fn set_admin(env: &Env, admin: &Address) {
 
 // Educator stats management
 pub fn get_educator_stats(env: &Env, educator: &Address) -> Option<EducatorStats> {
-    env.storage().instance().get(&get_educator_stats_key(env, educator))
+    env.storage()
+        .instance()
+        .get(&get_educator_stats_key(env, educator))
 }
 
 pub fn set_educator_stats(env: &Env, educator: &Address, stats: &EducatorStats) {
-    env.storage().instance().set(&get_educator_stats_key(env, educator), stats);
+    env.storage()
+        .instance()
+        .set(&get_educator_stats_key(env, educator), stats);
 }
 
 // Tip history management
 pub fn get_tip_history(env: &Env, educator: &Address) -> Option<TipHistory> {
-    env.storage().instance().get(&get_tip_history_key(env, educator))
+    env.storage()
+        .instance()
+        .get(&get_tip_history_key(env, educator))
 }
 
 pub fn set_tip_history(env: &Env, educator: &Address, history: &TipHistory) {
-    env.storage().instance().set(&get_tip_history_key(env, educator), history);
+    env.storage()
+        .instance()
+        .set(&get_tip_history_key(env, educator), history);
 }
 
 // Top educators management
 pub fn get_top_educators(env: &Env) -> Vec<(Address, EducatorStats)> {
-    env.storage().instance().get(&get_top_educators_key(env)).unwrap_or(Vec::new(env))
+    env.storage()
+        .instance()
+        .get(&get_top_educators_key(env))
+        .unwrap_or(Vec::new(env))
 }
 
 pub fn set_top_educators(env: &Env, educators: &Vec<(Address, EducatorStats)>) {
-    env.storage().instance().set(&get_top_educators_key(env), educators);
+    env.storage()
+        .instance()
+        .set(&get_top_educators_key(env), educators);
 }
 
 pub fn update_top_educators(env: &Env, educator: &Address, stats: &EducatorStats) {
     let mut top_educators = get_top_educators(env);
-    
+
     // Find if educator already exists and remove it
     for i in 0..top_educators.len() {
         let (addr, _) = top_educators.get(i).unwrap();
@@ -66,7 +79,7 @@ pub fn update_top_educators(env: &Env, educator: &Address, stats: &EducatorStats
             break;
         }
     }
-    
+
     // Find the correct position to insert based on total_amount
     let mut insert_idx = 0;
     for i in 0..top_educators.len() {
@@ -77,9 +90,9 @@ pub fn update_top_educators(env: &Env, educator: &Address, stats: &EducatorStats
         }
         insert_idx = i + 1;
     }
-    
+
     // Insert the educator at the correct position
     top_educators.insert(insert_idx, (educator.clone(), stats.clone()));
-    
+
     set_top_educators(env, &top_educators);
 }

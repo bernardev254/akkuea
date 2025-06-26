@@ -13,8 +13,13 @@ pub fn emit_tip_event(env: &Env, tip: &Tip) {
     env.events().publish(topics, data);
 }
 
-pub fn emit_educator_stats_updated(env: &Env, educator: &Address, total_tips: i128, tip_count: u32) {
+pub fn emit_educator_stats_updated(
+    env: &Env,
+    educator: &Address,
+    total_tips: i128,
+    tip_count: u32,
+) {
     let topics = (Symbol::new(env, "educator_stats_updated"), educator.clone());
     let data = (total_tips, tip_count);
     env.events().publish(topics, data);
-} 
+}

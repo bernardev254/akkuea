@@ -1,19 +1,19 @@
 #![no_std]
 
-use soroban_sdk::{
-    contract, contractimpl, Address, Env, Vec, String,
-};
+use soroban_sdk::{contract, contractimpl, Address, Env, String, Vec};
 
-mod types;
-mod storage;
 mod errors;
 mod events;
+mod storage;
 mod test;
+mod types;
 
-use types::{Tip, EducatorStats, TipHistory};
-use storage::{get_educator_stats, set_educator_stats, get_tip_history, set_tip_history, update_top_educators};
 use errors::TippingError;
-use events::{emit_tip_event, emit_educator_stats_updated};
+use events::{emit_educator_stats_updated, emit_tip_event};
+use storage::{
+    get_educator_stats, get_tip_history, set_educator_stats, set_tip_history, update_top_educators,
+};
+use types::{EducatorStats, Tip, TipHistory};
 
 #[contract]
 pub struct TippingRewardContract;
@@ -106,7 +106,7 @@ impl TippingRewardContract {
     pub fn get_top_educators(env: &Env, limit: u32) -> Vec<(Address, EducatorStats)> {
         let top_educators = storage::get_top_educators(env);
         let mut result = Vec::new(env);
-        
+
         // Convert Map to Vec
         let mut educators_vec = Vec::new(env);
         for (address, stats) in top_educators.iter() {
@@ -119,7 +119,7 @@ impl TippingRewardContract {
         } else {
             educators_vec.len() as u32
         };
-        
+
         // Add educators to result
         for i in 0..actual_limit {
             if let Some((address, stats)) = educators_vec.get(i) {

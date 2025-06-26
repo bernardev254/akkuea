@@ -1,9 +1,4 @@
-use soroban_sdk::{
-    Env,
-    String as SorobanString,
-    Vec,
-    Address,
-};
+use soroban_sdk::{Address, Env, String as SorobanString, Vec};
 
 use crate::ContentSearchContract;
 
@@ -23,28 +18,35 @@ fn test_add_and_search_content() {
     // Add content
     let title = SorobanString::from_str(&env, "Blockchain Basics");
     let description = SorobanString::from_str(&env, "Introduction to blockchain technology");
-    let tags = Vec::from_array(&env, [
-        SorobanString::from_str(&env, "blockchain"),
-        SorobanString::from_str(&env, "crypto"),
-        SorobanString::from_str(&env, "technology"),
-    ]);
+    let tags = Vec::from_array(
+        &env,
+        [
+            SorobanString::from_str(&env, "blockchain"),
+            SorobanString::from_str(&env, "crypto"),
+            SorobanString::from_str(&env, "technology"),
+        ],
+    );
     let url = SorobanString::from_str(&env, "https://example.com/blockchain-basics");
 
-    let _content_id = env.as_contract(&contract_id, || {
-        ContentSearchContract::add_content(
-            env.clone(),
-            title.clone(),
-            description.clone(),
-            tags.clone(),
-            url.clone(),
-        )
-    }).unwrap();
+    let _content_id = env
+        .as_contract(&contract_id, || {
+            ContentSearchContract::add_content(
+                env.clone(),
+                title.clone(),
+                description.clone(),
+                tags.clone(),
+                url.clone(),
+            )
+        })
+        .unwrap();
 
     // Search content
     let search_term = SorobanString::from_str(&env, "blockchain");
-    let results = env.as_contract(&contract_id, || {
-        ContentSearchContract::search_content(env.clone(), search_term)
-    }).unwrap();
+    let results = env
+        .as_contract(&contract_id, || {
+            ContentSearchContract::search_content(env.clone(), search_term)
+        })
+        .unwrap();
 
     assert_eq!(results.len(), 1);
     let content = results.get_unchecked(0);
@@ -101,22 +103,26 @@ fn test_case_insensitive_search() {
     let contract_id = setup_contract(&env);
 
     // Add content with uppercase tag
-    let _content_id = env.as_contract(&contract_id, || {
-        ContentSearchContract::add_content(
-            env.clone(),
-            SorobanString::from_str(&env, "Blockchain Basics"),
-            SorobanString::from_str(&env, "Description"),
-            Vec::from_array(&env, [SorobanString::from_str(&env, "blockchain")]),
-            SorobanString::from_str(&env, "https://example.com"),
-        )
-    }).unwrap();
+    let _content_id = env
+        .as_contract(&contract_id, || {
+            ContentSearchContract::add_content(
+                env.clone(),
+                SorobanString::from_str(&env, "Blockchain Basics"),
+                SorobanString::from_str(&env, "Description"),
+                Vec::from_array(&env, [SorobanString::from_str(&env, "blockchain")]),
+                SorobanString::from_str(&env, "https://example.com"),
+            )
+        })
+        .unwrap();
 
     // Search with same case
-    let results = env.as_contract(&contract_id, || {
-        ContentSearchContract::search_content(
-            env.clone(),
-            SorobanString::from_str(&env, "blockchain")
-        )
-    }).unwrap();
+    let results = env
+        .as_contract(&contract_id, || {
+            ContentSearchContract::search_content(
+                env.clone(),
+                SorobanString::from_str(&env, "blockchain"),
+            )
+        })
+        .unwrap();
     assert_eq!(results.len(), 1);
-} 
+}

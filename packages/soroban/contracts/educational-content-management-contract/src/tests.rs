@@ -1,7 +1,7 @@
 use crate::{TokenizedEducationalContent, TokenizedEducationalContentClient};
 use soroban_sdk::{
     testutils::{Address as AddressTrait, BytesN as _},
-    Address, BytesN, Env, String, vec,
+    vec, Address, BytesN, Env, String,
 };
 
 #[test]
@@ -24,7 +24,7 @@ fn test_publish_content() {
 
     // Publish content
     let content_id = client.publish_content(&creator, &title, &content_hash, &subject_tags);
-    
+
     // Get content and verify
     let content = client.get_content(&content_id);
     assert_eq!(content.id, content_id);
@@ -43,10 +43,10 @@ fn test_multiple_content_publish() {
     let client = TokenizedEducationalContentClient::new(&env, &contract_id);
 
     let creator = Address::generate(&env);
-    
+
     // Configure authentication for the creator
     env.mock_all_auths();
-    
+
     // Publish first content
     let title1 = String::from_str(&env, "Introduction to Smart Contracts");
     let content_hash1 = BytesN::random(&env);
@@ -56,7 +56,7 @@ fn test_multiple_content_publish() {
         String::from_str(&env, "beginner"),
     ];
     let content_id1 = client.publish_content(&creator, &title1, &content_hash1, &subject_tags1);
-    
+
     // Publish second content
     let title2 = String::from_str(&env, "Advanced Smart Contract Development");
     let content_hash2 = BytesN::random(&env);
@@ -66,14 +66,14 @@ fn test_multiple_content_publish() {
         String::from_str(&env, "advanced"),
     ];
     let content_id2 = client.publish_content(&creator, &title2, &content_hash2, &subject_tags2);
-    
+
     // Verify IDs are sequential
     assert_eq!(content_id2, content_id1 + 1);
-    
+
     // Verify both contents can be retrieved
     let content1 = client.get_content(&content_id1);
     let content2 = client.get_content(&content_id2);
-    
+
     assert_eq!(content1.title, title1);
     assert_eq!(content2.title, title2);
 }
@@ -88,13 +88,13 @@ fn test_publish_empty_tags() {
     let title = String::from_str(&env, "Content with no tags");
     let content_hash = BytesN::random(&env);
     let subject_tags = vec![&env]; // Empty tags vector
-    
+
     // Configure authentication for the creator
     env.mock_all_auths();
-    
+
     // Publish content with empty tags
     let content_id = client.publish_content(&creator, &title, &content_hash, &subject_tags);
-    
+
     // Verify content was published with empty tags
     let content = client.get_content(&content_id);
     assert_eq!(content.subject_tags, subject_tags);
@@ -113,10 +113,7 @@ fn test_upvote_content() {
     let creator = Address::generate(&env);
     let title = String::from_str(&env, "Blockchain Basics");
     let content_hash = BytesN::random(&env);
-    let subject_tags = vec![
-        &env,
-        String::from_str(&env, "blockchain"),
-    ];
+    let subject_tags = vec![&env, String::from_str(&env, "blockchain")];
     let content_id = client.publish_content(&creator, &title, &content_hash, &subject_tags);
 
     // Upvote content
@@ -161,7 +158,7 @@ fn test_multiple_upvotes() {
         let upvotes = client.upvote_content(&content_id, &voter);
         assert_eq!(upvotes, i + 1);
     }
-    
+
     // Verify final upvote count
     let content = client.get_content(&content_id);
     assert_eq!(content.upvotes, expected_upvotes);
@@ -181,16 +178,13 @@ fn test_duplicate_upvote() {
     let creator = Address::generate(&env);
     let title = String::from_str(&env, "Smart Contracts 101");
     let content_hash = BytesN::random(&env);
-    let subject_tags = vec![
-        &env,
-        String::from_str(&env, "smart contracts"),
-    ];
+    let subject_tags = vec![&env, String::from_str(&env, "smart contracts")];
     let content_id = client.publish_content(&creator, &title, &content_hash, &subject_tags);
 
     // Upvote content
     let voter = Address::generate(&env);
     client.upvote_content(&content_id, &voter);
-    
+
     // Try to upvote again - should panic
     client.upvote_content(&content_id, &voter);
 }
@@ -257,10 +251,7 @@ fn test_multiple_verifications() {
     let creator = Address::generate(&env);
     let title = String::from_str(&env, "Cryptocurrency Fundamentals");
     let content_hash = BytesN::random(&env);
-    let subject_tags = vec![
-        &env,
-        String::from_str(&env, "cryptocurrency"),
-    ];
+    let subject_tags = vec![&env, String::from_str(&env, "cryptocurrency")];
     let content_id = client.publish_content(&creator, &title, &content_hash, &subject_tags);
 
     // First verification
@@ -306,10 +297,7 @@ fn test_creator_can_verify_own_content() {
     let creator = Address::generate(&env);
     let title = String::from_str(&env, "Self-verified Content");
     let content_hash = BytesN::random(&env);
-    let subject_tags = vec![
-        &env,
-        String::from_str(&env, "self-verified"),
-    ];
+    let subject_tags = vec![&env, String::from_str(&env, "self-verified")];
     let content_id = client.publish_content(&creator, &title, &content_hash, &subject_tags);
 
     // Creator verifies their own content
@@ -333,7 +321,7 @@ fn test_content_with_long_title_and_many_tags() {
     let creator = Address::generate(&env);
     let long_title = String::from_str(&env, "This is a very long title for educational content that tests the storage and retrieval of lengthy metadata strings in the Soroban smart contract platform");
     let content_hash = BytesN::random(&env);
-    
+
     // Create many tags
     let mut subject_tags = vec![&env];
     for i in 1..20 {
@@ -349,7 +337,7 @@ fn test_content_with_long_title_and_many_tags() {
                 7 => String::from_str(&env, "tag07"),
                 8 => String::from_str(&env, "tag08"),
                 9 => String::from_str(&env, "tag09"),
-                _ => unreachable!()
+                _ => unreachable!(),
             }
         } else {
             match i {
@@ -363,16 +351,16 @@ fn test_content_with_long_title_and_many_tags() {
                 17 => String::from_str(&env, "tag17"),
                 18 => String::from_str(&env, "tag18"),
                 19 => String::from_str(&env, "tag19"),
-                _ => unreachable!()
+                _ => unreachable!(),
             }
         };
-        
+
         subject_tags.push_back(full_tag);
     }
-    
+
     // Publish content with long title and many tags
     let content_id = client.publish_content(&creator, &long_title, &content_hash, &subject_tags);
-    
+
     // Verify content was stored correctly
     let content = client.get_content(&content_id);
     assert_eq!(content.title, long_title);
@@ -392,7 +380,7 @@ fn test_multiple_content_and_popularity_tracking() {
     // Create 5 different content entries
     let creator = Address::generate(&env);
     let mut content_ids = vec![&env];
-    
+
     for i in 0..5 {
         // Replace concatenation with static strings
         let title = match i {
@@ -401,65 +389,62 @@ fn test_multiple_content_and_popularity_tracking() {
             2 => String::from_str(&env, "Educational Content 2"),
             3 => String::from_str(&env, "Educational Content 3"),
             4 => String::from_str(&env, "Educational Content 4"),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
-        
+
         let content_hash = BytesN::random(&env);
-        let subject_tags = vec![
-            &env,
-            String::from_str(&env, "education"),
-        ];
-        
+        let subject_tags = vec![&env, String::from_str(&env, "education")];
+
         let content_id = client.publish_content(&creator, &title, &content_hash, &subject_tags);
         content_ids.push_back(content_id);
     }
-    
+
     // Different voting patterns for each content:
     // Content 0: 5 votes
     // Content 1: 3 votes
     // Content 2: 0 votes
     // Content 3: 10 votes
     // Content 4: 1 vote
-    
+
     // Create a pool of voters
     let mut voters = vec![&env];
     for _ in 0..15 {
         voters.push_back(Address::generate(&env));
     }
-    
+
     // Content 0: 5 votes (voters 0-4)
     for i in 0..5 {
         client.upvote_content(&content_ids.get(0).unwrap(), &voters.get(i).unwrap());
     }
-    
+
     // Content 1: 3 votes (voters 5-7)
     for i in 5..8 {
         client.upvote_content(&content_ids.get(1).unwrap(), &voters.get(i).unwrap());
     }
-    
+
     // Content 2: 0 votes (skip)
-    
+
     // Content 3: 10 votes (voters 0-9)
     for i in 0..10 {
         client.upvote_content(&content_ids.get(3).unwrap(), &voters.get(i).unwrap());
     }
-    
+
     // Content 4: 1 vote (voter 10)
     client.upvote_content(&content_ids.get(4).unwrap(), &voters.get(10).unwrap());
-    
+
     // Verify vote counts
     let content0 = client.get_content(&content_ids.get(0).unwrap());
     let content1 = client.get_content(&content_ids.get(1).unwrap());
     let content2 = client.get_content(&content_ids.get(2).unwrap());
     let content3 = client.get_content(&content_ids.get(3).unwrap());
     let content4 = client.get_content(&content_ids.get(4).unwrap());
-    
+
     assert_eq!(content0.upvotes, 5);
     assert_eq!(content1.upvotes, 3);
     assert_eq!(content2.upvotes, 0);
     assert_eq!(content3.upvotes, 10);
     assert_eq!(content4.upvotes, 1);
-    
+
     // The most popular content should be content3
     assert!(content3.upvotes > content0.upvotes);
     assert!(content3.upvotes > content1.upvotes);
@@ -485,58 +470,55 @@ fn test_verify_before_and_after_upvotes() {
         String::from_str(&env, "testing"),
         String::from_str(&env, "verification"),
     ];
-    
+
     let content_id = client.publish_content(&creator, &title, &content_hash, &subject_tags);
-    
+
     // Scenario 1: Verify first, then upvote
     let verifier = Address::generate(&env);
     client.verify_content(&content_id, &verifier);
-    
+
     // Check content is verified
     let content = client.get_content(&content_id);
     assert_eq!(content.is_verified, true);
     assert_eq!(content.upvotes, 0);
-    
+
     // Now add some upvotes
     let voters = [
         Address::generate(&env),
         Address::generate(&env),
         Address::generate(&env),
     ];
-    
+
     for voter in &voters {
         client.upvote_content(&content_id, voter);
     }
-    
+
     // Verify upvotes were added and verification status maintained
     let content_after_votes = client.get_content(&content_id);
     assert_eq!(content_after_votes.is_verified, true);
     assert_eq!(content_after_votes.upvotes, 3);
-    
+
     // Scenario 2: New content - upvote first, then verify
     let title2 = String::from_str(&env, "Upvotes before Verification");
     let content_hash2 = BytesN::random(&env);
     let content_id2 = client.publish_content(&creator, &title2, &content_hash2, &subject_tags);
-    
+
     // Add upvotes first
-    let voters2 = [
-        Address::generate(&env),
-        Address::generate(&env),
-    ];
-    
+    let voters2 = [Address::generate(&env), Address::generate(&env)];
+
     for voter in &voters2 {
         client.upvote_content(&content_id2, voter);
     }
-    
+
     // Check content has upvotes but is not verified
     let content2 = client.get_content(&content_id2);
     assert_eq!(content2.is_verified, false);
     assert_eq!(content2.upvotes, 2);
-    
+
     // Now verify the content
     let verifier2 = Address::generate(&env);
     client.verify_content(&content_id2, &verifier2);
-    
+
     // Check content is now verified and upvotes remain
     let content2_after_verify = client.get_content(&content_id2);
     assert_eq!(content2_after_verify.is_verified, true);
@@ -555,31 +537,31 @@ fn test_complex_workflow() {
     // 1. Create several content entries
     let creator1 = Address::generate(&env);
     let creator2 = Address::generate(&env);
-    
+
     // Content 1
     let content_id1 = client.publish_content(
-        &creator1, 
-        &String::from_str(&env, "Solidity Security"), 
+        &creator1,
+        &String::from_str(&env, "Solidity Security"),
         &BytesN::random(&env),
         &vec![
             &env,
             String::from_str(&env, "solidity"),
             String::from_str(&env, "security"),
-        ]
+        ],
     );
-    
+
     // Content 2
     let content_id2 = client.publish_content(
-        &creator2, 
-        &String::from_str(&env, "Rust for Blockchain"), 
+        &creator2,
+        &String::from_str(&env, "Rust for Blockchain"),
         &BytesN::random(&env),
         &vec![
             &env,
             String::from_str(&env, "rust"),
             String::from_str(&env, "blockchain"),
-        ]
+        ],
     );
-    
+
     // 2. Upvote both contents
     let voters = [
         Address::generate(&env),
@@ -588,29 +570,29 @@ fn test_complex_workflow() {
         Address::generate(&env),
         Address::generate(&env),
     ];
-    
+
     // Vote for content 1 (3 votes)
     client.upvote_content(&content_id1, &voters[0]);
     client.upvote_content(&content_id1, &voters[1]);
     client.upvote_content(&content_id1, &voters[2]);
-    
+
     // Vote for content 2 (2 votes)
     client.upvote_content(&content_id2, &voters[3]);
     client.upvote_content(&content_id2, &voters[4]);
-    
+
     // 3. Verify only content 2
     let verifier = Address::generate(&env);
     client.verify_content(&content_id2, &verifier);
-    
+
     // 4. Retrieve and check both contents
     let content1 = client.get_content(&content_id1);
     let content2 = client.get_content(&content_id2);
-    
+
     // Content 1 should have 3 upvotes and not be verified
     assert_eq!(content1.upvotes, 3);
     assert_eq!(content1.is_verified, false);
-    
+
     // Content 2 should have 2 upvotes and be verified
     assert_eq!(content2.upvotes, 2);
     assert_eq!(content2.is_verified, true);
-} 
+}

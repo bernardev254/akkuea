@@ -5,9 +5,7 @@ use soroban_sdk::{
     Address, Env, String, Vec,
 };
 
-use crate::{
-    TippingRewardContract, TippingRewardContractClient,
-};
+use crate::{TippingRewardContract, TippingRewardContractClient};
 
 fn create_contract(e: &Env) -> TippingRewardContractClient {
     let contract_id = e.register(TippingRewardContract, ());
@@ -90,11 +88,11 @@ fn test_get_top_educators() {
     let top_educators = client.get_top_educators(&2);
 
     assert_eq!(top_educators.len(), 2);
-    
+
     // Verify amounts are in descending order
     let (_, stats1) = top_educators.get(0).unwrap();
     let (_, stats2) = top_educators.get(1).unwrap();
-    
+
     assert_eq!(stats1.total_amount, 200);
     assert_eq!(stats2.total_amount, 150);
     assert_eq!(stats1.tip_count, 1);
@@ -103,10 +101,10 @@ fn test_get_top_educators() {
     // Verify the addresses are either recipient2 or recipient3
     let (addr1, _) = top_educators.get(0).unwrap();
     let (addr2, _) = top_educators.get(1).unwrap();
-    
+
     assert!(
-        (addr1 == recipient2 && addr2 == recipient3) ||
-        (addr1 == recipient3 && addr2 == recipient2)
+        (addr1 == recipient2 && addr2 == recipient3)
+            || (addr1 == recipient3 && addr2 == recipient2)
     );
 }
 
@@ -140,7 +138,7 @@ fn test_multiple_tips_same_educator() {
 
     // Send first tip
     client.send_tip(&sender, &recipient, &100, &token, &None);
-    
+
     // Send second tip
     client.send_tip(&sender, &recipient, &200, &token, &None);
 
@@ -152,10 +150,10 @@ fn test_multiple_tips_same_educator() {
     // Verify tip history has both tips
     let history = client.get_tip_history(&recipient).unwrap();
     assert_eq!(history.tips.len(), 2);
-    
+
     let first_tip = history.tips.get(0).unwrap();
     assert_eq!(first_tip.amount, 100);
-    
+
     let second_tip = history.tips.get(1).unwrap();
     assert_eq!(second_tip.amount, 200);
 }
@@ -186,7 +184,7 @@ fn test_get_top_educators_with_limit_larger_than_educators() {
 
     let top_educators = client.get_top_educators(&5);
     assert_eq!(top_educators.len(), 1);
-    
+
     let (addr, stats) = top_educators.get(0).unwrap();
     assert_eq!(addr, recipient);
     assert_eq!(stats.total_amount, 100);
@@ -238,11 +236,11 @@ fn test_multiple_tokens() {
     // Verify tip history has both tips with correct tokens
     let history = client.get_tip_history(&recipient).unwrap();
     assert_eq!(history.tips.len(), 2);
-    
+
     let first_tip = history.tips.get(0).unwrap();
     assert_eq!(first_tip.token, token1);
     assert_eq!(first_tip.amount, 100);
-    
+
     let second_tip = history.tips.get(1).unwrap();
     assert_eq!(second_tip.token, token2);
     assert_eq!(second_tip.amount, 200);
@@ -268,11 +266,11 @@ fn test_multiple_senders() {
     // Verify tip history has both tips with correct senders
     let history = client.get_tip_history(&recipient).unwrap();
     assert_eq!(history.tips.len(), 2);
-    
+
     let first_tip = history.tips.get(0).unwrap();
     assert_eq!(first_tip.from, sender1);
     assert_eq!(first_tip.amount, 100);
-    
+
     let second_tip = history.tips.get(1).unwrap();
     assert_eq!(second_tip.from, sender2);
     assert_eq!(second_tip.amount, 200);
@@ -293,20 +291,21 @@ fn test_tip_timestamps() {
 
     // Send first tip
     client.send_tip(&sender, &recipient, &100, &token, &None);
-    
+
     // Advance time
-    e.ledger().with_mut(|l| l.timestamp = initial_timestamp + 1000);
-    
+    e.ledger()
+        .with_mut(|l| l.timestamp = initial_timestamp + 1000);
+
     // Send second tip
     client.send_tip(&sender, &recipient, &200, &token, &None);
 
     // Verify timestamps in history
     let history = client.get_tip_history(&recipient).unwrap();
     assert_eq!(history.tips.len(), 2);
-    
+
     let first_tip = history.tips.get(0).unwrap();
     assert_eq!(first_tip.timestamp, initial_timestamp);
-    
+
     let second_tip = history.tips.get(1).unwrap();
     assert_eq!(second_tip.timestamp, initial_timestamp + 1000);
 
@@ -357,7 +356,7 @@ fn test_update_existing_educator() {
 
     // Send initial tip
     client.send_tip(&sender, &recipient, &100, &token, &None);
-    
+
     // Send higher tip to same recipient
     client.send_tip(&sender, &recipient, &300, &token, &None);
 
@@ -394,7 +393,7 @@ fn test_tied_amounts() {
     // Verify top educators
     let top_educators = client.get_top_educators(&2);
     assert_eq!(top_educators.len(), 2);
-    
+
     // Both should have the same amount
     let (_, stats1) = top_educators.get(0).unwrap();
     let (_, stats2) = top_educators.get(1).unwrap();
@@ -425,7 +424,7 @@ fn test_update_lower_amount() {
     // Verify top educators order
     let top_educators = client.get_top_educators(&2);
     assert_eq!(top_educators.len(), 2);
-    
+
     // Second recipient should now be first
     let (addr1, stats1) = top_educators.get(0).unwrap();
     let (addr2, stats2) = top_educators.get(1).unwrap();
@@ -461,7 +460,7 @@ fn test_multiple_updates_same_educator() {
     // Verify tip history has all tips
     let history = client.get_tip_history(&recipient).unwrap();
     assert_eq!(history.tips.len(), 4);
-    
+
     // Verify amounts in history
     assert_eq!(history.tips.get(0).unwrap().amount, 100);
     assert_eq!(history.tips.get(1).unwrap().amount, 200);

@@ -2,9 +2,9 @@
 use soroban_sdk::{contract, contractimpl, Address, BytesN, Env, String, Vec};
 
 mod publish;
-mod vote;
-mod verify;
 mod storage;
+mod verify;
+mod vote;
 
 pub use crate::storage::Content;
 
@@ -16,7 +16,7 @@ impl TokenizedEducationalContent {
     pub fn publish_content(
         env: Env,
         creator: Address,
-        title: String, 
+        title: String,
         content_hash: BytesN<32>,
         subject_tags: Vec<String>,
     ) -> u64 {
@@ -40,4 +40,4 @@ impl TokenizedEducationalContent {
 }
 
 #[cfg(test)]
-mod tests; 
+mod tests;

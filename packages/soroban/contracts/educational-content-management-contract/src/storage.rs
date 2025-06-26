@@ -39,9 +39,10 @@ pub fn save_content(env: &Env, content: &Content) {
 // Retrieve content from contract storage
 pub fn get_content(env: &Env, content_id: u64) -> Content {
     let key = DataKey::Content(content_id);
-    env.storage().instance().get(&key).unwrap_or_else(|| {
-        panic!("content with ID {} not found", content_id)
-    })
+    env.storage()
+        .instance()
+        .get(&key)
+        .unwrap_or_else(|| panic!("content with ID {} not found", content_id))
 }
 
 // Record a user's vote for a specific content
@@ -54,4 +55,4 @@ pub fn record_user_vote(env: &Env, voter: Address, content_id: u64) {
 pub fn has_user_voted(env: &Env, voter: &Address, content_id: u64) -> bool {
     let key = DataKey::UserVotes(voter.clone(), content_id);
     env.storage().instance().has(&key)
-} 
+}

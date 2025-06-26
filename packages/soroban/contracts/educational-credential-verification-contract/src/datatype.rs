@@ -1,4 +1,4 @@
-use soroban_sdk::{Address, String, Vec, contracttype};
+use soroban_sdk::{contracttype, Address, String, Vec};
 
 /// Educator profile data structure
 /// Contains all information about an educator including their credentials and verification status
@@ -59,4 +59,4 @@ pub struct Review {
     pub educator: Address,
     pub rating: u32,
     pub timestamp: u64,
-} 
+}

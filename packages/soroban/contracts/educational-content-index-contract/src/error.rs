@@ -1,4 +1,4 @@
-use soroban_sdk::{contracterror, contracttype, String, Env};
+use soroban_sdk::{contracterror, contracttype, Env, String};
 
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -27,4 +27,4 @@ impl From<Error> for CustomError {
             message: String::from_str(&env, message),
         }
     }
-} 
+}

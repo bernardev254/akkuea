@@ -1,4 +1,4 @@
-use soroban_sdk::{contracttype, Env, String, Vec, Symbol, symbol_short};
+use soroban_sdk::{contracttype, symbol_short, Env, String, Symbol, Vec};
 
 const CONTENT_KEY: Symbol = symbol_short!("CONTENT");
 const NEXT_ID_KEY: Symbol = symbol_short!("NEXT_ID");
@@ -31,7 +31,7 @@ impl ContentStorage {
                 contents: Vec::new(env),
             }
         };
-        
+
         // Actualizar o añadir el contenido
         let mut found = false;
         for i in 0..content_list.contents.len() {
@@ -41,11 +41,11 @@ impl ContentStorage {
                 break;
             }
         }
-        
+
         if !found {
             content_list.contents.push_back(content.clone());
         }
-        
+
         storage.set(&CONTENT_KEY, &content_list);
         storage.extend_ttl(50, 100);
     }
@@ -55,14 +55,14 @@ impl ContentStorage {
         if !storage.has(&CONTENT_KEY) {
             return Vec::new(env);
         }
-        
+
         let content_list: ContentList = storage.get(&CONTENT_KEY).unwrap();
         content_list.contents
     }
 
     pub fn initialize(env: &Env) {
         let storage = env.storage().instance();
-        
+
         // Inicializar la lista de contenido si no existe
         if !storage.has(&CONTENT_KEY) {
             let content_list = ContentList {
@@ -70,13 +70,13 @@ impl ContentStorage {
             };
             storage.set(&CONTENT_KEY, &content_list);
         }
-        
+
         // Inicializar el contador de ID si no existe
         if !storage.has(&NEXT_ID_KEY) {
             storage.set(&NEXT_ID_KEY, &0u64);
         }
-        
+
         // Extender el TTL del almacenamiento
         storage.extend_ttl(50, 100);
     }
-} 
+}
