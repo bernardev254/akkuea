@@ -17,37 +17,6 @@ const UserActivityDashboard = () => {
   const [activeTab, setActiveTab] = useState('Activity');
   const tabs = ['Activity', 'Achievements', 'Statistics'];
 
-  // Generate sample heatmap data
-  const generateHeatmapData = () => {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return months.map((month) => ({
-      month,
-      days: Array(7)
-        .fill(0)
-        .map(() =>
-          Array(4)
-            .fill(0)
-            .map(() => Math.floor(Math.random() * 5))
-        ),
-    }));
-  };
-
-  // Generate data but only use it in the component when needed
-  generateHeatmapData();
-
   // Sample recent activity data
   const recentActivity = [
     {
@@ -81,8 +50,6 @@ const UserActivityDashboard = () => {
       timeAgo: '5 days ago',
     },
   ];
-
-  // Activity color function is handled in the AnnualContributions component
 
   // Helper function to get icon for activity type
   const getActivityIcon = (type: Activity['type'] | string) => {
