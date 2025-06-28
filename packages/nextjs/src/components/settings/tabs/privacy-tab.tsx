@@ -5,28 +5,25 @@ import { Lock, FileText, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 
-export interface PrivacyTabProps {
-  isDarkMode?: boolean;
-}
 
 export interface FilterOption {
   id: string;
   label: string;
 }
 
-export function PrivacyTab({ isDarkMode = false }: PrivacyTabProps) {
+export function PrivacyTab() {
   const [privateProfile, setPrivateProfile] = useState(false);
   const [showOnlineStatus, setShowOnlineStatus] = useState(true);
   const [contentFilter, setContentFilter] = useState('moderate');
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Handlers
   const handleViewPrivacyPolicy = () => window.open('/privacy-policy', '_blank');
   const handleDownloadData = () => console.log('Downloading user data...');
-  const handleDeleteAccount = () => {
-    console.log('Account deleted');
-    setShowDeleteModal(false);
-  };
+  // const handleDeleteAccount = () => {
+  //   console.log('Account deleted');
+  //   setShowDeleteModal(false);
+  // };
 
   const filterOptions: FilterOption[] = [
     { id: 'off', label: 'Off - Show all content' },
@@ -66,7 +63,7 @@ export function PrivacyTab({ isDarkMode = false }: PrivacyTabProps) {
           <div>
             <h3 className="font-medium text-gray-900 dark:text-gray-100">Show Online Status</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Let others see when you're active
+              Let others see when you&apos;re active
             </p>
           </div>
           <Switch
@@ -138,7 +135,7 @@ export function PrivacyTab({ isDarkMode = false }: PrivacyTabProps) {
           </div>
           <Button 
             variant="destructive" 
-            onClick={() => setShowDeleteModal(true)}
+            onClick={() => {}}
           >
             Delete
           </Button>
