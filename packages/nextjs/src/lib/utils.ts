@@ -43,3 +43,31 @@ export function formatAddress(address: string): string {
   if (!address || address.length < 11) return address;
   return `${address.slice(0, 7)}...${address.slice(-4)}`;
 }
+
+// Utility functions for user dashboard
+export const generateHeatmapData = () => {
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  return months.map((month) => ({
+    month,
+    days: Array(7)
+      .fill(0)
+      .map(() =>
+        Array(4)
+          .fill(0)
+          .map(() => Math.floor(Math.random() * 5))
+      ),
+  }));
+};
