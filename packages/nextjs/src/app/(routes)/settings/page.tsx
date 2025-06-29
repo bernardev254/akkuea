@@ -10,7 +10,7 @@ import NotificationsTab from "@/components/settings/tabs/notifications-tab"
 import AccessibilityTab from "@/components/settings/tabs/accessibility-tab"
 import Navbar from "@/components/navbar/NavBar"
 import { AccountTab } from "@/components/settings/tabs/account-tab"
-import { useTheme } from "next-themes"
+// import { useTheme } from "next-themes"
 
 export default function SettingsPage() {
   const [mounted, setMounted] = useState(false)
