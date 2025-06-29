@@ -14,7 +14,7 @@ import { useTheme } from "next-themes"
 
 export default function SettingsPage() {
   const [mounted, setMounted] = useState(false)
-  const { resolvedTheme } = useTheme()
+  // const { resolvedTheme } = useTheme()
 
   useEffect(() => {
     setMounted(true)
