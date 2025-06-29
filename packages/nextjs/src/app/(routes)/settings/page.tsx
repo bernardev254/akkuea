@@ -22,7 +22,7 @@ export default function SettingsPage() {
 
   if (!mounted) return null
 
-  const isDarkMode = resolvedTheme === "dark"
+  // const isDarkMode = resolvedTheme === "dark"
 
   return (
     <>
@@ -52,7 +52,9 @@ export default function SettingsPage() {
                 </TabContent>
 
                 <TabContent value="privacy">
-                  <PrivacyTab isDarkMode={isDarkMode} />
+                  <PrivacyTab 
+                  // isDarkMode={isDarkMode} 
+                  />
                 </TabContent>
 
                 <TabContent value="account">
