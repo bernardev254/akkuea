@@ -1,7 +1,9 @@
 use soroban_sdk::{Env, String as SorobanString, Vec};
-use crate::metadata::{Content, ContentStorage};
+use crate::metadata::Content;
+use crate::storage::ContentStorage;
 use crate::error::Error;
 
+/// Core search functionality for educational content
 pub fn search_content(env: &Env, subject: SorobanString) -> Result<Vec<Content>, Error> {
     let contents = ContentStorage::get_all_content(env);
     let mut results = Vec::new(env);
@@ -26,4 +28,4 @@ pub fn search_content(env: &Env, subject: SorobanString) -> Result<Vec<Content>,
     } else {
         Ok(results)
     }
-} 
+}
