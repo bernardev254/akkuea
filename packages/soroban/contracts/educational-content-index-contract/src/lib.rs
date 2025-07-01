@@ -3,6 +3,7 @@
 mod error;
 mod metadata;
 mod search;
+mod storage;
 mod validate;
 
 #[cfg(test)]
@@ -11,7 +12,8 @@ mod test;
 use soroban_sdk::{contract, contractimpl, Env, String, Vec, Symbol, symbol_short};
 
 use crate::error::Error;
-use crate::metadata::{Content, ContentStorage};
+use crate::metadata::Content;
+use crate::storage::ContentStorage;
 use crate::search::search_content;
 
 const INITIALIZED_KEY: Symbol = symbol_short!("INIT");
@@ -85,4 +87,4 @@ impl ContentSearchContract {
 
         Ok(id)
     }
-} 
+}
