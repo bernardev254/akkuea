@@ -3,6 +3,8 @@ use soroban_sdk::String;
 use crate::error::Error;
 use crate::metadata::Content;
 
+use crate::DifficultyLevel;
+
 pub fn validate_subject(subject: &String) -> bool {
     !subject.is_empty() && subject.len() <= 100
 }
@@ -34,6 +36,16 @@ pub fn validate_content(content: &Content) -> Result<(), Error> {
             return Err(Error::InvalidInput);
         }
     }
+
+    if content.author.is_some() && content.author.as_ref().unwrap().len() > 100 {
+        return Err(Error::InvalidInput);
+    }
+
+    // if content.difficulty_level.is_some() {
+    //     match content.difficulty_level.as_ref().unwrap() {
+    //         DifficultyLevel::beginner | DifficultyLevel::intermediate | DifficultyLevel::advanced => {}
+    //     }
+    // }
 
     Ok(())
 }

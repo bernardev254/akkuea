@@ -8,13 +8,21 @@ mod validate;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contract, contractimpl, Env, String, Vec, Symbol, symbol_short};
+use soroban_sdk::{contract, contracttype, contractimpl, Env, String, Vec, Symbol, symbol_short};
 
 use crate::error::Error;
 use crate::metadata::{Content, ContentStorage};
 use crate::search::search_content;
 
 const INITIALIZED_KEY: Symbol = symbol_short!("INIT");
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum DifficultyLevel {
+    Beginner,
+    Intermediate,
+    Advanced,
+}
 
 #[contract]
 pub struct ContentSearchContract;
@@ -57,6 +65,9 @@ impl ContentSearchContract {
         description: String,
         subject_tags: Vec<String>,
         content_url: String,
+        author: Option<String>,
+        difficulty_level: Option<DifficultyLevel>,
+        creation_date: Option<u64>,
     ) -> Result<u64, Error> {
         // Verificar que el contrato está inicializado
         if !env.storage().instance().has(&INITIALIZED_KEY) {
@@ -75,6 +86,9 @@ impl ContentSearchContract {
             description,
             subject_tags,
             content_url,
+            author: author,
+            difficulty_level: difficulty_level,
+            creation_date: creation_date,
         };
 
         // Validar el contenido

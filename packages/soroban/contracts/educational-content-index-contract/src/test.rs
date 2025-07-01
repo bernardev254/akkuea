@@ -37,6 +37,9 @@ fn test_add_and_search_content() {
             description.clone(),
             tags.clone(),
             url.clone(),
+            None,
+            None,
+            None,
         )
     }).unwrap();
 
@@ -78,6 +81,9 @@ fn test_add_content_validation() {
             SorobanString::from_str(&env, "Description"),
             Vec::from_array(&env, [SorobanString::from_str(&env, "tag")]),
             SorobanString::from_str(&env, "https://example.com"),
+            None,
+            None,
+            None,
         )
     });
     assert!(result.is_err());
@@ -90,6 +96,9 @@ fn test_add_content_validation() {
             SorobanString::from_str(&env, "Description"),
             Vec::from_array(&env, [SorobanString::from_str(&env, "blockchain")]),
             SorobanString::from_str(&env, "https://example.com"),
+            None,
+            None,
+            None,
         )
     });
     assert!(result.is_ok());
@@ -108,6 +117,9 @@ fn test_case_insensitive_search() {
             SorobanString::from_str(&env, "Description"),
             Vec::from_array(&env, [SorobanString::from_str(&env, "blockchain")]),
             SorobanString::from_str(&env, "https://example.com"),
+            None,
+            None,
+            None,
         )
     }).unwrap();
 

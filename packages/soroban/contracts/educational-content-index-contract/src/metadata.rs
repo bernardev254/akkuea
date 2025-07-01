@@ -3,6 +3,8 @@ use soroban_sdk::{contracttype, Env, String, Vec, Symbol, symbol_short};
 const CONTENT_KEY: Symbol = symbol_short!("CONTENT");
 const NEXT_ID_KEY: Symbol = symbol_short!("NEXT_ID");
 
+use crate::DifficultyLevel;
+
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Content {
@@ -11,6 +13,9 @@ pub struct Content {
     pub description: String,
     pub subject_tags: Vec<String>,
     pub content_url: String,
+    pub author: Option<String>,
+    pub difficulty_level: Option<DifficultyLevel>,
+    pub creation_date: Option<u64>,
 }
 
 #[contracttype]
