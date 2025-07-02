@@ -1,6 +1,12 @@
 use soroban_sdk::{contracttype, String, Vec};
 
-use crate::DifficultyLevel;
+// #[contracttype]
+// #[derive(Clone, Debug, Eq, PartialEq)]
+// pub enum DifficultyLevel {
+//     Beginner,
+//     Intermediate,
+//     Advanced,
+// }
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -11,7 +17,7 @@ pub struct Content {
     pub subject_tags: Vec<String>,
     pub content_url: String,
     pub author: Option<String>,
-    pub difficulty_level: Option<DifficultyLevel>,
+    pub difficulty_level: Option<String>,
     pub creation_date: Option<u64>,
 }
 
