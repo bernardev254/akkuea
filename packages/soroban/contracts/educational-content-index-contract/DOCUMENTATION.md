@@ -84,7 +84,7 @@ While the contract doesn't explicitly emit events in the examined code, it would
 
 ### Content Management
 
-#### `add_content(env: Env, title: String, description: String, subject_tags: Vec<String>, content_url: String) -> Result<u64, Error>`
+#### `add_content(env: Env, title: String, description: String, subject_tags: Vec<String>, content_url: String, author: Option<String>, difficulty_level: Option<String>, creation_date: Option<u64>) -> Result<u64, Error>`
 
 - Adds new educational content to the search index
 - Parameters:
@@ -92,6 +92,9 @@ While the contract doesn't explicitly emit events in the examined code, it would
   - `description`: Detailed description of the content
   - `subject_tags`: List of subject tags for categorization
   - `content_url`: URL or reference to the actual content
+  - `author`: Author name
+  - `difficulty_level`: 'Beginner' | 'Intermediate' | 'Advanced'
+  - `creation_date`: Timestamp
 - Validates all input parameters
 - Assigns a unique ID to the content
 - Returns the assigned content ID or an error

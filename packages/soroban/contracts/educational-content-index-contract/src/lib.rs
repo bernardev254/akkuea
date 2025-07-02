@@ -9,12 +9,13 @@ mod validate;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contract, contractimpl, Env, String, Vec, Symbol, symbol_short};
+use soroban_sdk::{contract, contractimpl, symbol_short, Env, String, Symbol, Vec};
 
 use crate::error::Error;
+// use crate::metadata::{Content, DifficultyLevel};
 use crate::metadata::Content;
-use crate::storage::ContentStorage;
 use crate::search::search_content;
+use crate::storage::ContentStorage;
 
 const INITIALIZED_KEY: Symbol = symbol_short!("INIT");
 
@@ -25,15 +26,15 @@ pub struct ContentSearchContract;
 impl ContentSearchContract {
     pub fn initialize(env: Env) {
         let storage = env.storage().instance();
-        
+
         // Verificar si ya está inicializado
         if storage.has(&INITIALIZED_KEY) {
             panic!("Contract already initialized");
         }
-        
+
         // Inicializar el almacenamiento
         ContentStorage::initialize(&env);
-        
+
         // Marcar como inicializado
         storage.set(&INITIALIZED_KEY, &true);
         storage.extend_ttl(50, 100);
@@ -44,12 +45,12 @@ impl ContentSearchContract {
         if !env.storage().instance().has(&INITIALIZED_KEY) {
             return Err(Error::NotInitialized);
         }
-        
+
         // Validar el subject
         if !crate::validate::validate_subject(&subject) {
             return Err(Error::InvalidInput);
         }
-        
+
         search_content(&env, subject)
     }
 
@@ -59,6 +60,9 @@ impl ContentSearchContract {
         description: String,
         subject_tags: Vec<String>,
         content_url: String,
+        author: Option<String>,
+        difficulty_level: Option<String>,
+        creation_date: Option<u64>,
     ) -> Result<u64, Error> {
         // Verificar que el contrato está inicializado
         if !env.storage().instance().has(&INITIALIZED_KEY) {
@@ -67,7 +71,10 @@ impl ContentSearchContract {
 
         // Obtener y actualizar el ID
         let storage = env.storage().instance();
-        let id = storage.get::<Symbol, u64>(&symbol_short!("NEXT_ID")).unwrap_or(0) + 1;
+        let id = storage
+            .get::<Symbol, u64>(&symbol_short!("NEXT_ID"))
+            .unwrap_or(0)
+            + 1;
         storage.set(&symbol_short!("NEXT_ID"), &id);
 
         // Crear el contenido
@@ -77,11 +84,14 @@ impl ContentSearchContract {
             description,
             subject_tags,
             content_url,
+            author,
+            difficulty_level,
+            creation_date,
         };
 
         // Validar el contenido
-        crate::validate::validate_content(&content)?;
-        
+        crate::validate::validate_content(&env, &content)?;
+
         // Guardar el contenido
         ContentStorage::set_content(&env, &content);
 

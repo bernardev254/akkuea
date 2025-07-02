@@ -1,4 +1,4 @@
-use soroban_sdk::String;
+use soroban_sdk::{Env, String};
 
 use crate::error::Error;
 use crate::metadata::Content;
@@ -7,7 +7,7 @@ pub fn validate_subject(subject: &String) -> bool {
     !subject.is_empty() && subject.len() <= 100
 }
 
-pub fn validate_content(content: &Content) -> Result<(), Error> {
+pub fn validate_content(env: &Env, content: &Content) -> Result<(), Error> {
     // Validar título
     if content.title.is_empty() || content.title.len() > 200 {
         return Err(Error::InvalidInput);
@@ -35,9 +35,22 @@ pub fn validate_content(content: &Content) -> Result<(), Error> {
         }
     }
 
+    if content.author.is_some() && content.author.as_ref().unwrap().len() > 100 {
+        return Err(Error::InvalidInput);
+    }
+
+    if let Some(level) = content.difficulty_level.as_ref() {
+        let beginner = String::from_str(env, "Beginner");
+        let intermediate = String::from_str(env, "Intermediate");
+        let advanced = String::from_str(env, "Advanced");
+        if *level != beginner && *level != intermediate && *level != advanced {
+            return Err(Error::InvalidInput);
+        }
+    }
+
     Ok(())
 }
 
 pub fn is_valid_tag(tag: &String) -> bool {
     !tag.is_empty() && tag.len() <= 50
-} 
+}
