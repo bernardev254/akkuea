@@ -1,4 +1,4 @@
-use crate::{TokenizedEducationalContent, TokenizedEducationalContentClient};
+use crate::{TokenizedEducationalContent, TokenizedEducationalContentClient, VerificationLevel};
 use soroban_sdk::{
     testutils::{Address as AddressTrait, BytesN as _},
     Address, BytesN, Env, String, vec,
@@ -33,7 +33,7 @@ fn test_publish_content() {
     assert_eq!(content.content_hash, content_hash);
     assert_eq!(content.subject_tags, subject_tags);
     assert_eq!(content.upvotes, 0);
-    assert_eq!(content.is_verified, false);
+    assert_eq!(content.verification_level, VerificationLevel::None);
 }
 
 #[test]
@@ -232,16 +232,16 @@ fn test_verify_content() {
 
     // Verify the content is not verified initially
     let content = client.get_content(&content_id);
-    assert_eq!(content.is_verified, false);
+    assert_eq!(content.verification_level, VerificationLevel::None);
 
-    // Verify content
+    // Verify content to Peer level
     let verifier = Address::generate(&env);
-    let verified = client.verify_content(&content_id, &verifier);
-    assert_eq!(verified, true);
+    let verified_level = client.verify_content(&content_id, &verifier, &VerificationLevel::Peer);
+    assert_eq!(verified_level, VerificationLevel::Peer);
 
-    // Check that the content is now verified
+     // Check that the content is now verified to the correct level
     let content = client.get_content(&content_id);
-    assert_eq!(content.is_verified, true);
+    assert_eq!(content.verification_level, VerificationLevel::Peer);
 }
 
 #[test]
@@ -263,19 +263,19 @@ fn test_multiple_verifications() {
     ];
     let content_id = client.publish_content(&creator, &title, &content_hash, &subject_tags);
 
-    // First verification
+    // First verification (to Peer)
     let verifier1 = Address::generate(&env);
-    let verified = client.verify_content(&content_id, &verifier1);
-    assert_eq!(verified, true);
+    let verified_level1 = client.verify_content(&content_id, &verifier1, &VerificationLevel::Peer);
+    assert_eq!(verified_level1, VerificationLevel::Peer);
 
-    // Second verification (should not change the status)
+    // Second verification (upgrade to Expert)
     let verifier2 = Address::generate(&env);
-    let verified = client.verify_content(&content_id, &verifier2);
-    assert_eq!(verified, true);
+    let verified_level2 = client.verify_content(&content_id, &verifier2, &VerificationLevel::Expert);
+    assert_eq!(verified_level2, VerificationLevel::Expert);
 
-    // The content should still be verified
+    // The content should now have the highest verification level submitted
     let content = client.get_content(&content_id);
-    assert_eq!(content.is_verified, true);
+    assert_eq!(content.verification_level, VerificationLevel::Expert);
 }
 
 #[test]
@@ -290,7 +290,7 @@ fn test_verify_nonexistent_content() {
 
     // Try to verify content that doesn't exist
     let verifier = Address::generate(&env);
-    client.verify_content(&999, &verifier);
+    client.verify_content(&999, &verifier, &VerificationLevel::Peer);
 }
 
 #[test]
@@ -312,12 +312,12 @@ fn test_creator_can_verify_own_content() {
     ];
     let content_id = client.publish_content(&creator, &title, &content_hash, &subject_tags);
 
-    // Creator verifies their own content
-    client.verify_content(&content_id, &creator);
+     // MODIFIED: Call verify_content with a specific level
+    client.verify_content(&content_id, &creator, &VerificationLevel::Peer);
 
-    // Check that the content is now verified
     let content = client.get_content(&content_id);
-    assert_eq!(content.is_verified, true);
+    // MODIFIED: Check for the correct verification level
+    assert_eq!(content.verification_level, VerificationLevel::Peer);
 }
 
 #[test]
@@ -490,12 +490,13 @@ fn test_verify_before_and_after_upvotes() {
     
     // Scenario 1: Verify first, then upvote
     let verifier = Address::generate(&env);
-    client.verify_content(&content_id, &verifier);
+    client.verify_content(&content_id, &verifier, &VerificationLevel::Expert);
     
     // Check content is verified
     let content = client.get_content(&content_id);
-    assert_eq!(content.is_verified, true);
+    assert_eq!(content.verification_level, VerificationLevel::Expert);
     assert_eq!(content.upvotes, 0);
+    
     
     // Now add some upvotes
     let voters = [
@@ -510,7 +511,7 @@ fn test_verify_before_and_after_upvotes() {
     
     // Verify upvotes were added and verification status maintained
     let content_after_votes = client.get_content(&content_id);
-    assert_eq!(content_after_votes.is_verified, true);
+    assert_eq!(content_after_votes.verification_level, VerificationLevel::Expert);
     assert_eq!(content_after_votes.upvotes, 3);
     
     // Scenario 2: New content - upvote first, then verify
@@ -530,16 +531,14 @@ fn test_verify_before_and_after_upvotes() {
     
     // Check content has upvotes but is not verified
     let content2 = client.get_content(&content_id2);
-    assert_eq!(content2.is_verified, false);
+    assert_eq!(content2.verification_level, VerificationLevel::None);
     assert_eq!(content2.upvotes, 2);
     
     // Now verify the content
-    let verifier2 = Address::generate(&env);
-    client.verify_content(&content_id2, &verifier2);
+    client.verify_content(&content_id2, &verifier, &VerificationLevel::Peer);
     
-    // Check content is now verified and upvotes remain
     let content2_after_verify = client.get_content(&content_id2);
-    assert_eq!(content2_after_verify.is_verified, true);
+    assert_eq!(content2_after_verify.verification_level, VerificationLevel::Peer);
     assert_eq!(content2_after_verify.upvotes, 2);
 }
 
@@ -600,7 +599,7 @@ fn test_complex_workflow() {
     
     // 3. Verify only content 2
     let verifier = Address::generate(&env);
-    client.verify_content(&content_id2, &verifier);
+     client.verify_content(&content_id2, &verifier, &VerificationLevel::Institutional);
     
     // 4. Retrieve and check both contents
     let content1 = client.get_content(&content_id1);
@@ -608,11 +607,11 @@ fn test_complex_workflow() {
     
     // Content 1 should have 3 upvotes and not be verified
     assert_eq!(content1.upvotes, 3);
-    assert_eq!(content1.is_verified, false);
+    assert_eq!(content1.verification_level, VerificationLevel::None);
     
     // Content 2 should have 2 upvotes and be verified
     assert_eq!(content2.upvotes, 2);
-    assert_eq!(content2.is_verified, true);
+    assert_eq!(content2.verification_level, VerificationLevel::Institutional);
 }
 
 #[test]
@@ -661,7 +660,7 @@ fn test_filter_by_verification_mixed_content() {
         &BytesN::random(&env),
         &vec![&env, String::from_str(&env, "verified")]
     );
-    client.verify_content(&content_id1, &verifier);
+    client.verify_content(&content_id1, &verifier, &VerificationLevel::Peer);
 
     // Content 2: Not verified
     let content_id2 = client.publish_content(
@@ -678,7 +677,7 @@ fn test_filter_by_verification_mixed_content() {
         &BytesN::random(&env),
         &vec![&env, String::from_str(&env, "verified")]
     );
-    client.verify_content(&content_id3, &verifier);
+   client.verify_content(&content_id3, &verifier, &VerificationLevel::Institutional);
 
     // Filter by verification
     let verified_content = client.filter_by_verification();
@@ -689,7 +688,7 @@ fn test_filter_by_verification_mixed_content() {
     // Check that all returned content is verified
     for i in 0..verified_content.len() {
         let content = verified_content.get(i).unwrap();
-        assert_eq!(content.is_verified, true);
+        assert!(content.verification_level > VerificationLevel::None);
     }
 
     // Check that the correct content IDs are returned
@@ -849,7 +848,7 @@ fn test_filter_combinations_verified_and_popular() {
         &BytesN::random(&env),
         &vec![&env, String::from_str(&env, "best")]
     );
-    client.verify_content(&content_id1, &verifier);
+     client.verify_content(&content_id1, &verifier, &VerificationLevel::Institutional);
     for _ in 0..10 {
         let voter = Address::generate(&env);
         client.upvote_content(&content_id1, &voter);
@@ -862,7 +861,7 @@ fn test_filter_combinations_verified_and_popular() {
         &BytesN::random(&env),
         &vec![&env, String::from_str(&env, "verified")]
     );
-    client.verify_content(&content_id2, &verifier);
+    client.verify_content(&content_id2, &verifier, &VerificationLevel::Peer);
     for _ in 0..2 {
         let voter = Address::generate(&env);
         client.upvote_content(&content_id2, &voter);
@@ -995,7 +994,7 @@ fn test_filters_with_large_dataset() {
 
         // Verify every 3rd content (indices 0, 3, 6, 9, 12, 15, 18)
         if i % 3 == 0 {
-            client.verify_content(&content_id, &verifier);
+            client.verify_content(&content_id, &verifier, &VerificationLevel::Peer);
             expected_verified += 1;
         }
 
@@ -1023,7 +1022,7 @@ fn test_filters_with_large_dataset() {
     // Verify all returned content is actually verified
     for i in 0..verified_results.len() {
         let content = verified_results.get(i).unwrap();
-        assert_eq!(content.is_verified, true);
+        assert!(content.verification_level > VerificationLevel::None);
     }
 
     // Filter by min_upvotes = 5
@@ -1045,4 +1044,115 @@ fn test_filters_with_large_dataset() {
         let content = popular_10_results.get(i).unwrap();
         assert!(content.upvotes >= 10);
     }
+}
+
+
+#[test]
+fn test_filter_by_verification_level() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+
+    // Configure authentication
+    env.mock_all_auths();
+    let creator = Address::generate(&env);
+    let verifier = Address::generate(&env);
+
+    // Content 1: Peer verified
+    let content_id1 = client.publish_content(&creator, &String::from_str(&env, "Peer Verified"), &BytesN::random(&env), &vec![&env]);
+    client.verify_content(&content_id1, &verifier, &VerificationLevel::Peer);
+
+    // Content 2: Not verified
+    let content_id2 = client.publish_content(&creator, &String::from_str(&env, "Unverified"), &BytesN::random(&env), &vec![&env]);
+
+    // Content 3: Institutional verified
+    let content_id3 = client.publish_content(&creator, &String::from_str(&env, "Inst Verified"), &BytesN::random(&env), &vec![&env]);
+    client.verify_content(&content_id3, &verifier, &VerificationLevel::Institutional);
+    
+    // Content 4: Another Peer verified
+    let content_id4 = client.publish_content(&creator, &String::from_str(&env, "Peer Verified 2"), &BytesN::random(&env), &vec![&env]);
+    client.verify_content(&content_id4, &verifier, &VerificationLevel::Peer);
+
+    // Filter by Peer - should return 2 items
+    let peer_verified = client.filter_by_verification_level(&VerificationLevel::Peer);
+    assert_eq!(peer_verified.len(), 2);
+
+    // Filter by Institutional - should return 1 item
+    let inst_verified = client.filter_by_verification_level(&VerificationLevel::Institutional);
+    assert_eq!(inst_verified.len(), 1);
+    assert_eq!(inst_verified.get(0).unwrap().id, content_id3);
+
+    // Filter by Expert - should return 0 items
+    let expert_verified = client.filter_by_verification_level(&VerificationLevel::Expert);
+    assert_eq!(expert_verified.len(), 0);
+
+    // Filter by None - should return 1 item
+    let none_verified = client.filter_by_verification_level(&VerificationLevel::None);
+    assert_eq!(none_verified.len(), 1);
+    assert_eq!(none_verified.get(0).unwrap().id, content_id2);
+}
+
+
+#[test]
+fn test_verification_tier_upgrade() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+
+    // Configure authentication
+    env.mock_all_auths();
+    let creator = Address::generate(&env);
+    let verifier = Address::generate(&env);
+    let content_id = client.publish_content(&creator, &String::from_str(&env, "Tiered Verification"), &BytesN::random(&env), &vec![&env]);
+    
+    assert_eq!(client.get_content(&content_id).verification_level, VerificationLevel::None);
+
+    // 1. Verify to Peer
+    let level = client.verify_content(&content_id, &verifier, &VerificationLevel::Peer);
+    assert_eq!(level, VerificationLevel::Peer);
+    assert_eq!(client.get_content(&content_id).verification_level, VerificationLevel::Peer);
+
+    // 2. Upgrade to Expert
+    let level = client.verify_content(&content_id, &verifier, &VerificationLevel::Expert);
+    assert_eq!(level, VerificationLevel::Expert);
+    assert_eq!(client.get_content(&content_id).verification_level, VerificationLevel::Expert);
+
+    // 3. Upgrade to Institutional
+    let level = client.verify_content(&content_id, &verifier, &VerificationLevel::Institutional);
+    assert_eq!(level, VerificationLevel::Institutional);
+    assert_eq!(client.get_content(&content_id).verification_level, VerificationLevel::Institutional);
+}
+
+#[test]
+#[should_panic(expected = "cannot overwrite a higher or equal verification level")]
+fn test_prevent_verification_downgrade() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+
+    // Configure authentication
+    env.mock_all_auths();
+    let creator = Address::generate(&env);
+    let verifier = Address::generate(&env);
+    let content_id = client.publish_content(&creator, &String::from_str(&env, "Test Downgrade"), &BytesN::random(&env), &vec![&env]);
+
+    client.verify_content(&content_id, &verifier, &VerificationLevel::Institutional);
+    client.verify_content(&content_id, &verifier, &VerificationLevel::Peer); // Should panic
+}
+
+#[test]
+#[should_panic(expected = "cannot overwrite a higher or equal verification level")]
+fn test_prevent_same_level_verification() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+
+    // Configure authentication
+    env.mock_all_auths();
+    let creator = Address::generate(&env);
+    let verifier = Address::generate(&env);
+    let content_id = client.publish_content(&creator, &String::from_str(&env, "Test Same Level"), &BytesN::random(&env), &vec![&env]);
+
+    client.verify_content(&content_id, &verifier, &VerificationLevel::Expert);
+    client.verify_content(&content_id, &verifier, &VerificationLevel::Expert); // Should panic
 }

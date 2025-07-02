@@ -1,5 +1,5 @@
 use soroban_sdk::{Address, BytesN, Env, String, Vec, symbol_short};
-use crate::storage::{Content, get_next_content_id, save_content};
+use crate::storage::{Content, get_next_content_id, save_content, VerificationLevel};
 
 // Publish new educational content
 pub fn publish_content(
@@ -24,7 +24,7 @@ pub fn publish_content(
         creation_date,
         subject_tags,
         upvotes: 0,
-        is_verified: false,
+        verification_level: VerificationLevel::None, // Default to no verification
     };
 
     // Store content
@@ -44,4 +44,4 @@ pub fn publish_content(
 
     // Return the content ID
     id
-} 
+}

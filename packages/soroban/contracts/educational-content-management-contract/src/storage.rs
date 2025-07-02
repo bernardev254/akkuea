@@ -1,5 +1,15 @@
 use soroban_sdk::{contracttype, Address, BytesN, Env, String, Vec};
 
+// Define the verification tiers
+#[contracttype]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd, Ord)]
+pub enum VerificationLevel {
+    None = 0,
+    Peer = 1,
+    Expert = 2,
+    Institutional = 3,
+}
+
 // Content data structure as per requirements
 #[contracttype]
 pub struct Content {
@@ -10,16 +20,16 @@ pub struct Content {
     pub creation_date: u64,
     pub subject_tags: Vec<String>,
     pub upvotes: u32,
-    pub is_verified: bool,
+    pub verification_level: VerificationLevel,
 }
 
 // Keys for contract data
 #[derive(Clone)]
 #[contracttype]
 pub enum DataKey {
-    Content(u64),            // Content ID -> Content
-    ContentCounter,          // Counter for content IDs
-    UserVotes(Address, u64), // (User, Content ID) -> Has voted?
+    Content(u64),
+    ContentCounter,
+    UserVotes(Address, u64),
 }
 
 // Get the next content ID and increment the counter
@@ -73,7 +83,6 @@ pub fn get_all_content_ids(env: &Env) -> Vec<u64> {
     let mut content_ids = Vec::new(env);
     let total_content = get_content_counter(env);
 
-    // Iterate through all possible content IDs and check if they exist
     for id in 0..total_content {
         if content_exists(env, id) {
             content_ids.push_back(id);
