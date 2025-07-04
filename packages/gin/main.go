@@ -24,5 +24,8 @@ func main() {
 	// Get port from config (env), default to 8080
 	port := config.GetPort()
 	log.Printf("Starting server on port %s", port)
-	router.Run(":" + port)
+
+	if err := router.Run(":" + port); err != nil {
+		log.Fatalf("could not start server: %v", err)
+	}
 }

@@ -15,7 +15,7 @@ env:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest  
 
     steps:
       - name: Checkout repository
@@ -35,8 +35,8 @@ jobs:
 
       - name: Install Stellar CLI
         run: |
-          brew update
-          brew install stellar-cli
+          curl -L https://github.com/stellar/stellar-cli/releases/latest/download/stellar-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          sudo mv stellar /usr/local/bin/stellar
           stellar --version
 
       - name: Build Rust project
