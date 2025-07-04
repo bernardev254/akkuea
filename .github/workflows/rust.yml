@@ -3,12 +3,8 @@ name: Soroban Smart Contracts CI
 on:
   push:
     branches: ['main']
-    paths:
-      - 'packages/soroban/**'
   pull_request:
     branches: ['main']
-    paths:
-      - 'packages/soroban/**'
 
 env:
   CARGO_TERM_COLOR: always
@@ -18,29 +14,21 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install Rust
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
           source $HOME/.cargo/env
-
       - name: Install Rust target for Soroban
         run: |
           source $HOME/.cargo/env
           rustup target add wasm32v1-none
-        env:
-          PATH: ${{ env.PATH }}:$HOME/.cargo/bin
-
       - name: Install Stellar CLI with Homebrew
         run: |
           brew update
           brew install stellar-cli
           stellar --version
-        env:
-          PATH: ${{ env.PATH }}:$HOME/.cargo/bin
-
       - name: Build Cargo project
         run: |
           source $HOME/.cargo/env
