@@ -15,7 +15,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  
+    runs-on: macos-latest
 
     steps:
       - name: Checkout repository
@@ -24,33 +24,37 @@ jobs:
       - name: Install Rust
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
           source $HOME/.cargo/env
 
       - name: Install Rust target for Soroban
         run: |
+          source $HOME/.cargo/env
           rustup target add wasm32v1-none
         env:
           PATH: ${{ env.PATH }}:$HOME/.cargo/bin
 
-      - name: Install Stellar CLI
+      - name: Install Stellar CLI with Homebrew
         run: |
-          curl -L https://github.com/stellar/stellar-cli/releases/latest/download/stellar-x86_64-unknown-linux-gnu.tar.gz | tar xz
-          sudo mv stellar /usr/local/bin/stellar
+          brew update
+          brew install stellar-cli
           stellar --version
-
-      - name: Build Rust project
-        run: cargo build --verbose
-        working-directory: packages/soroban
         env:
           PATH: ${{ env.PATH }}:$HOME/.cargo/bin
 
-      - name: Build Soroban contracts
-        run: stellar contract build --verbose
+      - name: Build Cargo project
+        run: |
+          source $HOME/.cargo/env
+          cargo build --verbose
         working-directory: packages/soroban
 
-      - name: Run tests
-        run: cargo test --verbose
+      - name: Build Soroban contract
+        run: |
+          source $HOME/.cargo/env
+          stellar contract build --verbose
         working-directory: packages/soroban
-        env:
-          PATH: ${{ env.PATH }}:$HOME/.cargo/bin
+
+      - name: Run Cargo tests
+        run: |
+          source $HOME/.cargo/env
+          cargo test --verbose
+        working-directory: packages/soroban
