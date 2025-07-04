@@ -3,46 +3,50 @@ name: Soroban Smart Contracts CI
 on:
   push:
     branches: ['main']
+    paths:
+      - 'packages/soroban/**'
   pull_request:
     branches: ['main']
+    paths:
+      - 'packages/soroban/**'
 
 env:
   CARGO_TERM_COLOR: always
+  CONTRACT_DIR: packages/soroban
 
 jobs:
-  build:
+  build-and-test:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install Rust
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-          source $HOME/.cargo/env
-      - name: Install Rust target for Soroban
-        run: |
-          source $HOME/.cargo/env
-          rustup target add wasm32v1-none
-      - name: Install Stellar CLI with Homebrew
+          echo "source $HOME/.cargo/env" >> $GITHUB_ENV
+
+      - name: Load Rust environment
+        run: source $HOME/.cargo/env
+
+      - name: Add Soroban target
+        run: rustup target add wasm32v1-none
+
+      - name: Install Stellar CLI
         run: |
           brew update
           brew install stellar-cli
           stellar --version
-      - name: Build Cargo project
-        run: |
-          source $HOME/.cargo/env
-          cargo build --verbose
-        working-directory: packages/soroban
+
+      - name: Build Rust project
+        run: cargo build --verbose
+        working-directory: ${{ env.CONTRACT_DIR }}
 
       - name: Build Soroban contract
-        run: |
-          source $HOME/.cargo/env
-          stellar contract build --verbose
-        working-directory: packages/soroban
+        run: stellar contract build --verbose
+        working-directory: ${{ env.CONTRACT_DIR }}
 
-      - name: Run Cargo tests
-        run: |
-          source $HOME/.cargo/env
-          cargo test --verbose
-        working-directory: packages/soroban
+      - name: Run Rust tests
+        run: cargo test --verbose
+        working-directory: ${{ env.CONTRACT_DIR }}
