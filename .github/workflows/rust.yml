@@ -3,8 +3,12 @@ name: Soroban Smart Contracts CI
 on:
   push:
     branches: ['main']
+    paths:
+      - 'packages/soroban/**'
   pull_request:
     branches: ['main']
+    paths:
+      - 'packages/soroban/**'
 
 env:
   CARGO_TERM_COLOR: always
@@ -14,7 +18,8 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install Rust
         run: |
@@ -46,3 +51,4 @@ jobs:
           source $HOME/.cargo/env
           cargo test --verbose
         working-directory: packages/soroban
+        
