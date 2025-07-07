@@ -1,5 +1,5 @@
 pub mod engine;
 pub mod filters;
 
-// Re-export the main search function for backward compatibility
-pub use engine::search_content;
+// Re-export the main search functions for backward compatibility and new features
+pub use engine::{search_content, search_content_multi_tag};

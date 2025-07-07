@@ -1,11 +1,11 @@
 #![no_std]
 
 mod error;
+mod events;
 mod metadata;
 mod search;
 mod storage;
 mod validate;
-mod events;
 
 #[cfg(test)]
 mod test;
@@ -13,10 +13,10 @@ mod test;
 use soroban_sdk::{contract, contractimpl, symbol_short, Env, String, Symbol, Vec};
 
 use crate::error::Error;
+use crate::events::Events;
 use crate::metadata::Content;
 use crate::search::search_content;
 use crate::storage::ContentStorage;
-use crate::events::Events;
 
 const INITIALIZED_KEY: Symbol = symbol_short!("INIT");
 
@@ -53,7 +53,7 @@ impl ContentSearchContract {
         }
 
         let results = search_content(&env, subject.clone())?;
-        
+
         // Emit search performed event
         Events::search_performed(&env, &subject, results.len() as u32);
 
@@ -124,8 +124,8 @@ impl ContentSearchContract {
         }
 
         // Get existing content
-        let existing_content = ContentStorage::get_content_by_id(&env, content_id)
-            .ok_or(Error::ContentNotFound)?;
+        let existing_content =
+            ContentStorage::get_content_by_id(&env, content_id).ok_or(Error::ContentNotFound)?;
 
         // Create updated content
         let updated_content = Content {
@@ -147,6 +147,60 @@ impl ContentSearchContract {
 
         // Emit content updated event
         Events::content_updated(&env, &existing_content, &updated_content);
+
+        Ok(())
+    }
+
+    /// Search content using multiple tags (OR operation) with indexed search for better performance
+    pub fn search_content_multi_tag(env: Env, tags: Vec<String>) -> Result<Vec<Content>, Error> {
+        // Verify contract is initialized
+        if !env.storage().instance().has(&INITIALIZED_KEY) {
+            return Err(Error::NotInitialized);
+        }
+
+        // Validate tags
+        for tag in tags.iter() {
+            if !crate::validate::validate_subject(&tag) {
+                return Err(Error::InvalidInput);
+            }
+        }
+
+        let results = crate::search::engine::search_content_multi_tag(&env, tags)?;
+
+        // Emit search performed event
+        Events::search_performed(
+            &env,
+            &String::from_str(&env, "multi-tag"),
+            results.len() as u32,
+        );
+
+        Ok(results)
+    }
+
+    /// Get content by ID using indexed lookup for better performance
+    pub fn get_content_by_id(env: Env, content_id: u64) -> Option<Content> {
+        // Verify contract is initialized
+        if !env.storage().instance().has(&INITIALIZED_KEY) {
+            return None;
+        }
+
+        // Try indexed lookup first, fallback to linear search for compatibility
+        if let Some(content) = ContentStorage::get_content_by_id_indexed(&env, content_id) {
+            Some(content)
+        } else {
+            ContentStorage::get_content_by_id(&env, content_id)
+        }
+    }
+
+    /// Rebuild search indices - useful for migrating existing content to indexed search
+    /// This is an administrative function that should be called after contract upgrades
+    pub fn rebuild_search_indices(env: Env) -> Result<(), Error> {
+        // Verify contract is initialized
+        if !env.storage().instance().has(&INITIALIZED_KEY) {
+            return Err(Error::NotInitialized);
+        }
+
+        ContentStorage::rebuild_indices(&env);
 
         Ok(())
     }
