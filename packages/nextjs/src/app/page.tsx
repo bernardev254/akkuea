@@ -2,7 +2,7 @@
 
 import { useGlobalAuthenticationStore } from '@/components/auth/store/data';
 import QuickPost from '@/components/quickPost/quickPost';
-import Navbar from '@/components/navbar/NavBar';
+import Navbar from '@/components/navbar/navbar';
 import CreatePostModal from '@/components/floating-button/button';
 import Post from '@/components/post/page';
 

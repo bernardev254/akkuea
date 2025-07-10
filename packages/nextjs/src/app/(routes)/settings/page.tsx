@@ -8,7 +8,7 @@ import { AppearanceTab } from "@/components/settings/tabs/appearance-tab"
 import { PrivacyTab } from "@/components/settings/tabs/privacy-tab"
 import NotificationsTab from "@/components/settings/tabs/notifications-tab"
 import AccessibilityTab from "@/components/settings/tabs/accessibility-tab"
-import Navbar from "@/components/navbar/NavBar"
+import Navbar from "@/components/navbar/navbar"
 import { AccountTab } from "@/components/settings/tabs/account-tab"
 // import { useTheme } from "next-themes"
 
