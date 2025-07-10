@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Calendar } from 'lucide-react';
-import TabNavigation from './user-dashboard/TabNavigation';
-import TabContent from './user-dashboard/TabContent';
+import TabNavigation from './user-dashboard/tab-navigation';
+import TabContent from './user-dashboard/tab-content';
 import { generateHeatmapData } from '@/lib/utils';
 
 // Activity type definition
