@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Palette, Bell, LockKeyhole, User, Eye } from "lucide-react"
 import { TabProvider } from "@/contexts/TabContext"
-import { TabNav, TabItem, TabContent } from "@/components/settings/TabComponents"
+import { TabNav, TabItem, TabContent } from "@/components/settings/tab-components"
 import { AppearanceTab } from "@/components/settings/tabs/appearance-tab"
 import { PrivacyTab } from "@/components/settings/tabs/privacy-tab"
 import NotificationsTab from "@/components/settings/tabs/notifications-tab"
