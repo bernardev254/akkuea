@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { Bell, Mail, Smartphone, Volume2, MessageSquare, Heart, AtSign, MessageCircle, Info, Users } from 'lucide-react';
+import {
+  Bell,
+  Mail,
+  Smartphone,
+  Volume2,
+  MessageSquare,
+  Heart,
+  AtSign,
+  MessageCircle,
+  Info,
+  Users,
+} from 'lucide-react';
 
 interface NotificationSettingsState {
   enableNotifications: boolean;

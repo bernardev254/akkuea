@@ -1,5 +1,5 @@
 import { useMessages } from '@/store/messaging-store';
-import { Avatar } from './avatar';
+import { Avatar } from './Avatar';
 
 export function MessagePreview() {
   const { conversations } = useMessages();
