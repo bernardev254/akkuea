@@ -1,8 +1,8 @@
 'use client';
 
 import { useGlobalAuthenticationStore } from '@/components/auth/store/data';
-import QuickPost from '@/components/quickPost/quickPost';
-import Navbar from '@/components/navbar/NavBar';
+import QuickPost from '@/components/quick-post/quick-post';
+import Navbar from '@/components/navbar/navbar';
 import CreatePostModal from '@/components/floating-button/button';
 import Post from '@/components/post/page';
 

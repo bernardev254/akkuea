@@ -5,7 +5,6 @@ import { Lock, FileText, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 
-
 export interface FilterOption {
   id: string;
   label: string;
@@ -52,10 +51,7 @@ export function PrivacyTab() {
               Only approved followers can see your posts
             </p>
           </div>
-          <Switch
-            checked={privateProfile}
-            onCheckedChange={setPrivateProfile}
-          />
+          <Switch checked={privateProfile} onCheckedChange={setPrivateProfile} />
         </div>
 
         {/* Online Status */}
@@ -66,10 +62,7 @@ export function PrivacyTab() {
               Let others see when you&apos;re active
             </p>
           </div>
-          <Switch
-            checked={showOnlineStatus}
-            onCheckedChange={setShowOnlineStatus}
-          />
+          <Switch checked={showOnlineStatus} onCheckedChange={setShowOnlineStatus} />
         </div>
 
         {/* Content Filtering */}
@@ -133,10 +126,7 @@ export function PrivacyTab() {
               Permanently delete your account and all data
             </p>
           </div>
-          <Button 
-            variant="destructive" 
-            onClick={() => {}}
-          >
+          <Button variant="destructive" onClick={() => {}}>
             Delete
           </Button>
         </div>
