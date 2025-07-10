@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { useMessages } from '@/store/messaging-store';
 import type { ConversationItemProps } from '@/app/Types/messages';
 
-import { Avatar } from './Avatar';
+import { Avatar } from './avatar';
 
 export function ConversationItem({ conversation, onSelect }: ConversationItemProps) {
   const { selectedConversationId } = useMessages();
