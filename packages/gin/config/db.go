@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"gin/models"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -42,6 +44,84 @@ func InitDB() {
 	sqlDB.SetMaxOpenConns(100)
 
 	log.Println("Successfully connected to PostgreSQL database")
+
+	runMigrations()
+}
+
+func runMigrations() {
+	log.Println("Starting automatic database migrations...")
+
+	modelsToMigrate := []interface{}{
+		&models.User{},
+		&models.Resource{},
+		&models.Reward{},             
+		&models.MarketplaceRequest{},  
+	}
+
+	// run AutoMigrate for each model
+	for _, model := range modelsToMigrate {
+		modelName := fmt.Sprintf("%T", model)
+		log.Printf("Migrating model: %s", modelName)
+		
+		if err := DB.AutoMigrate(model); err != nil {
+			log.Fatalf("Failed to migrate model %s: %v", modelName, err)
+		}
+		
+		log.Printf("Successfully migrated: %s", modelName)
+	}
+
+	log.Println("All database migrations completed successfully")
+	
+	verifyForeignKeys()
+}
+
+// if foreign key constraints are properly created
+func verifyForeignKeys() {
+	log.Println("Verifying foreign key constraints...")
+
+	// Check if tables exist
+	tables := []interface{}{
+		&models.User{},
+		&models.Resource{},
+		&models.Reward{},
+		&models.MarketplaceRequest{},
+	}
+
+	for _, table := range tables {
+		tableName := fmt.Sprintf("%T", table)
+		if DB.Migrator().HasTable(table) {
+			log.Printf("✓ Table exists: %s", tableName)
+		} else {
+			log.Printf("✗ Table missing: %s", tableName)
+		}
+	}
+
+	// Verify specific foreign key columns exist
+	if DB.Migrator().HasColumn(&models.Resource{}, "creator_id") {
+		log.Println("Resource.creator_id foreign key column exists")
+	} else {
+		log.Println("Resource.creator_id foreign key column missing")
+	}
+
+	if DB.Migrator().HasColumn(&models.Reward{}, "user_id") {
+		log.Println("Reward.user_id foreign key column exists")
+	} else {
+		log.Println("Reward.user_id foreign key column missing")
+	}
+
+	if DB.Migrator().HasColumn(&models.MarketplaceRequest{}, "requester_id") {
+		log.Println("MarketplaceRequest.requester_id foreign key column exists")
+	} else {
+		log.Println("MarketplaceRequest.requester_id foreign key column missing")
+	}
+
+	if DB.Migrator().HasColumn(&models.MarketplaceRequest{}, "designer_id") {
+		log.Println("MarketplaceRequest.designer_id foreign key column exists")
+	} else {
+		log.Println("MarketplaceRequest.designer_id foreign key column missing")
+	}
+
+	log.Println("Foreign key verification completed")
 }
 
 func GetDB() *gorm.DB {
