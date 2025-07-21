@@ -15,11 +15,20 @@ func main() {
 	// Load environment variables from .env
 	_ = godotenv.Load()
 
+	// Initialize database connection
+	config.InitDB()
+	defer config.CloseDB()
+
 	router := gin.Default()
 	router.Use(middleware.Logger())
 
-	// Register /ping route
+	// Health and status endpoints
 	router.GET("/ping", api.PingHandler)
+	router.GET("/health", api.HealthHandler)
+
+	// User endpoints
+	router.GET("/users", api.GetAllUsers)
+	router.POST("/users", api.CreateUser)
 
 	// Get port from config (env), default to 8080
 	port := config.GetPort()
