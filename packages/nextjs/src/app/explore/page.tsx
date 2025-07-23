@@ -8,7 +8,7 @@ import EmptyState from "@/components/explore/empty-components";
 import TabNavigation from "@/components/explore/tab-navigation";
 
 const ExplorePage = () => {
-  const [activeTab, setActiveTab] = useState("trending");
+  const [activeTab, setActiveTab] = useState<string | number>("trending");
   const [searchQuery, setSearchQuery] = useState("");
 
   const popularTopics = [

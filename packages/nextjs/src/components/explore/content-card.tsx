@@ -1,7 +1,20 @@
 import React from 'react';
 import { User, Heart, MessageCircle } from 'lucide-react';
 
-const ContentCard = ({ type, item }) => {
+type ContentCardProps = {
+  type: 'trending' | 'featured';
+  item: {
+    author: string;
+    readTime?: string;
+    title: string;
+    topic?: string;
+    likes: number;
+    comments: number;
+    specialty?: string;
+  };
+};
+
+const ContentCard: React.FC<ContentCardProps> = ({ type, item }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow mt-6">
       {type === 'trending' ? (
@@ -20,7 +33,7 @@ const ContentCard = ({ type, item }) => {
           </h3>
           <div className="flex items-center justify-between">
             <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${item.topicColor} dark:bg-teal-900/30 dark:text-teal-300`}
+              className={`px-3 py-1 rounded-full text-sm font-medium bg-[#0D9488]/10 dark:bg-[#0D9488]/20  text-[#0D9488] dark:text-[#0D9488]`}
             >
               {item.topic}
             </span>
@@ -43,7 +56,7 @@ const ContentCard = ({ type, item }) => {
               <h3 className="font-semibold text-gray-900 dark:text-gray-200 mb-2 text-lg">
                 {item.title}
               </h3>
-              <span className="px-3 py-1 bg-cyan-500 dark:bg-teal-400 text-white text-sm font-medium rounded-full">
+              <span className="px-3 py-1  bg-[#0D9488]/10 dark:bg-[#0D9488]/20  text-[#0D9488] dark:text-[#0D9488] text-sm font-medium rounded-full">
                 Featured
               </span>
             </div>

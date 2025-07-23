@@ -1,12 +1,17 @@
 import React from "react";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Compass } from "lucide-react";
 
-const ExploreHeader = ({ searchQuery, setSearchQuery }) => {
+interface ExploreHeaderProps {
+  searchQuery: string;
+  setSearchQuery: (value: string) => void;
+}
+
+const ExploreHeader: React.FC<ExploreHeaderProps> = ({ searchQuery, setSearchQuery }) => {
   return (
     <div className="mb-8">
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
-          <Search className="w-5 h-5 text-white" />
+        <div className="w-8 h-8 bg-[#0D9488] rounded-lg flex items-center justify-center">
+          <Compass className="w-5 h-5 text-white" />
         </div>
         <h1
           className="text-2xl font-semibold text-gray-900 dark:text-gray-200"

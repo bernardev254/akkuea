@@ -1,7 +1,19 @@
 import React from "react";
 import { User } from "lucide-react";
 
-const PeopleCard = ({ person }) => {
+interface Person {
+  name: string;
+  username: string;
+  specialty: string;
+  followers: number;
+  posts: number;
+}
+
+interface PeopleCardProps {
+  person: Person;
+}
+
+const PeopleCard: React.FC<PeopleCardProps> = ({ person }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow mt-6">
       <div className="text-center mb-4">
@@ -24,7 +36,7 @@ const PeopleCard = ({ person }) => {
         </div>
       </div>
       
-      <button className="w-full bg-cyan-500 dark:bg-teal-400 hover:bg-cyan-600 dark:hover:bg-teal-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+      <button className="w-full bg-[#59C9D0] dark:bg-teal-400 hover:bg-cyan-600 dark:hover:bg-teal-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
         Follow
       </button>
     </div>

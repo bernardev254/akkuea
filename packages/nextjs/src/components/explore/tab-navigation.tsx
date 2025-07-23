@@ -1,6 +1,18 @@
 import React from "react";
 
-const TabNavigation = ({ activeTab, setActiveTab, tabs }) => {
+type Tab = {
+  id: string | number;
+  label: React.ReactNode;
+  icon?: React.ReactNode;
+};
+
+type TabNavigationProps = {
+  activeTab: string | number;
+  setActiveTab: (id: string | number) => void;
+  tabs: Tab[];
+};
+
+const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, setActiveTab, tabs }) => {
   return (
     <div className="flex bg-white dark:bg-gray-800 rounded-lg p-1 border border-gray-200 dark:border-gray-700  transition-colors duration-300">
       {tabs.map((tab) => (
