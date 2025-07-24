@@ -5,6 +5,7 @@ mod publish;
 mod vote;
 mod verify;
 mod storage;
+mod moderation;
 
 pub use crate::storage::{Content, VerificationLevel};
 
@@ -96,6 +97,103 @@ impl TokenizedEducationalContent {
         }
 
         popular_content
+    }
+
+    // --- Advanced Verification ---
+    pub fn verify_content_advanced(
+        env: Env,
+        content_id: u64,
+        verifier: Address,
+        level: VerificationLevel,
+        delegated_by: Option<Address>,
+        min_reputation: u32,
+        expiration_secs: Option<u64>,
+    ) -> VerificationLevel {
+        verify::verify_content_advanced(
+            &env,
+            content_id,
+            verifier,
+            level,
+            delegated_by,
+            min_reputation,
+            expiration_secs,
+        )
+    }
+
+    pub fn renew_verification(
+        env: Env,
+        content_id: u64,
+        verifier: Address,
+        new_expiration_secs: u64,
+    ) {
+        verify::renew_verification(&env, content_id, verifier, new_expiration_secs)
+    }
+
+    pub fn delegate_verification(
+        env: Env,
+        delegator: Address,
+        delegatee: Address,
+        until: Option<u64>,
+    ) {
+        verify::delegate_verification(&env, delegator, delegatee, until)
+    }
+
+    pub fn revoke_delegation(
+        env: Env,
+        delegator: Address,
+        delegatee: Address,
+    ) {
+        verify::revoke_delegation(&env, delegator, delegatee)
+    }
+
+    // --- Moderation ---
+    pub fn flag_content(
+        env: Env,
+        content_id: u64,
+        flagger: Address,
+        reason: String,
+    ) {
+        moderation::flag_content(&env, content_id, flagger, reason)
+    }
+
+    pub fn get_flags(env: Env, content_id: u64) -> Vec<crate::storage::Flag> {
+        moderation::get_flags(&env, content_id)
+    }
+
+    pub fn moderate_content(
+        env: Env,
+        content_id: u64,
+        moderator: Address,
+        action: crate::storage::ModerationStatus,
+        reason: String,
+    ) {
+        moderation::moderate_content(&env, content_id, moderator, action, reason)
+    }
+
+    pub fn get_moderation_history(env: Env, content_id: u64) -> Vec<crate::storage::ModerationAction> {
+        moderation::get_moderation_history(&env, content_id)
+    }
+
+    pub fn create_dispute(
+        env: Env,
+        content_id: u64,
+        creator: Address,
+        reason: String,
+    ) -> u64 {
+        moderation::create_dispute(&env, content_id, creator, reason)
+    }
+
+    pub fn resolve_dispute(
+        env: Env,
+        dispute_id: u64,
+        resolver: Address,
+        approve: bool,
+    ) {
+        moderation::resolve_dispute(&env, dispute_id, resolver, approve)
+    }
+
+    pub fn get_dispute(env: Env, dispute_id: u64) -> Option<crate::storage::Dispute> {
+        moderation::get_dispute(&env, dispute_id)
     }
 }
 

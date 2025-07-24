@@ -1156,3 +1156,74 @@ fn test_prevent_same_level_verification() {
     client.verify_content(&content_id, &verifier, &VerificationLevel::Expert);
     client.verify_content(&content_id, &verifier, &VerificationLevel::Expert); // Should panic
 }
+
+#[test]
+fn test_flag_and_get_flags() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    let creator = Address::generate(&env);
+    let flagger = Address::generate(&env);
+    let content_id = client.publish_content(&creator, &String::from_str(&env, "Flaggable Content"), &BytesN::random(&env), &vec![&env, String::from_str(&env, "test")]);
+    client.flag_content(&content_id, &flagger, &String::from_str(&env, "spam"));
+    let flags = client.get_flags(&content_id);
+    assert_eq!(flags.len(), 1);
+    assert_eq!(flags.get(0).unwrap().flagger, flagger);
+}
+
+#[test]
+fn test_moderate_and_get_history() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    let creator = Address::generate(&env);
+    let moderator = Address::generate(&env);
+    let content_id = client.publish_content(&creator, &String::from_str(&env, "Moderatable Content"), &BytesN::random(&env), &vec![&env, String::from_str(&env, "test")]);
+    client.flag_content(&content_id, &creator, &String::from_str(&env, "abuse"));
+    client.moderate_content(&content_id, &moderator, &crate::storage::ModerationStatus::Removed, &String::from_str(&env, "confirmed abuse"));
+    let history = client.get_moderation_history(&content_id);
+    assert_eq!(history.len(), 1);
+    assert_eq!(history.get(0).unwrap().moderator, moderator);
+    assert_eq!(history.get(0).unwrap().action, crate::storage::ModerationStatus::Removed);
+}
+
+#[test]
+fn test_create_and_resolve_dispute() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    let creator = Address::generate(&env);
+    let resolver = Address::generate(&env);
+    let content_id = client.publish_content(&creator, &String::from_str(&env, "Disputable Content"), &BytesN::random(&env), &vec![&env, String::from_str(&env, "test")]);
+    let dispute_id = client.create_dispute(&content_id, &creator, &String::from_str(&env, "unfair removal"));
+    let dispute = client.get_dispute(&dispute_id).unwrap();
+    assert_eq!(dispute.status, crate::storage::ModerationStatus::UnderDispute);
+    client.resolve_dispute(&dispute_id, &resolver, &true);
+    let dispute = client.get_dispute(&dispute_id).unwrap();
+    assert_eq!(dispute.status, crate::storage::ModerationStatus::Approved);
+    assert_eq!(dispute.resolver.unwrap(), resolver);
+}
+
+#[test]
+fn test_advanced_verification_and_delegation() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    let creator = Address::generate(&env);
+    let verifier = Address::generate(&env);
+    let delegatee = Address::generate(&env);
+    let content_id = client.publish_content(&creator, &String::from_str(&env, "Advanced Verification"), &BytesN::random(&env), &vec![&env, String::from_str(&env, "test")]);
+    // Delegate
+    client.delegate_verification(&verifier, &delegatee, &Some(100000));
+    // Advanced verification with delegation
+    let level = client.verify_content_advanced(&content_id, &delegatee, &VerificationLevel::Expert, &Some(verifier.clone()), &50, &Some(1000));
+    assert_eq!(level, VerificationLevel::Expert);
+    // Renew verification
+    client.renew_verification(&content_id, &delegatee, &2000);
+    // Revoke delegation
+    client.revoke_delegation(&verifier, &delegatee);
+}
