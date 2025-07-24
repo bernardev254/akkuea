@@ -215,9 +215,7 @@ fn partial_match(env: &Env, text: &SorobanString, query: &SorobanString) -> bool
 /// Simplified substring search for Soroban environment
 fn simple_contains(_env: &Env, text: &SorobanString, query: &SorobanString) -> bool {
     // Basic substring search - Soroban doesn't support complex string operations
-    // This is a very conservative approach to prevent false positives
-    // We will only allow exact matches or very specific patterns to avoid false positives
-
+    // just match length and check if query is a substring of text
     let text_len = text.len();
     let query_len = query.len();
 
@@ -286,6 +284,7 @@ fn simple_contains(_env: &Env, text: &SorobanString, query: &SorobanString) -> b
 }
 
 /// Basic fuzzy matching allowing one character difference
+#[warn(dead_code)]
 fn fuzzy_match_basic(env: &Env, text: &SorobanString, query: &SorobanString) -> bool {
     // Simplified fuzzy matching for demo
     // In production, implement Levenshtein distance or similar algorithms
