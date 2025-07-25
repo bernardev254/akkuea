@@ -101,6 +101,77 @@ pub enum DataKey {
     UserContentContributions(Address, u64), // collaborator, content_id -> Vec<CollaboratorSubmission>
 }
 
+// --- Advanced Verification and Moderation Additions ---
+
+#[contracttype]
+pub struct VerificationRecord {
+    pub verifier: Address,
+    pub level: VerificationLevel,
+    pub timestamp: u64,
+    pub expiration: Option<u64>,
+    pub delegated_by: Option<Address>,
+    pub reputation_snapshot: Option<u32>,
+}
+
+#[derive(Clone, PartialEq, Debug)]
+#[contracttype]
+pub struct Delegation {
+    pub delegator: Address,
+    pub delegatee: Address,
+    pub since: u64,
+    pub until: Option<u64>,
+}
+
+#[contracttype]
+pub struct Flag {
+    pub content_id: u64,
+    pub flagger: Address,
+    pub reason: String,
+    pub timestamp: u64,
+}
+
+#[derive(Clone, PartialEq, Debug)]
+#[contracttype]
+pub enum ModerationStatus {
+    Pending,
+    Approved,
+    Rejected,
+    Removed,
+    UnderDispute,
+}
+
+#[contracttype]
+pub struct ModerationAction {
+    pub content_id: u64,
+    pub moderator: Address,
+    pub action: ModerationStatus,
+    pub reason: String,
+    pub timestamp: u64,
+}
+
+#[contracttype]
+pub struct Dispute {
+    pub dispute_id: u64,
+    pub content_id: u64,
+    pub creator: Address,
+    pub reason: String,
+    pub status: ModerationStatus,
+    pub created_at: u64,
+    pub resolved_at: Option<u64>,
+    pub resolver: Option<Address>,
+}
+
+#[derive(Clone)]
+#[contracttype]
+pub enum AdvDataKey {
+    VerificationRecord(u64), // content_id -> Vec<VerificationRecord>
+    Delegation(Address),     // delegator -> Vec<Delegation>
+    Flag(u64),              // content_id -> Vec<Flag>
+    Moderation(u64),        // content_id -> Vec<ModerationAction>
+    Dispute(u64),           // dispute_id -> Dispute
+    DisputeCounter,         // u64
+}
+
 // Get the next content ID and increment the counter
 pub fn get_next_content_id(env: &Env) -> u64 {
     let key = DataKey::ContentCounter;
