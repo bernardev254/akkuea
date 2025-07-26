@@ -14,9 +14,9 @@ export default function Home() {
       <Navbar />
       <main className="flex flex-col gap-8 w-full items-center">
         <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <p>{address}</p>       
-          </div>
-            <QuickPost />
+          <p>{address}</p>
+        </div>
+        <QuickPost />
         <Post />
       </main>
       <CreatePostModal />

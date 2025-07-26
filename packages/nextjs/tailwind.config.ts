@@ -1,3 +1,4 @@
+// tailwind.config.ts
 import type { Config } from 'tailwindcss';
 
 export default {
@@ -10,14 +11,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        card: 'hsl(var(--card))',
         primary: 'hsl(var(--primary))',
         secondary: 'hsl(var(--secondary))',
-        muted: 'hsl(var(--muted))',
-        destructive: 'hsl(var(--destructive))',
         achievement: 'hsl(var(--achievement))',
+        destructive: 'hsl(var(--destructive))',
+        background: 'hsl(var(--background))',
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        foreground: 'hsl(var(--foreground))',
+        muted: 'hsl(var(--muted))',
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        chart: {
+          '1': 'hsl(var(--chart-1))',
+          '2': 'hsl(var(--chart-2))',
+          '3': 'hsl(var(--chart-3))',
+          '4': 'hsl(var(--chart-4))',
+          '5': 'hsl(var(--chart-5))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
