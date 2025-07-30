@@ -17,22 +17,20 @@ export interface SectionContainerProps {
 
 export function SectionTitle({ title, isDarkMode }: SectionTitleProps) {
   return (
-    <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+    <h2
+      className={`text-lg font-semibold ${isDarkMode ? 'text-foreground-dark' : 'text-foreground-light'}`}
+    >
       {title}
     </h2>
   );
 }
 
 export function SectionDescription({ text, isDarkMode }: SectionDescriptionProps) {
-  return <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>{text}</p>;
+  return <p className={isDarkMode ? 'text-muted-dark' : 'text-muted-light'}>{text}</p>;
 }
 
 export function SectionContainer({ children, hasBorder = true }: SectionContainerProps) {
   return (
-    <div
-      className={`mb-6 ${hasBorder ? 'pb-6 border-b border-gray-200 dark:border-gray-800' : ''}`}
-    >
-      {children}
-    </div>
+    <div className={`mb-6 ${hasBorder ? 'pb-6 border-b border-border-dark' : ''}`}>{children}</div>
   );
 }

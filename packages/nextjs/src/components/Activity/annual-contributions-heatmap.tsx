@@ -6,19 +6,19 @@ import { generateHeatmapData, TIME_CONSTS } from '@/lib/utils';
 const getActivityColor = (level: number): string => {
   switch (true) {
     case level === 0:
-      return 'bg-gray-200 dark:bg-gray-700';
+      return "bg-muted/20"
     case level === 1:
-      return 'bg-teal-100 dark:bg-teal-900';
+      return "bg-primary/20"
     case level === 2:
-      return 'bg-teal-300 dark:bg-teal-700';
+      return "bg-primary/40"
     case level === 3:
-      return 'bg-teal-500 dark:bg-teal-500';
+      return "bg-primary/60"
     case level === 4:
-      return 'bg-teal-700 dark:bg-teal-300';
+      return "bg-primary/80"
     case level > 4:
-      return 'bg-teal-700 dark:bg-teal-300';
+      return "bg-primary"
     default:
-      return 'bg-gray-200 dark:bg-gray-700';
+      return "bg-muted/20"
   }
 };
 
@@ -40,18 +40,15 @@ const AnnualContributions: React.FC<IAnnualContributions> = ({ pattern }) => {
   }, [pattern]);
 
   return (
-    <div className="mb-8 w-full border rounded-xl p-3 shadow-lg dark:border-gray-700 dark:bg-black transition-colors duration-300 overflow-x-auto">
-      <h2 className="text-base font-medium mb-4 text-gray-800 dark:text-gray-200">
-        Annual Contributions
-      </h2>
-
+    <div className="mb-8 w-full border border-border rounded-xl p-3 shadow-lg bg-card transition-colors duration-300 overflow-x-auto">
+      <h2 className="text-base font-medium mb-4 text-foreground">Annual Contributions</h2>
       <div className="flex" style={{ minWidth: 'fit-content' }}>
         {/* Weekday labels column */}
         <div className="flex flex-col mr-2 pt-8">
           {TIME_CONSTS.weekdays.map((day) => (
             <div
               key={day}
-              className="h-[10px] flex items-center justify-end text-xs text-gray-500 dark:text-gray-400 mb-[2px]"
+              className="h-[10px] flex items-center justify-end text-xs text-muted mb-[2px]"
             >
               {day}
             </div>
@@ -61,7 +58,7 @@ const AnnualContributions: React.FC<IAnnualContributions> = ({ pattern }) => {
         {/* Main content area */}
         <div className="flex-1">
           {/* Month labels row */}
-          <div className="grid grid-cols-12 gap-[2px] mb-4 text-xs text-gray-500 dark:text-gray-400">
+          <div className="grid grid-cols-12 gap-[2px] mb-4 text-xs text-muted">
             {TIME_CONSTS.months.map((month) => (
               <div key={month} className="text-center">
                 {month}
@@ -77,6 +74,7 @@ const AnnualContributions: React.FC<IAnnualContributions> = ({ pattern }) => {
                   const activityForDay = heatmapData[dayIndex];
                   // Default activity to 0 in case data is blank
                   const activityLevel = activityForDay ? activityForDay[monthIndex] : 0;
+
                   return (
                     <div
                       key={`${month}-${dayIndex}`}
@@ -90,14 +88,14 @@ const AnnualContributions: React.FC<IAnnualContributions> = ({ pattern }) => {
 
           {/* Legend */}
           <div className="flex items-center justify-end mt-4">
-            <span className="text-xs text-gray-500 dark:text-gray-400 mr-2">Less</span>
+            <span className="text-xs text-muted mr-2">Less</span>
             {[0, 1, 2, 3, 4].map((level) => (
               <div
                 key={`legend-${level}`}
                 className={`h-[10px] w-[10px] rounded-sm mr-1 ${getActivityColor(level)}`}
               />
             ))}
-            <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">More</span>
+            <span className="text-xs text-muted ml-1">More</span>
           </div>
         </div>
       </div>
