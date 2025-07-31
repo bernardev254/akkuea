@@ -239,7 +239,7 @@ impl ContributorReputation {
         env: Env,
         caller: Address,
         user_address: Address,
-        operation: String,
+        _operation: String,
         new_limit: u32,
     ) -> Result<(), Error> {
         caller.require_auth();
