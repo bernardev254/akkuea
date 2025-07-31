@@ -1,5 +1,4 @@
 'use client';
-
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
@@ -23,12 +22,12 @@ export function ThemeSwitcher() {
         <div className="flex items-center space-x-3">
           {resolvedTheme === 'dark' ? (
             <>
-              <Sun className="h-5 w-5 text-amber-500" />
+              <Sun className="h-5 w-5 text-achievement" />
               <h3 className="text-lg font-semibold">Light Mode</h3>
             </>
           ) : (
             <>
-              <Moon className="h-5 w-5 text-teal-400" />
+              <Moon className="h-5 w-5 text-primary" />
               <h3 className="text-lg font-semibold">Dark Mode</h3>
             </>
           )}
@@ -40,7 +39,7 @@ export function ThemeSwitcher() {
           className="data-[state=checked]:bg-primary"
         />
       </div>
-      <p className="text-sm text-muted-foreground pl-8">Toggle between light and dark theme</p>
+      <p className="text-sm text-muted pl-8">Toggle between light and dark theme</p>
     </div>
   );
 }

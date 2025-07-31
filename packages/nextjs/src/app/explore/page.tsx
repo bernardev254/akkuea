@@ -1,5 +1,6 @@
 'use client';
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import ExploreHeader from '@/components/explore/explore-header';
 import ContentCard from '@/components/explore/content-card';
 import PeopleCard from '@/components/explore/people-card';
@@ -33,7 +34,7 @@ const ExplorePage = () => {
       author: 'Dr. Sarah Chen',
       readTime: '12 min read',
       topic: 'Artificial Intelligence',
-      topicColor: 'bg-cyan-100 text-cyan-700',
+      topicColor: 'bg-primary/10 text-primary',
       likes: 1245,
       comments: 89,
     },
@@ -43,7 +44,7 @@ const ExplorePage = () => {
       author: 'Carlos Rodriguez',
       readTime: '8 min read',
       topic: 'Web Development',
-      topicColor: 'bg-cyan-100 text-cyan-700',
+      topicColor: 'bg-primary/10 text-primary',
       likes: 876,
       comments: 124,
     },
@@ -53,7 +54,7 @@ const ExplorePage = () => {
       author: 'Ana Lopez',
       readTime: '15 min read',
       topic: 'Data Science',
-      topicColor: 'bg-cyan-100 text-cyan-700',
+      topicColor: 'bg-primary/10 text-primary',
       likes: 543,
       comments: 67,
     },
@@ -63,7 +64,7 @@ const ExplorePage = () => {
       author: 'Prof. Juan Martinez',
       readTime: '20 min read',
       topic: 'Physics',
-      topicColor: 'bg-cyan-100 text-cyan-700',
+      topicColor: 'bg-primary/10 text-primary',
       likes: 432,
       comments: 56,
     },
@@ -194,15 +195,13 @@ const ExplorePage = () => {
   };
 
   return (
-    <div className={`min-h-screen `}>
-      <div className="px-4 sm:px-6 lg:px-8 py-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-h-screen">
+      <div className="px-4 sm:px-6 lg:px-8 py-6 bg-background transition-colors duration-300">
         <ExploreHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
         {activeTab === 'trending' && <PopularTopics topics={popularTopics} />}
         {activeTab === 'trending' && (
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-6">
-            Trending Content
-          </h2>
+          <h2 className="text-lg font-semibold text-foreground mb-6">Trending Content</h2>
         )}
         {renderContent()}
         {searchQuery && !renderContent() && <EmptyState />}

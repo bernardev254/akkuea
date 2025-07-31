@@ -17,41 +17,37 @@ const RecentActivity = ({ activities }: RecentActivityProps) => {
   const getActivityIcon = (type: Activity['type'] | string) => {
     switch (type) {
       case 'comment':
-        return <MessageSquare size={16} className="text-teal-400" />;
+        return <MessageSquare size={16} className="text-primary" />;
       case 'like':
-        return <ThumbsUp size={16} className="text-teal-400" />;
+        return <ThumbsUp size={16} className="text-primary" />;
       case 'post':
-        return <FileText size={16} className="text-teal-400" />;
+        return <FileText size={16} className="text-primary" />;
       case 'achievement':
-        return <Award size={16} className="text-teal-400" />;
+        return <Award size={16} className="text-primary" />;
       case 'join':
-        return <Users size={16} className="text-teal-400" />;
+        return <Users size={16} className="text-primary" />;
       default:
-        return <Clock size={16} className="text-teal-400" />;
+        return <Clock size={16} className="text-primary" />;
     }
   };
 
   return (
     <div className="mt-6">
-      <h2 className="text-base font-medium mb-3 text-gray-800 dark:text-gray-200">
-        Recent Activity
-      </h2>
-      <div className="border rounded-xl px-4 py-6 dark:border-gray-700 transition-colors duration-300">
+      <h2 className="text-base font-medium mb-3 text-foreground">Recent Activity</h2>
+      <div className="border border-border rounded-xl px-4 py-6 transition-colors duration-300">
         <div className="flex flex-col space-y-4">
           {activities.map((activity) => (
             <div key={activity.id} className="flex items-start">
-              <div className="mt-1 p-1 bg-teal-100 dark:bg-teal-900/30 bg-opacity-20 rounded">
-                {getActivityIcon(activity.type)}
-              </div>
+              <div className="mt-1 p-1 bg-primary/10 rounded">{getActivityIcon(activity.type)}</div>
               <div className="ml-3">
-                <p className="text-sm text-gray-800 dark:text-gray-200">{activity.content}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{activity.timeAgo}</p>
+                <p className="text-sm text-foreground">{activity.content}</p>
+                <p className="text-xs text-muted">{activity.timeAgo}</p>
               </div>
             </div>
           ))}
         </div>
         <div className="mt-4 text-right">
-          <button className="text-sm text-teal-400 hover:text-teal-500 dark:hover:text-teal-300">
+          <button className="text-sm text-primary hover:text-primary/80 transition-colors">
             View all activity history
           </button>
         </div>

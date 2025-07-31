@@ -1,3 +1,5 @@
+'use client';
+
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -21,7 +23,7 @@ export const ProfileForm = ({
   return (
     <>
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="name" className="block text-sm font-medium text-foreground">
           Name
         </label>
         <Input
@@ -32,7 +34,7 @@ export const ProfileForm = ({
         />
       </div>
       <div>
-        <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="username" className="block text-sm font-medium text-foreground">
           Username
         </label>
         <Input
@@ -43,7 +45,7 @@ export const ProfileForm = ({
         />
       </div>
       <div>
-        <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="bio" className="block text-sm font-medium text-foreground">
           Bio
         </label>
         <Textarea
