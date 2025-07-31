@@ -15,8 +15,7 @@ interface RoleSelectorProps {
 export const RoleSelector = ({ roles, selectedRoles, onRoleChange }: RoleSelectorProps) => {
   return (
     <div>
-      {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
-      <label className="block text-sm font-medium text-gray-700 mb-2">Roles</label>
+      <label className="block text-sm font-medium text-foreground mb-2">Roles</label>
       <div className="flex flex-wrap gap-4">
         {roles.map((role) => (
           <div key={role.id} className="flex items-center space-x-2">
@@ -24,7 +23,7 @@ export const RoleSelector = ({ roles, selectedRoles, onRoleChange }: RoleSelecto
               id={role.id}
               checked={selectedRoles.includes(role.id)}
               onCheckedChange={() => onRoleChange(role.id)}
-              className="border-gray-300 text-black data-[state=checked]:bg-black data-[state=checked]:border-black"
+              className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
             />
             <Label htmlFor={role.id}>{role.label}</Label>
           </div>

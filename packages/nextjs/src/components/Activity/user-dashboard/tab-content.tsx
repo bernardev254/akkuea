@@ -29,7 +29,7 @@ const TabContent = ({ activeTab, recentActivity }: TabContentProps) => {
 
   if (activeTab === 'Achievements') {
     return (
-      <div className="h-52 flex items-center justify-center text-gray-500 dark:text-gray-400">
+      <div className="h-52 flex items-center justify-center text-muted">
         Achievements content would go here
       </div>
     );
@@ -37,7 +37,7 @@ const TabContent = ({ activeTab, recentActivity }: TabContentProps) => {
 
   if (activeTab === 'Statistics') {
     return (
-      <div className="h-52 flex items-center justify-center text-gray-500 dark:text-gray-400">
+      <div className="h-52 flex items-center justify-center text-muted">
         Statistics content would go here
       </div>
     );

@@ -1,7 +1,5 @@
 'use client';
-
 import type React from 'react';
-
 import { useState, useEffect, useRef } from 'react';
 import { Search, MessageCircle, User } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -16,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { usePostsStore } from '@/store/postsStore';
 import { useRouter } from 'next/navigation';
 import { LogOut, Settings } from 'lucide-react';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,7 +41,6 @@ const Navbar = () => {
         setShowSuggestions(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -100,7 +96,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 right-0 left-0 border-b bg-background text-foreground z-50">
+    <nav className="fixed top-0 right-0 left-0 border-b border-border bg-background text-foreground z-50">
       <div className="h-14 flex items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
@@ -112,7 +108,7 @@ const Navbar = () => {
           <Input
             type="search"
             placeholder="Buscar posts..."
-            className="w-full pl-10 h-10 bg-input border-border text-foreground placeholder:text-muted-foreground"
+            className="w-full pl-10 h-10 bg-card border-border text-foreground placeholder:text-muted"
             value={searchQuery}
             onChange={handleSearchChange}
             onKeyDown={handleKeyPress}
@@ -123,7 +119,7 @@ const Navbar = () => {
             variant="ghost"
             className="absolute left-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
           >
-            <Search className="h-4 w-4 text-muted-foreground" />
+            <Search className="h-4 w-4 text-muted" />
             <span className="sr-only">Buscar</span>
           </Button>
 
@@ -133,7 +129,7 @@ const Navbar = () => {
               {suggestions.map((suggestion, index) => (
                 <div
                   key={index}
-                  className="px-4 py-2 hover:bg-muted cursor-pointer text-foreground"
+                  className="px-4 py-2 hover:bg-muted/50 cursor-pointer text-foreground"
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
                   {suggestion}
@@ -150,11 +146,11 @@ const Navbar = () => {
               <TooltipTrigger asChild>
                 <Link
                   href="/messages-private"
-                  className="p-2 hover:bg-muted rounded-full transition-colors relative"
+                  className="p-2 hover:bg-muted/50 rounded-full transition-colors relative"
                 >
-                  <MessageCircle className="h-5 w-5" style={{ color: '#59C9D0' }} />
+                  <MessageCircle className="h-5 w-5 text-primary" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-[#00CECE] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {unreadCount}
                     </span>
                   )}
@@ -165,16 +161,17 @@ const Navbar = () => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
-                <User className="h-5 w-5 text-muted-foreground" />
+                <User className="h-5 w-5 text-muted" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="font-semibold text-teal-500 dark:text-teal-400">
+              <DropdownMenuLabel className="font-semibold text-primary">
                 Jefferson Calderon
-                <div className="text-xs text-muted-foreground">@xJeffx23</div>
+                <div className="text-xs text-muted">@xJeffx23</div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push('/profile')} className="gap-2">
@@ -184,7 +181,7 @@ const Navbar = () => {
                 <Settings className="h-4 w-4" /> Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleDisconnect} className="text-red-500 gap-2">
+              <DropdownMenuItem onClick={handleDisconnect} className="text-destructive gap-2">
                 <LogOut className="h-4 w-4" /> Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -193,14 +190,14 @@ const Navbar = () => {
           {address ? (
             <Button
               onClick={handleDisconnect}
-              className="bg-[#59C9D0] hover:bg-[#4ab5bc] text-white font-medium px-4 py-2 rounded-full transition-colors duration-200 text-sm shadow-sm hover:shadow-md"
+              className="bg-primary hover:bg-primary/80 text-white font-medium px-4 py-2 rounded-full transition-colors duration-200 text-sm shadow-sm hover:shadow-md"
             >
               Disconnect
             </Button>
           ) : (
             <Button
               onClick={handleConnect}
-              className="bg-[#59C9D0] hover:bg-[#4ab5bc] text-white font-medium px-4 py-2 rounded-full transition-colors duration-200 text-sm shadow-sm hover:shadow-md"
+              className="bg-primary hover:bg-primary/80 text-white font-medium px-4 py-2 rounded-full transition-colors duration-200 text-sm shadow-sm hover:shadow-md"
             >
               Connect
             </Button>

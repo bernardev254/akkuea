@@ -91,12 +91,10 @@ export default function RightSidebar() {
     if (savedState) {
       setIsCollapsed(JSON.parse(savedState));
     }
-
     const fetchData = async () => {
       setRecommendations(mockRecommendations);
       setTrending(mockTrending);
     };
-
     fetchData();
   }, []);
 
@@ -115,7 +113,6 @@ export default function RightSidebar() {
           const containerTop = contentRef.current.getBoundingClientRect().top;
           const targetTop = targetRef.current.getBoundingClientRect().top;
           const scrollOffset = targetTop - containerTop;
-
           contentRef.current.scrollTo({
             top: scrollOffset,
             behavior: 'smooth',
@@ -128,7 +125,6 @@ export default function RightSidebar() {
         const containerTop = contentRef.current.getBoundingClientRect().top;
         const targetTop = targetRef.current.getBoundingClientRect().top;
         const scrollOffset = targetTop - containerTop;
-
         contentRef.current.scrollTo({
           top: scrollOffset,
           behavior: 'smooth',
@@ -139,24 +135,19 @@ export default function RightSidebar() {
 
   return (
     <aside
-      className={`fixed right-0 top-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-[#000000] dark:border-gray-600 border-l shadow-lg dark:shadow-gray-900/30
-        transition-all duration-300 ease-in-out 
-        ${isCollapsed ? 'w-16' : 'w-[256px]'}
-        transform md:translate-x-0
-        ${isCollapsed ? 'translate-x-full md:translate-x-0' : 'translate-x-0'}`}
+      className={`fixed right-0 top-14 h-[calc(100vh-3.5rem)] bg-card border-l border-border shadow-lg transition-all duration-300 ease-in-out ${
+        isCollapsed ? 'w-16' : 'w-[256px]'
+      } transform md:translate-x-0 ${isCollapsed ? 'translate-x-full md:translate-x-0' : 'translate-x-0'}`}
     >
       <button
         onClick={toggleSidebar}
-        className="absolute -left-3 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-900 rounded-full p-1.5 
-          shadow-lg dark:shadow-gray-900/30 z-50 
-          hover:bg-gray-50 dark:hover:bg-gray-800 
-          transition-colors"
+        className="absolute -left-3 top-1/2 -translate-y-1/2 bg-card rounded-full p-1.5 shadow-lg z-50 hover:bg-muted/50 transition-colors"
         aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         {isCollapsed ? (
-          <ChevronLeft className="text-gray-600 dark:text-gray-400" size={16} />
+          <ChevronLeft className="text-muted" size={16} />
         ) : (
-          <ChevronRight className="text-gray-600 dark:text-gray-400" size={16} />
+          <ChevronRight className="text-muted" size={16} />
         )}
       </button>
 
@@ -164,46 +155,34 @@ export default function RightSidebar() {
         // Collapsed State
         <div className="h-full py-4">
           <div className="flex justify-center mb-6">
-            <div className="w-10 h-10 rounded-lg bg-[#0D9488]/10 dark:bg-[#0D9488]/20 flex items-center justify-center">
-              <Compass className="w-5 h-5 text-[#0D9488] dark:text-[#0D9488]" />
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Compass className="w-5 h-5 text-primary" />
             </div>
           </div>
-
           <div className="space-y-4">
             <div className="relative group">
               <div className="flex justify-center">
                 <div
                   onClick={() => scrollToSection('recommendations')}
-                  className="w-10 h-10 rounded-lg hover:bg-[#0D9488]/10 dark:hover:bg-[#0D9488]/20 
-                    flex items-center justify-center transition-colors cursor-pointer"
+                  className="w-10 h-10 rounded-lg hover:bg-primary/10 flex items-center justify-center transition-colors cursor-pointer"
                 >
-                  <Sparkles className="w-5 h-5 text-[#0D9488] dark:text-[#0D9488]" />
+                  <Sparkles className="w-5 h-5 text-primary" />
                 </div>
               </div>
-              <div
-                className="absolute right-full top-1/2 -translate-y-1/2 mr-2 px-2 py-1 
-                bg-gray-900 dark:bg-gray-800 text-white text-xs rounded 
-                opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all"
-              >
+              <div className="absolute right-full top-1/2 -translate-y-1/2 mr-2 px-2 py-1 bg-foreground text-background text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                 Recommendations
               </div>
             </div>
-
             <div className="relative group">
               <div className="flex justify-center">
                 <div
                   onClick={() => scrollToSection('trending')}
-                  className="w-10 h-10 rounded-lg hover:bg-[#0D9488]/10 dark:hover:bg-[#0D9488]/20 
-                    flex items-center justify-center transition-colors cursor-pointer"
+                  className="w-10 h-10 rounded-lg hover:bg-primary/10 flex items-center justify-center transition-colors cursor-pointer"
                 >
-                  <Flame className="w-5 h-5 text-[#0D9488] dark:text-[#0D9488]" />
+                  <Flame className="w-5 h-5 text-primary" />
                 </div>
               </div>
-              <div
-                className="absolute right-full top-1/2 -translate-y-1/2 mr-2 px-2 py-1 
-                bg-gray-900 dark:bg-gray-800 text-white text-xs rounded 
-                opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all"
-              >
+              <div className="absolute right-full top-1/2 -translate-y-1/2 mr-2 px-2 py-1 bg-foreground text-background text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                 Trending
               </div>
             </div>
@@ -213,9 +192,8 @@ export default function RightSidebar() {
         // Expanded State
         <div className="h-full flex flex-col">
           <div className="p-4">
-            <h2 className="text-lg font-semibold text-[#0D9488] dark:text-white">Discovery</h2>
+            <h2 className="text-lg font-semibold text-primary">Discovery</h2>
           </div>
-
           <div
             ref={contentRef}
             className="flex-1 overflow-y-auto px-4 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
@@ -223,58 +201,34 @@ export default function RightSidebar() {
             <div className="space-y-6">
               {/* Recommendations Section */}
               <section ref={recommendationsRef}>
-                <h3 className="flex items-center gap-2 text-sm font-medium text-[#0D9488] dark:text-white mb-4">
-                  <Sparkles size={16} className="text-[#0D9488] dark:text-[#0D9488]" />
+                <h3 className="flex items-center gap-2 text-sm font-medium text-primary mb-4">
+                  <Sparkles size={16} className="text-primary" />
                   Recommendations
                 </h3>
-
                 <div className="space-y-3">
                   {recommendations.map((item) => (
                     <div
                       key={item.id}
-                      className="border border-gray-100 dark:border-gray-800 rounded-lg p-3 
-                        hover:border-[#0D9488]/20 dark:hover:border-[#0D9488]/40 
-                        bg-white dark:bg-gray-700 group
-                        hover:bg-[#0D9488]/5 dark:hover:bg-[#0D9488]/10
-                        transform hover:scale-[1.02] hover:shadow-sm
-                        transition-all duration-200 cursor-pointer"
+                      className="border border-border rounded-lg p-3 hover:border-primary/20 bg-card group hover:bg-primary/5 transform hover:scale-[1.02] hover:shadow-sm transition-all duration-200 cursor-pointer"
                     >
                       <div className="flex justify-between items-center mb-2">
-                        <span
-                          className="text-[11px] px-2 py-0.5 rounded-sm 
-                          bg-[#0D9488]/10 dark:bg-[#0D9488]/20 
-                          text-[#0D9488] dark:text-[#0D9488]"
-                        >
+                        <span className="text-[11px] px-2 py-0.5 rounded-sm bg-primary/10 text-primary">
                           {item.type}
                         </span>
-                        <span className="text-[11px] text-gray-400 dark:text-gray-500">
-                          {item.relevance}% relevant
-                        </span>
+                        <span className="text-[11px] text-muted">{item.relevance}% relevant</span>
                       </div>
-                      <h4
-                        className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 
-                        group-hover:text-[#0D9488] dark:group-hover:text-[#0D9488] transition-colors"
-                      >
+                      <h4 className="text-sm font-medium text-foreground mb-2 group-hover:text-primary transition-colors">
                         {item.title}
                       </h4>
                       <div className="flex items-center gap-2">
-                        <div
-                          className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 
-                          flex items-center justify-center"
-                        >
-                          <User size={12} className="text-gray-500 dark:text-gray-400" />
+                        <div className="w-5 h-5 rounded-full bg-muted/20 flex items-center justify-center">
+                          <User size={12} className="text-muted" />
                         </div>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {item.author}
-                        </span>
+                        <span className="text-xs text-muted">{item.author}</span>
                       </div>
                     </div>
                   ))}
-
-                  <button
-                    className="text-sm text-[#0D9488] dark:text-[#0D9488] 
-                    hover:text-[#0D9488]/80 dark:hover:text-[#0D9488]/80 font-medium"
-                  >
+                  <button className="text-sm text-primary hover:text-primary/80 font-medium">
                     See more recommendations →
                   </button>
                 </div>
@@ -282,37 +236,24 @@ export default function RightSidebar() {
 
               {/* Trending Section */}
               <section ref={trendingRef}>
-                <h3 className="flex items-center gap-2 text-sm font-medium text-[#0D9488] dark:text-white mb-4">
-                  <Flame size={16} className="text-[#0D9488] dark:text-white" />
+                <h3 className="flex items-center gap-2 text-sm font-medium text-primary mb-4">
+                  <Flame size={16} className="text-primary" />
                   Trending
                 </h3>
-
                 <div className="space-y-3">
                   {trending.map((item) => (
                     <div
                       key={item.id}
-                      className="border border-gray-100 dark:border-gray-800 rounded-lg p-3 
-                        hover:border-[#0D9488]/20 dark:hover:border-[#0D9488]/40 
-                        bg-white dark:bg-gray-700 group
-                        hover:bg-[#0D9488]/5 dark:hover:bg-[#0D9488]/10
-                        transform hover:scale-[1.02] hover:shadow-sm
-                        transition-all duration-200 cursor-pointer"
+                      className="border border-border rounded-lg p-3 hover:border-primary/20 bg-card group hover:bg-primary/5 transform hover:scale-[1.02] hover:shadow-sm transition-all duration-200 cursor-pointer"
                     >
-                      <h4
-                        className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 
-                        group-hover:text-[#0D9488] dark:group-hover:text-[#0D9488] transition-colors"
-                      >
+                      <h4 className="text-sm font-medium text-foreground mb-2 group-hover:text-primary transition-colors">
                         {item.title}
                       </h4>
                       <div className="flex justify-between items-center">
-                        <span
-                          className="text-[11px] px-2 py-0.5 rounded-sm 
-                          bg-[#0D9488]/10 dark:bg-[#0D9488]/20 
-                          text-[#0D9488] dark:text-[#0D9488]"
-                        >
+                        <span className="text-[11px] px-2 py-0.5 rounded-sm bg-primary/10 text-primary">
                           {item.category}
                         </span>
-                        <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center gap-3 text-xs text-muted">
                           <div className="flex items-center gap-1">
                             <MessageSquare size={12} />
                             <span>{item.comments}</span>
@@ -325,11 +266,7 @@ export default function RightSidebar() {
                       </div>
                     </div>
                   ))}
-
-                  <button
-                    className="text-sm text-[#0D9488] dark:text-[#0D9488] 
-                    hover:text-[#0D9488]/80 dark:hover:text-[#0D9488]/80 font-medium"
-                  >
+                  <button className="text-sm text-primary hover:text-primary/80 font-medium">
                     See more trending topics →
                   </button>
                 </div>

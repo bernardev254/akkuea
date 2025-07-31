@@ -29,12 +29,12 @@ export default function SettingsPage() {
       <Navbar />
       <div className="max-w-5xl mx-auto">
         <div className="space-y-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-teal-600 dark:text-teal-400">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary">
             Settings
           </h1>
 
           <TabProvider>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-card rounded-lg shadow-sm border border-border">
               <TabNav>
                 <TabItem icon={<Palette />} label="Appearance" value="appearance" />
                 <TabItem icon={<Bell />} label="Notifications" value="notifications" />
