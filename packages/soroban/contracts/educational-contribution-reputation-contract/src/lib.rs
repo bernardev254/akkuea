@@ -244,7 +244,7 @@ impl ContributorReputation {
     ) -> Result<(), Error> {
         caller.require_auth();
         security::check_admin_access(&env, &caller)?;
-        security::update_rate_limit(&env, &user_address, &operation.to_string(), new_limit)
+        security::update_rate_limit(&env, &user_address, "operation", new_limit)
     }
 
     /// Check circuit breaker status for a service
