@@ -1303,16 +1303,16 @@ fn test_professional_certification_registration() {
     };
     
     // Register certification
-    let cert_id = contract_client.register_professional_certification(&caller, &user_id, &certification);
+    let cert_id = contract_client.register_professional_cert(&caller, &user_id, &certification);
     assert_eq!(cert_id, String::from_str(&env, "pmp_456"));
 }
 
 #[test]
 fn test_system_bridge_configuration() {
     let env = Env::default();
-    let caller = Address::generate(&env);
+    let _caller = Address::generate(&env);
     let contract_address = env.register(ContributorReputation, ());
-    let contract_client = ContributorReputationClient::new(&env, &contract_address);
+    let _contract_client = ContributorReputationClient::new(&env, &contract_address);
 
     env.mock_all_auths();
     
@@ -1322,7 +1322,7 @@ fn test_system_bridge_configuration() {
     supported_operations.push_back(String::from_str(&env, "export"));
     supported_operations.push_back(String::from_str(&env, "sync"));
     
-    let bridge = SystemBridge {
+    let _bridge = SystemBridge {
         id: String::from_str(&env, "bridge_univ_1"),
         name: String::from_str(&env, "University System Bridge"),
         bridge_type: BridgeType::AcademicSystem,
@@ -1521,11 +1521,4 @@ fn test_credential_expiration_cleanup() {
     });
 }
 
-// Helper function for creating test environment
-fn create_test_env() -> Env {
-    let env = Env::default();
-    env.ledger().with_mut(|li| {
-        li.timestamp = 1234567890;
-    });
-    env
-}
+// Removed duplicate create_test_env function
