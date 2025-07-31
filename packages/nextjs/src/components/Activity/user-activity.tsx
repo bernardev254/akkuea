@@ -56,16 +56,14 @@ const UserActivityDashboard = () => {
   ];
 
   return (
-    <div className="container bg-white dark:bg-black rounded-lg shadow mx-auto mb-10 transition-colors duration-300 border">
+    <div className="container bg-card rounded-lg shadow mx-auto mb-10 transition-colors duration-300 border border-border">
       {/* Header with title */}
-      <div className="flex items-center mb-4 text-teal-600 dark:text-teal-400 bg-[#00CED10D] dark:bg-teal-900/20 h-[55.99px] px-3">
+      <div className="flex items-center mb-4 text-primary bg-primary/5 h-[55.99px] px-3">
         <Calendar size={18} className="mr-2" />
         <h1 className="text-lg font-bold">User Activity</h1>
       </div>
-
       <div className="p-4">
         <TabNavigation tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-
         <TabContent activeTab={activeTab} recentActivity={recentActivity} />
       </div>
     </div>

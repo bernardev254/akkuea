@@ -1,7 +1,7 @@
 'use client';
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Switch } from '@/components/ui/switch';
+import { Eye } from 'lucide-react';
 
 const AccessibilityTab = () => {
   // Estado para el tamaño de fuente
@@ -23,84 +23,39 @@ const AccessibilityTab = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800/50 rounded-xl p-4 sm:p-6 shadow-sm border">
+    <div className="bg-card rounded-xl p-4 sm:p-6 shadow-sm border border-border">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-[#00CED1]">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1.5 12C3.5 6.5 8 3 12 3C16 3 20.5 6.5 22.5 12C20.5 17.5 16 21 12 21C8 21 3.5 17.5 1.5 12Z"
-              stroke="#00CED1"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle cx="12" cy="12" r="3" stroke="#00CED1" strokeWidth="2" />
-          </svg>
+        <span className="text-primary">
+          <Eye className="w-5 h-5" />
         </span>
-        <h2 className="text-lg font-semibold">Accessibility</h2>
+        <h2 className="text-lg font-semibold text-foreground">Accessibility</h2>
       </div>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 ml-0 sm:ml-7">
+      <p className="text-sm text-muted mb-4 ml-0 sm:ml-7">
         Customize your experience for better accessibility
       </p>
 
       {/* Visual Preferences */}
       <div className="ml-0 sm:ml-7 mt-8">
-        <h3
-          className="font-medium"
-          style={{
-            fontFamily: 'Inter',
-            fontWeight: 500,
-            fontSize: '18px',
-            lineHeight: '28px',
-            letterSpacing: '0%',
-          }}
-        >
-          Visual Preferences
-        </h3>
+        <h3 className="font-medium text-foreground text-lg">Visual Preferences</h3>
+
         {/* Font Size */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <span
-              className="font-semibold"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 500,
-                fontSize: '14px',
-                lineHeight: '20px',
-                letterSpacing: '0%',
-              }}
-            >
-              Font Size
-            </span>
+            <span className="font-semibold text-foreground text-sm">Font Size</span>
             <div className="flex items-center gap-2">
               <button
-                className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-full border border-border bg-card shadow-sm text-foreground hover:bg-muted transition-colors"
                 onClick={() => handleFontSizeChange(fontSize - 1)}
                 aria-label="Disminuir tamaño de fuente"
                 disabled={fontSize <= minFontSize}
               >
                 –
               </button>
-              <span
-                className="text-sm font-medium w-10 text-center"
-                style={{
-                  fontFamily: 'Inter',
-                  fontWeight: 500,
-                  fontSize: '14px',
-                  lineHeight: '20px',
-                  letterSpacing: '0%',
-                }}
-              >
+              <span className="text-sm font-medium w-10 text-center text-foreground">
                 {fontSize}px
               </span>
               <button
-                className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-full border border-border bg-card shadow-sm text-foreground hover:bg-muted transition-colors"
                 onClick={() => handleFontSizeChange(fontSize + 1)}
                 aria-label="Aumentar tamaño de fuente"
                 disabled={fontSize >= maxFontSize}
@@ -115,12 +70,11 @@ const AccessibilityTab = () => {
             max={maxFontSize}
             value={fontSize}
             onChange={(e) => handleFontSizeChange(Number(e.target.value))}
-            className="w-full h-2 rounded-lg mb-3"
-            style={{ accentColor: '#00CED1', background: '#374151' }}
+            className="w-full h-2 rounded-lg mb-3 accent-primary"
             aria-label="Font size slider"
           />
           <div
-            className="border rounded px-3 py-2 bg-gray-50 dark:bg-gray-900/30 text-gray-700 dark:text-gray-200"
+            className="border border-border rounded px-3 py-2 bg-muted/20 text-foreground"
             style={{
               fontSize: `${fontSize}px`,
               fontFamily: dyslexiaFont ? 'OpenDyslexic, Arial, sans-serif' : 'inherit',
@@ -129,63 +83,21 @@ const AccessibilityTab = () => {
             This is a preview text that shows how your content will look.
           </div>
         </div>
+
         {/* High Contrast Mode */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span
-              className="font-medium"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 500,
-                fontSize: '14px',
-                lineHeight: '20px',
-                letterSpacing: '0%',
-              }}
-            >
-              High Contrast Mode
-            </span>
-            <div
-              className="text-xs"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 400,
-                fontSize: '12px',
-                lineHeight: '16px',
-                letterSpacing: '0%',
-                color: '#6B7280',
-              }}
-            >
-              Increase contrast for better visibility
-            </div>
+            <span className="font-medium text-foreground text-sm">High Contrast Mode</span>
+            <div className="text-xs text-muted">Increase contrast for better visibility</div>
           </div>
           <Switch checked={highContrast} onCheckedChange={setHighContrast} />
         </div>
+
         {/* Dyslexia-Friendly Font */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span
-              className="font-medium"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 500,
-                fontSize: '14px',
-                lineHeight: '20px',
-                letterSpacing: '0%',
-              }}
-            >
-              Dyslexia-Friendly Font
-            </span>
-            <div
-              className="text-xs"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 400,
-                fontSize: '12px',
-                lineHeight: '16px',
-                letterSpacing: '0%',
-                color: '#6B7280',
-              }}
-            >
+            <span className="font-medium text-foreground text-sm">Dyslexia-Friendly Font</span>
+            <div className="text-xs text-muted">
               Use a more readable font with increased spacing
             </div>
           </div>
@@ -195,77 +107,22 @@ const AccessibilityTab = () => {
 
       {/* Interaction */}
       <div className="ml-0 sm:ml-7 mt-8">
-        <h3
-          className="font-medium"
-          style={{
-            fontFamily: 'Inter',
-            fontWeight: 500,
-            fontSize: '18px',
-            lineHeight: '28px',
-            letterSpacing: '0%',
-          }}
-        >
-          Interaction
-        </h3>
+        <h3 className="font-medium text-foreground text-lg">Interaction</h3>
+
         {/* Reduce Motion */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span
-              className="font-medium"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 500,
-                fontSize: '14px',
-                lineHeight: '20px',
-                letterSpacing: '0%',
-              }}
-            >
-              Reduce Motion
-            </span>
-            <div
-              className="text-xs"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 400,
-                fontSize: '12px',
-                lineHeight: '16px',
-                letterSpacing: '0%',
-                color: '#6B7280',
-              }}
-            >
-              Minimize animations and transitions
-            </div>
+            <span className="font-medium text-foreground text-sm">Reduce Motion</span>
+            <div className="text-xs text-muted">Minimize animations and transitions</div>
           </div>
           <Switch checked={reduceMotion} onCheckedChange={setReduceMotion} />
         </div>
+
         {/* Increase Cursor Visibility */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span
-              className="font-medium"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 500,
-                fontSize: '14px',
-                lineHeight: '20px',
-                letterSpacing: '0%',
-              }}
-            >
-              Increase Cursor Visibility
-            </span>
-            <div
-              className="text-xs"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 400,
-                fontSize: '12px',
-                lineHeight: '16px',
-                letterSpacing: '0%',
-                color: '#6B7280',
-              }}
-            >
-              Use a larger, more visible cursor
-            </div>
+            <span className="font-medium text-foreground text-sm">Increase Cursor Visibility</span>
+            <div className="text-xs text-muted">Use a larger, more visible cursor</div>
           </div>
           <Switch checked={increaseCursor} onCheckedChange={setIncreaseCursor} />
         </div>
@@ -273,44 +130,13 @@ const AccessibilityTab = () => {
 
       {/* Keyboard Navigation */}
       <div className="ml-0 sm:ml-7 mt-8">
-        <h3
-          className="font-medium"
-          style={{
-            fontFamily: 'Inter',
-            fontWeight: 500,
-            fontSize: '18px',
-            lineHeight: '28px',
-            letterSpacing: '0%',
-          }}
-        >
-          Keyboard Navigation
-        </h3>
+        <h3 className="font-medium text-foreground text-lg">Keyboard Navigation</h3>
+
         {/* Enhanced Focus Indicators */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span
-              className="font-medium"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 500,
-                fontSize: '14px',
-                lineHeight: '20px',
-                letterSpacing: '0%',
-              }}
-            >
-              Enhanced Focus Indicators
-            </span>
-            <div
-              className="text-xs"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 400,
-                fontSize: '12px',
-                lineHeight: '16px',
-                letterSpacing: '0%',
-                color: '#6B7280',
-              }}
-            >
+            <span className="font-medium text-foreground text-sm">Enhanced Focus Indicators</span>
+            <div className="text-xs text-muted">
               Show more visible focus outlines when using keyboard
             </div>
           </div>

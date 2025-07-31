@@ -30,7 +30,7 @@
     --impact-border: 329 84% 58%;
   }
 
-  [data-theme='dark'] {
+  .dark {
     --background: 210 21% 9%; /* #121A1E */
     --card: 210 19% 18%; /* #1E2A2E */
     --primary: 176 73% 44%; /* #2AC1BC */
