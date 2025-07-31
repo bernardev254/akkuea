@@ -1,4 +1,3 @@
-
 import { Trophy, Award } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,7 +11,7 @@ export default function Component() {
 
   return (
     <>
-      <div className="min-h-screen bg-black text-card p-6">
+      <div className="min-h-screen bg-background text-card p-6">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="flex items-center space-x-2 sm:space-x-3">
@@ -20,7 +19,7 @@ export default function Component() {
             <h1 className="text-2xl sm:text-3xl font-bold text-primary">Achievements</h1>
           </div>
 
-          <article className="bg-gray-700 w-full p-5 rounded-md space-y-5">
+          <article className="bg-card w-full p-5 rounded-md space-y-5">
             <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-6">
               <div className="text-center lg:text-left">
                 <h2 className="text-lg sm:text-xl font-semibold text-primary">Your progress</h2>
@@ -32,9 +31,7 @@ export default function Component() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full lg:w-auto">
                 <div className="text-center">
                   <div className="text-xl sm:text-2xl font-bold text-primary">12</div>
-                  <div className="text-muted text-[11px] sm:text-xs">
-                    Completed achievements
-                  </div>
+                  <div className="text-muted text-[11px] sm:text-xs">Completed achievements</div>
                 </div>
                 <div className="text-center">
                   <div className="text-xl sm:text-2xl font-bold text-primary">Intermediate</div>
@@ -57,7 +54,7 @@ export default function Component() {
 
           {/* Achievement Tabs */}
           <Tabs defaultValue="all" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-black">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-background">
               <TabsTrigger
                 value="all"
                 className="data-[state=active]:bg-primary data-[state=active]:text-card"

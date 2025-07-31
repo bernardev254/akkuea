@@ -3,10 +3,10 @@ import { Progress } from '@/components/ui/progress';
 import { Achievement } from '@/lib/types';
 
 const categoryStyles: { [key: string]: string } = {
-  Contribution: 'bg-green-500/20 text-green-400 border-green-500/30',
-  Community: 'bg-green-500/20 text-green-400 border-green-500/30',
-  Learning: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  Impact: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+  Contribution: 'bg-contribution-bg/20 text-contribution-text border-contribution-border/30',
+  Community: 'bg-community-bg/20 text-community-text border-community-border/30',
+  Learning: 'bg-learning-bg/20 text-learning-text border-learning-border/30',
+  Impact: 'bg-impact-bg/20 text-impact-text border-impact-border/30',
 };
 
 const iconBgStyles: { [key: string]: string } = {
@@ -16,11 +16,12 @@ const iconBgStyles: { [key: string]: string } = {
 };
 
 export const AchievementCard = ({ achievement }: { achievement: Achievement }) => {
-  const badgeStyle = categoryStyles[achievement.category] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+  const badgeStyle =
+    categoryStyles[achievement.category] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
   const iconBgStyle = iconBgStyles[achievement.status];
 
   return (
-    <div className="bg-gray-700 rounded-lg p-4 flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+    <div className="bg-card rounded-lg p-4 flex flex-col sm:flex-row gap-4 items-center sm:items-start">
       <div>
         <div className={`${iconBgStyle} p-3 rounded-lg`}>
           <achievement.icon className="w-6 h-6 text-card" />
@@ -38,10 +39,10 @@ export const AchievementCard = ({ achievement }: { achievement: Achievement }) =
         <div className="flex flex-col gap-1 mt-4">
           <div className="flex justify-between">
             {achievement.status === 'completed' && (
-              <p className="text-slate-500 text-sm">Completed on {achievement.completedDate}</p>
+              <p className="text-muted-foreground text-sm">Completed on {achievement.completedDate}</p>
             )}
             {achievement.status === 'in-progress' && (
-              <p className="text-slate-500 text-sm">In progress - {achievement.progressText}</p>
+              <p className="text-muted-foreground text-sm">In progress - {achievement.progressText}</p>
             )}
             {achievement.status !== 'locked' && (
               <span className="text-card font-semibold text-sm">{achievement.progress}%</span>

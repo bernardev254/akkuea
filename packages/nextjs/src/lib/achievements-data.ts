@@ -1,4 +1,3 @@
-
 import { Star, Users, Code, BookOpen, MessageCircle, Share2 } from 'lucide-react';
 import { Achievement } from '@/lib/types';
 
