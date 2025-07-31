@@ -3,6 +3,7 @@ use crate::security;
 use crate::storage;
 use crate::types::*;
 use soroban_sdk::{Address, Env, Map, String, Vec};
+use alloc::string::ToString;
 
 /// Integration module providing external credential verification, professional certification,
 /// and import/export functionality
@@ -244,7 +245,7 @@ pub fn sync_with_external_system(
     security::check_moderator_access(env, caller)?;
     
     // Check circuit breaker
-    security::check_circuit_breaker(env, &bridge_id)?;
+    security::check_circuit_breaker(env, &bridge_id.to_string())?;
     
     // Get bridge configuration
     let bridge = storage::get_system_bridge(env, bridge_id.clone())
@@ -277,13 +278,13 @@ pub fn sync_with_external_system(
             operation.status = OperationStatus::Completed;
             operation.completed_at = Some(env.ledger().timestamp());
             operation.records_processed = records_count;
-            security::record_success(env, &bridge_id)?;
+            security::record_success(env, &bridge_id.to_string())?;
         }
         Err(e) => {
             operation.status = OperationStatus::Failed;
             operation.completed_at = Some(env.ledger().timestamp());
             operation.errors.push_back(String::from_str(env, "Sync failed"));
-            security::record_failure(env, &bridge_id)?;
+            security::record_failure(env, &bridge_id.to_string())?;
             storage::store_import_export_operation(env, &operation);
             return Err(e);
         }
@@ -340,7 +341,7 @@ pub fn import_user_data(
             operation.status = OperationStatus::Completed;
             operation.records_processed = records_count;
         }
-        Err(e) => {
+        Err(_e) => {
             operation.status = OperationStatus::Failed;
             operation.errors.push_back(String::from_str(env, "Import failed"));
         }
@@ -537,15 +538,12 @@ fn generate_export_data(
     let format_str = export_format.to_string();
     if format_str == "json" {
         if include_sensitive {
-            Ok(String::from_str(env, &format!("{{\"user_id\":{},\"name\":\"{}\",\"verified\":{}}}", 
-                user.id, user.name.to_string(), user.verified)))
+            Ok(String::from_str(env, &(String::from_str(env, "{\"user_id\":") + &user.id.to_string() + ",\"name\":\"" + &user.name.to_string() + "\",\"verified\":" + &user.verified.to_string() + "}")))
         } else {
-            Ok(String::from_str(env, &format!("{{\"name\":\"{}\",\"verified\":{}}}", 
-                user.name.to_string(), user.verified)))
+            Ok(String::from_str(env, &(String::from_str(env, "{\"name\":\"") + &user.name.to_string() + "\",\"verified\":" + &user.verified.to_string() + "}")))
         }
     } else if format_str == "xml" {
-        Ok(String::from_str(env, &format!("<user><name>{}</name><verified>{}</verified></user>", 
-            user.name.to_string(), user.verified)))
+        Ok(String::from_str(env, &(String::from_str(env, "<user><name>") + &user.name.to_string() + "</name><verified>" + &user.verified.to_string() + "</verified></user>")))
     } else {
         Err(Error::UnsupportedOperation)
     }

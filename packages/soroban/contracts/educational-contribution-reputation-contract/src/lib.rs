@@ -244,7 +244,7 @@ impl ContributorReputation {
     ) -> Result<(), Error> {
         caller.require_auth();
         security::check_admin_access(&env, &caller)?;
-        security::update_rate_limit(&env, &user_address, &operation, new_limit)
+        security::update_rate_limit(&env, &user_address, &operation.to_string(), new_limit)
     }
 
     /// Check circuit breaker status for a service
@@ -293,7 +293,7 @@ impl ContributorReputation {
     }
 
     /// Register a professional certification
-    pub fn register_professional_certification(
+    pub fn register_professional_cert(
         env: Env,
         caller: Address,
         user_id: u64,
@@ -303,7 +303,7 @@ impl ContributorReputation {
     }
 
     /// Verify a professional certification
-    pub fn verify_professional_certification(
+    pub fn verify_professional_cert(
         env: Env,
         caller: Address,
         certification_id: String,

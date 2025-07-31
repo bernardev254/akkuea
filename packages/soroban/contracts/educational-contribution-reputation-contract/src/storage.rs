@@ -422,7 +422,7 @@ pub fn system_bridge_exists(env: &Env, bridge_id: String) -> bool {
 pub fn get_all_external_credential_ids(env: &Env) -> Vec<String> {
     // This is a simplified implementation - in practice, you might want to maintain
     // a separate index for performance
-    let mut credential_ids = Vec::new(env);
+    let credential_ids = Vec::new(env);
     
     // In a real implementation, you would iterate through stored keys
     // For now, return empty vector as placeholder
@@ -433,7 +433,7 @@ pub fn get_all_external_credential_ids(env: &Env) -> Vec<String> {
 pub fn get_all_professional_certification_ids(env: &Env) -> Vec<String> {
     // This is a simplified implementation - in practice, you might want to maintain
     // a separate index for performance
-    let mut certification_ids = Vec::new(env);
+    let certification_ids = Vec::new(env);
     
     // In a real implementation, you would iterate through stored keys
     // For now, return empty vector as placeholder
