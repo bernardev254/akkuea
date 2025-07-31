@@ -21,8 +21,12 @@ pub fn validate_user_input(name: &String) -> Result<(), Error> {
         return Err(Error::InvalidInput);
     }
     
-    // Basic validation - more sophisticated checks would be added in production
-    // Skip string content validation for now to avoid to_string() issues
+    // Check for common malicious patterns by checking bytes
+    let name_bytes = name.as_bytes();
+    // Check for script tags
+    if name_bytes.windows(6).any(|w| w == b"<script") {
+        return Err(Error::InvalidInput);
+    }
     
     Ok(())
 }
@@ -60,7 +64,11 @@ pub fn validate_evidence(evidence: &String) -> Result<(), Error> {
 /// Check if user has exceeded rate limit
 pub fn check_rate_limit(env: &Env, _user_address: &Address, operation: &str) -> Result<(), Error> {
     let current_time = env.ledger().timestamp();
-    let window_start = current_time - MAX_RATE_LIMIT_WINDOW;
+    let window_start = if current_time > MAX_RATE_LIMIT_WINDOW {
+        current_time - MAX_RATE_LIMIT_WINDOW
+    } else {
+        0
+    };
     
     // Simplified rate limiting key to avoid string concatenation issues
     let rate_limit_key = String::from_str(env, operation);

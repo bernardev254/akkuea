@@ -626,7 +626,12 @@ fn test_platform_analytics() {
 
 // Tests from test_remaining_functions.rs
 fn create_test_env() -> Env {
-    Env::default()
+    let env = Env::default();
+    // Set a timestamp that's large enough to prevent underflow in arithmetic operations
+    env.ledger().with_mut(|li| {
+        li.timestamp = 31536000; // 1 year in seconds, large enough for all our test subtractions
+    });
+    env
 }
 
 fn create_test_user(env: &Env, id: u64, name: &str) -> User {
@@ -1206,7 +1211,7 @@ fn test_cleanup_expired_probations_no_active_probations() {
 
 #[test]
 fn test_security_audit() {
-    let env = Env::default();
+    let env = create_test_env();
     let caller = Address::generate(&env);
     let contract_address = env.register(ContributorReputation, ());
     let contract_client = ContributorReputationClient::new(&env, &contract_address);
@@ -1237,7 +1242,7 @@ fn test_security_audit() {
 
 #[test]
 fn test_external_credential_registration() {
-    let env = Env::default();
+    let env = create_test_env();
     let caller = Address::generate(&env);
     let contract_address = env.register(ContributorReputation, ());
     let contract_client = ContributorReputationClient::new(&env, &contract_address);
@@ -1273,7 +1278,7 @@ fn test_external_credential_registration() {
 
 #[test]
 fn test_professional_certification_registration() {
-    let env = Env::default();
+    let env = create_test_env();
     let caller = Address::generate(&env);
     let contract_address = env.register(ContributorReputation, ());
     let contract_client = ContributorReputationClient::new(&env, &contract_address);
@@ -1309,7 +1314,7 @@ fn test_professional_certification_registration() {
 
 #[test]
 fn test_system_bridge_configuration() {
-    let env = Env::default();
+    let env = create_test_env();
     let _caller = Address::generate(&env);
     let contract_address = env.register(ContributorReputation, ());
     let _contract_client = ContributorReputationClient::new(&env, &contract_address);
@@ -1342,7 +1347,7 @@ fn test_system_bridge_configuration() {
 
 #[test]
 fn test_import_export_operations() {
-    let env = Env::default();
+    let env = create_test_env();
     let caller = Address::generate(&env);
     let contract_address = env.register(ContributorReputation, ());
     let contract_client = ContributorReputationClient::new(&env, &contract_address);
@@ -1493,14 +1498,15 @@ fn test_credential_expiration_cleanup() {
         env.storage().instance().set(&DataKey::NextUserId, &2u64);
         
         // Create an expired external credential
+        let current_time = env.ledger().timestamp();
         let expired_credential = ExternalCredential {
             id: String::from_str(&env, "expired_cred"),
             user_id: 1,
             provider: String::from_str(&env, "Test Provider"),
             credential_type: String::from_str(&env, "Certificate"),
             subject_area: String::from_str(&env, "Computer Science"),
-            issued_date: env.ledger().timestamp() - 86400, // Yesterday
-            expiry_date: Some(env.ledger().timestamp() - 3600), // Expired 1 hour ago
+            issued_date: if current_time > 86400 { current_time - 86400 } else { 0 }, // Yesterday or 0
+            expiry_date: Some(if current_time > 3600 { current_time - 3600 } else { 0 }), // Expired 1 hour ago or 0
             verification_status: VerificationStatus::Verified,
             verification_data: String::from_str(&env, "test_data"),
             metadata: Map::new(&env),
