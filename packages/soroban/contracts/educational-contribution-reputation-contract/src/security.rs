@@ -6,7 +6,7 @@ use soroban_sdk::{Address, Env, String, Vec};
 /// Security module providing input validation, rate limiting, circuit breakers, and formal verification
 
 // Constants for security limits
-const MAX_STRING_LENGTH: usize = 1000;
+const MAX_STRING_LENGTH: u32 = 1000;
 const MAX_SCORE: u32 = 1000;
 const MAX_RATE_LIMIT_WINDOW: u64 = 3600; // 1 hour in seconds
 const DEFAULT_RATE_LIMIT: u32 = 100; // Default operations per window

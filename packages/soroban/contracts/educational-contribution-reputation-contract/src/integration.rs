@@ -523,10 +523,10 @@ fn process_import_data(
 fn generate_export_data(
     env: &Env,
     user_id: u64,
-    export_format: &String,
+    _export_format: &String,
     include_sensitive: bool,
 ) -> Result<String, Error> {
-    let user = storage::get_user(env, user_id)?;
+    let _user = storage::get_user(env, user_id)?;
     
     // Mock export generation based on format
     // Simplified to avoid to_string() issues
