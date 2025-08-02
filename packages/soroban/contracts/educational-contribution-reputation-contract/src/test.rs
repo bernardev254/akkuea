@@ -1226,7 +1226,7 @@ fn test_security_audit() {
     contract_client.verify_user(&caller, &user_id1, &String::from_str(&env, "verified"));
     
     // Create reputation for user2 before submitting dispute
-    contract_client.update_reputation(&caller, &user_id2, &String::from_str(&env, "Math"), &100, &String::from_str(&env, "Initial math score"));
+    contract_client.update_reputation(&caller, &user_id2, &String::from_str(&env, "Math"), &100);
     
     // Create a dispute
     let _dispute_id = contract_client.submit_dispute(
