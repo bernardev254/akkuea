@@ -1222,8 +1222,9 @@ fn test_security_audit() {
     let user_id1 = contract_client.initialize_user(&caller, &String::from_str(&env, "Alice"));
     let user_id2 = contract_client.initialize_user(&caller, &String::from_str(&env, "Bob"));
     
-    // Verify one user
+    // Verify both users (required for reputation updates)
     contract_client.verify_user(&caller, &user_id1, &String::from_str(&env, "verified"));
+    contract_client.verify_user(&caller, &user_id2, &String::from_str(&env, "verified"));
     
     // Create reputation for user2 before submitting dispute
     contract_client.update_reputation(&caller, &user_id2, &String::from_str(&env, "Math"), &100);
