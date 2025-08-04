@@ -2386,3 +2386,289 @@ fn test_advanced_verification_and_delegation() {
     // Revoke delegation
     client.revoke_delegation(&verifier, &delegatee);
 }
+
+// ========================================
+// ANALYTICS TESTS
+// ========================================
+
+#[test]
+fn test_record_content_view() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    
+    let creator = Address::generate(&env);
+    let content_id = client.publish_content(
+        &creator,
+        &String::from_str(&env, "Test Content for Analytics"),
+        &BytesN::random(&env),
+        &vec![&env, String::from_str(&env, "analytics")]
+    );
+    
+    // Record multiple views
+    client.record_content_view(&content_id);
+    client.record_content_view(&content_id);
+    client.record_content_view(&content_id);
+    
+    // Get analytics and verify
+    let analytics = client.get_content_analytics(&content_id);
+    assert_eq!(analytics.content_id, content_id);
+    assert_eq!(analytics.total_views, 3);
+    assert_eq!(analytics.total_upvotes, 0);
+    assert_eq!(analytics.total_downvotes, 0);
+    assert_eq!(analytics.engagement_rate, 0); // No engagement yet
+}
+
+#[test]
+fn test_record_content_upvotes_and_downvotes() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    
+    let creator = Address::generate(&env);
+    let content_id = client.publish_content(
+        &creator,
+        &String::from_str(&env, "Content for Voting Analytics"),
+        &BytesN::random(&env),
+        &vec![&env, String::from_str(&env, "voting")]
+    );
+    
+    // Record views first
+    client.record_content_view(&content_id);
+    client.record_content_view(&content_id);
+    client.record_content_view(&content_id);
+    client.record_content_view(&content_id);
+    client.record_content_view(&content_id);
+    
+    // Record upvotes and downvotes
+    client.record_content_upvote(&content_id);
+    client.record_content_upvote(&content_id);
+    client.record_content_upvote(&content_id);
+    client.record_content_downvote(&content_id);
+    
+    // Get analytics and verify
+    let analytics = client.get_content_analytics(&content_id);
+    assert_eq!(analytics.total_views, 5);
+    assert_eq!(analytics.total_upvotes, 3);
+    assert_eq!(analytics.total_downvotes, 1);
+    assert_eq!(analytics.engagement_rate, 8000); // (3+1)/5 * 10000 = 8000
+    assert!(analytics.average_rating > 25000); // Should be above neutral (25000)
+}
+
+#[test]
+fn test_update_category_analytics() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    
+    let creator = Address::generate(&env);
+    let content_id = client.publish_content(
+        &creator,
+        &String::from_str(&env, "Category Analytics Test"),
+        &BytesN::random(&env),
+        &vec![&env, String::from_str(&env, "blockchain")]
+    );
+    
+    // Record some activity
+    client.record_content_view(&content_id);
+    client.record_content_upvote(&content_id);
+    
+    // Update category analytics
+    client.update_category_analytics(&content_id);
+    
+    // Note: Category analytics retrieval would need to be implemented
+    // For now, we just verify the function doesn't panic
+}
+
+// ========================================
+// TRENDING TESTS
+// ========================================
+
+#[test]
+fn test_calculate_trending_score() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    
+    let creator = Address::generate(&env);
+    let content_id = client.publish_content(
+        &creator,
+        &String::from_str(&env, "Trending Content Test"),
+        &BytesN::random(&env),
+        &vec![&env, String::from_str(&env, "trending")]
+    );
+    
+    // Record activity to generate analytics
+    client.record_content_view(&content_id);
+    client.record_content_upvote(&content_id);
+    client.record_content_upvote(&content_id);
+    
+    // Calculate trending score for daily period
+    let trending_score = client.calculate_trending_score(&content_id, &crate::storage::TrendingPeriod::Daily);
+    
+    // Verify trending score is calculated (should be > 0 due to activity)
+    assert!(trending_score > 0);
+}
+
+#[test]
+fn test_update_trending_content() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    
+    let creator = Address::generate(&env);
+    let content_id = client.publish_content(
+        &creator,
+        &String::from_str(&env, "Update Trending Test"),
+        &BytesN::random(&env),
+        &vec![&env, String::from_str(&env, "trending")]
+    );
+    
+    // Record some activity
+    client.record_content_view(&content_id);
+    client.record_content_upvote(&content_id);
+    
+    // Update trending content for daily period
+    client.update_trending_content(&content_id, &crate::storage::TrendingPeriod::Daily);
+    
+    // Note: Trending content retrieval would need to be implemented
+    // For now, we just verify the function doesn't panic
+}
+
+#[test]
+fn test_create_trending_snapshot() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    
+    let creator = Address::generate(&env);
+    let content_id = client.publish_content(
+        &creator,
+        &String::from_str(&env, "Snapshot Test Content"),
+        &BytesN::random(&env),
+        &vec![&env, String::from_str(&env, "snapshot")]
+    );
+    
+    // Record activity
+    client.record_content_view(&content_id);
+    client.record_content_upvote(&content_id);
+    
+    // Create trending snapshot for daily period
+    let snapshot = client.create_trending_snapshot(&crate::storage::TrendingPeriod::Daily);
+    
+    // Verify snapshot was created
+    assert_eq!(snapshot.period, crate::storage::TrendingPeriod::Daily);
+    // Note: timestamp might be 0 in test environment, which is acceptable
+    // Note: trending_content_ids might be empty if no content meets trending criteria
+}
+
+#[test]
+fn test_update_all_trending_content() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    
+    let creator = Address::generate(&env);
+    let content_id = client.publish_content(
+        &creator,
+        &String::from_str(&env, "All Trending Update Test"),
+        &BytesN::random(&env),
+        &vec![&env, String::from_str(&env, "trending")]
+    );
+    
+    // Record activity
+    client.record_content_view(&content_id);
+    client.record_content_upvote(&content_id);
+    
+    // Update all trending content
+    client.update_all_trending_content(&content_id);
+    
+    // Note: This function should update trending for all periods
+    // For now, we just verify the function doesn't panic
+}
+
+// ========================================
+// INTEGRATION TESTS
+// ========================================
+
+#[test]
+fn test_analytics_and_trending_integration() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    
+    let creator = Address::generate(&env);
+    let content_id = client.publish_content(
+        &creator,
+        &String::from_str(&env, "Integration Test Content"),
+        &BytesN::random(&env),
+        &vec![&env, String::from_str(&env, "integration")]
+    );
+    
+    // Simulate content becoming popular
+    for _ in 0..10 {
+        client.record_content_view(&content_id);
+    }
+    
+    for _ in 0..8 {
+        client.record_content_upvote(&content_id);
+    }
+    
+    for _ in 0..2 {
+        client.record_content_downvote(&content_id);
+    }
+    
+    // Get analytics
+    let analytics = client.get_content_analytics(&content_id);
+    assert_eq!(analytics.total_views, 10);
+    assert_eq!(analytics.total_upvotes, 8);
+    assert_eq!(analytics.total_downvotes, 2);
+    assert_eq!(analytics.engagement_rate, 10000); // (8+2)/10 * 10000 = 10000
+    
+    // Calculate trending score
+    let trending_score = client.calculate_trending_score(&content_id, &crate::storage::TrendingPeriod::Daily);
+    assert!(trending_score > 0);
+    
+    // Update trending content
+    client.update_trending_content(&content_id, &crate::storage::TrendingPeriod::Daily);
+    
+    // Create snapshot
+    let snapshot = client.create_trending_snapshot(&crate::storage::TrendingPeriod::Daily);
+    assert_eq!(snapshot.period, crate::storage::TrendingPeriod::Daily);
+    // Note: timestamp might be 0 in test environment, which is acceptable
+    
+    // Update category analytics
+    client.update_category_analytics(&content_id);
+}
+
+#[test]
+#[should_panic(expected = "Content does not exist")]
+fn test_analytics_nonexistent_content() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    
+    // Try to record view for non-existent content
+    client.record_content_view(&999);
+}
+
+#[test]
+#[should_panic(expected = "Content does not exist")]
+fn test_trending_nonexistent_content() {
+    let env = Env::default();
+    let contract_id = env.register(TokenizedEducationalContent, ());
+    let client = TokenizedEducationalContentClient::new(&env, &contract_id);
+    env.mock_all_auths();
+    
+    // Try to calculate trending score for non-existent content
+    client.calculate_trending_score(&999, &crate::storage::TrendingPeriod::Daily);
+}
