@@ -29,7 +29,7 @@ export const AchievementCard = ({ achievement }: { achievement: Achievement }) =
       </div>
       <div className="flex flex-col w-full text-center sm:text-left">
         <div className="flex flex-col sm:flex-row items-center justify-between mb-2">
-          <h3 className="text-card font-semibold text-base">{achievement.title}</h3>
+          <h3 className=" text-foreground font-semibold text-base">{achievement.title}</h3>
           <Badge variant="outline" className={`${badgeStyle} mt-2 sm:mt-0`}>
             {achievement.category}
           </Badge>
@@ -39,13 +39,17 @@ export const AchievementCard = ({ achievement }: { achievement: Achievement }) =
         <div className="flex flex-col gap-1 mt-4">
           <div className="flex justify-between">
             {achievement.status === 'completed' && (
-              <p className="text-muted-foreground text-sm">Completed on {achievement.completedDate}</p>
+              <p className="text-foreground text-sm">
+                Completed on {achievement.completedDate}
+              </p>
             )}
             {achievement.status === 'in-progress' && (
-              <p className="text-muted-foreground text-sm">In progress - {achievement.progressText}</p>
+              <p className="text-foreground text-sm">
+                In progress - {achievement.progressText}
+              </p>
             )}
             {achievement.status !== 'locked' && (
-              <span className="text-card font-semibold text-sm">{achievement.progress}%</span>
+              <span className="text-foreground font-semibold text-sm">{achievement.progress}%</span>
             )}
           </div>
 

@@ -6,19 +6,19 @@ import { generateHeatmapData, TIME_CONSTS } from '@/lib/utils';
 const getActivityColor = (level: number): string => {
   switch (true) {
     case level === 0:
-      return "bg-muted/20"
+      return 'bg-muted/20';
     case level === 1:
-      return "bg-primary/20"
+      return 'bg-primary/20';
     case level === 2:
-      return "bg-primary/40"
+      return 'bg-primary/40';
     case level === 3:
-      return "bg-primary/60"
+      return 'bg-primary/60';
     case level === 4:
-      return "bg-primary/80"
+      return 'bg-primary/80';
     case level > 4:
-      return "bg-primary"
+      return 'bg-primary';
     default:
-      return "bg-muted/20"
+      return 'bg-muted/20';
   }
 };
 
