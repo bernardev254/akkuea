@@ -57,25 +57,25 @@ export default function Component() {
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-background">
               <TabsTrigger
                 value="all"
-                className="data-[state=active]:bg-primary data-[state=active]:text-card"
+                className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-card"
               >
                 All
               </TabsTrigger>
               <TabsTrigger
                 value="completed"
-                className="data-[state=active]:bg-primary data-[state=active]:text-card"
+                className=" text-foreground data-[state=active]:bg-primary data-[state=active]:text-card"
               >
                 Completed
               </TabsTrigger>
               <TabsTrigger
                 value="in-progress"
-                className="data-[state=active]:bg-primary data-[state=active]:text-card"
+                className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-card"
               >
                 In progress
               </TabsTrigger>
               <TabsTrigger
                 value="locked"
-                className="data-[state=active]:bg-primary data-[state=active]:text-card"
+                className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-card"
               >
                 Locked
               </TabsTrigger>
