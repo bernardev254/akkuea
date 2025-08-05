@@ -29,9 +29,7 @@ export default function SettingsPage() {
       <Navbar />
       <div className="max-w-5xl mx-auto">
         <div className="space-y-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary">
-            Settings
-          </h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary">Settings</h1>
 
           <TabProvider>
             <div className="bg-card rounded-lg shadow-sm border border-border">
