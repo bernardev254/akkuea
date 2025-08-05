@@ -99,6 +99,14 @@ pub enum DataKey {
     CollaboratorPermission(Address, u64),   // collaborator, content_id -> CollaboratorPermission
     CollaboratorSubmission(Address, u64),   // collaborator, content_id -> CollaboratorSubmission
     UserContentContributions(Address, u64), // collaborator, content_id -> Vec<CollaboratorSubmission>
+    
+    // Analytics keys
+    ContentAnalytics(u64),                    // content_id -> ContentAnalytics
+    TimeBasedMetrics(u64, u64, TimePeriod),   // content_id, timestamp, period -> TimeBasedMetrics
+    CategoryAnalytics(String),                // category -> CategoryAnalytics
+    TrendingContent(u64, TrendingPeriod),     // content_id, period -> TrendingContent
+    TrendingSnapshot(TrendingPeriod, u64),    // period, timestamp -> TrendingSnapshot
+    AnalyticsCounter,                         // u64
 }
 
 // --- Advanced Verification and Moderation Additions ---
@@ -172,6 +180,76 @@ pub enum AdvDataKey {
     DisputeCounter,         // u64
 }
 
+/// ANALYTICS STORAGE STRUCTURES
+#[contracttype]
+pub struct ContentAnalytics {
+    pub content_id: u64,
+    pub total_views: u64,
+    pub total_upvotes: u32,
+    pub total_downvotes: u32,
+    pub engagement_rate: u32, // (upvotes + downvotes) / views * 10000 (scaled to avoid decimals)
+    pub average_rating: u32,  // 0-50000 (scaled to avoid decimals, 50000 = 5.0)
+    pub trending_score: u32,  // Scaled trending score
+    pub last_updated: u64,
+}
+
+#[contracttype]
+pub struct TimeBasedMetrics {
+    pub content_id: u64,
+    pub timestamp: u64,
+    pub views: u32,
+    pub upvotes: u32,
+    pub downvotes: u32,
+    pub period: TimePeriod,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[contracttype]
+pub enum TimePeriod {
+    Hourly = 0,
+    Daily = 1,
+    Weekly = 2,
+    Monthly = 3,
+}
+
+#[contracttype]
+pub struct CategoryAnalytics {
+    pub category: String,
+    pub total_content: u32,
+    pub total_views: u64,
+    pub total_upvotes: u32,
+    pub average_rating: u32,  // 0-50000 (scaled to avoid decimals, 50000 = 5.0)
+    pub trending_content_count: u32,
+    pub last_updated: u64,
+}
+
+/// TRENDING STORAGE STRUCTURES
+#[contracttype]
+pub struct TrendingContent {
+    pub content_id: u64,
+    pub trending_score: u32,      // Scaled trending score
+    pub velocity_score: u32,      // Scaled velocity score
+    pub time_weighted_score: u32, // Scaled time-weighted score
+    pub period: TrendingPeriod,
+    pub calculated_at: u64,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[contracttype]
+pub enum TrendingPeriod {
+    Daily = 0,
+    Weekly = 1,
+    Monthly = 2,
+}
+
+#[contracttype]
+pub struct TrendingSnapshot {
+    pub period: TrendingPeriod,
+    pub timestamp: u64,
+    pub trending_content_ids: Vec<u64>,
+    pub scores: Vec<u32>, // Scaled scores
+}
+
 // Get the next content ID and increment the counter
 pub fn get_next_content_id(env: &Env) -> u64 {
     let key = DataKey::ContentCounter;
@@ -233,6 +311,7 @@ pub fn get_all_content_ids(env: &Env) -> Vec<u64> {
 }
 
 // Get multiple content items by their IDs
+#[allow(dead_code)]
 pub fn get_multiple_content(env: &Env, content_ids: &Vec<u64>) -> Vec<Content> {
     let mut contents = Vec::new(env);
 
@@ -345,4 +424,85 @@ pub fn save_contribution_to_history(env: &Env, user: &Address, content_id: u64, 
 pub fn get_user_content_contribution_history(env: &Env, user: &Address, content_id: u64) -> Vec<CollaboratorSubmission> {
     let key = DataKey::UserContentContributions(user.clone(), content_id);
     env.storage().instance().get(&key).unwrap_or_else(|| Vec::new(env))
+}
+
+///
+/// ANALYTICS STORAGE FUNCTIONS
+///
+
+/// Save content analytics
+pub fn save_content_analytics(env: &Env, analytics: &ContentAnalytics) {
+    let key = DataKey::ContentAnalytics(analytics.content_id);
+    env.storage().instance().set(&key, analytics);
+}
+
+/// Get content analytics
+pub fn get_content_analytics(env: &Env, content_id: u64) -> Option<ContentAnalytics> {
+    let key = DataKey::ContentAnalytics(content_id);
+    env.storage().instance().get(&key)
+}
+
+/// Save time-based metrics
+pub fn save_time_based_metrics(env: &Env, metrics: &TimeBasedMetrics) {
+    let key = DataKey::TimeBasedMetrics(metrics.content_id, metrics.timestamp, metrics.period);
+    env.storage().instance().set(&key, metrics);
+}
+
+/// Get time-based metrics for a content item
+pub fn get_time_based_metrics(env: &Env, content_id: u64, timestamp: u64, period: TimePeriod) -> Option<TimeBasedMetrics> {
+    let key = DataKey::TimeBasedMetrics(content_id, timestamp, period);
+    env.storage().instance().get(&key)
+}
+
+/// Save category analytics
+pub fn save_category_analytics(env: &Env, analytics: &CategoryAnalytics) {
+    let key = DataKey::CategoryAnalytics(analytics.category.clone());
+    env.storage().instance().set(&key, analytics);
+}
+
+/// Get category analytics
+pub fn get_category_analytics(env: &Env, category: &String) -> Option<CategoryAnalytics> {
+    let key = DataKey::CategoryAnalytics(category.clone());
+    env.storage().instance().get(&key)
+}
+
+/// Save trending content data
+pub fn save_trending_content(env: &Env, trending: &TrendingContent) {
+    let key = DataKey::TrendingContent(trending.content_id, trending.period);
+    env.storage().instance().set(&key, trending);
+}
+
+/// Get trending content data
+pub fn get_trending_content(env: &Env, content_id: u64, period: TrendingPeriod) -> Option<TrendingContent> {
+    let key = DataKey::TrendingContent(content_id, period);
+    env.storage().instance().get(&key)
+}
+
+/// Save trending snapshot
+pub fn save_trending_snapshot(env: &Env, snapshot: &TrendingSnapshot) {
+    let key = DataKey::TrendingSnapshot(snapshot.period, snapshot.timestamp);
+    env.storage().instance().set(&key, snapshot);
+}
+
+/// Get trending snapshot
+pub fn get_trending_snapshot(env: &Env, period: TrendingPeriod, timestamp: u64) -> Option<TrendingSnapshot> {
+    let key = DataKey::TrendingSnapshot(period, timestamp);
+    env.storage().instance().get(&key)
+}
+
+/// Get analytics counter
+#[allow(dead_code)]
+pub fn get_analytics_counter(env: &Env) -> u64 {
+    let key = DataKey::AnalyticsCounter;
+    env.storage().instance().get(&key).unwrap_or(0u64)
+}
+
+/// Increment analytics counter
+#[allow(dead_code)]
+pub fn increment_analytics_counter(env: &Env) -> u64 {
+    let key = DataKey::AnalyticsCounter;
+    let counter = get_analytics_counter(env);
+    let new_counter = counter + 1;
+    env.storage().instance().set(&key, &new_counter);
+    new_counter
 }

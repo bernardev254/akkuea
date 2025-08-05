@@ -8,6 +8,8 @@ mod storage;
 mod versioning;
 mod collaborative;
 mod moderation;
+mod analytics;
+mod trending;
 
 use crate::storage::{CollaboratorPermission, CollaboratorSubmission, ContentVersion, VersionDiff};
 pub use crate::storage::{Content, VerificationLevel};
@@ -356,6 +358,123 @@ impl TokenizedEducationalContent {
 
     pub fn get_dispute(env: Env, dispute_id: u64) -> Option<crate::storage::Dispute> {
         moderation::get_dispute(&env, dispute_id)
+    }
+
+    // ========================================
+    // ANALYTICS FUNCTIONS
+    // ========================================
+
+    /// Record a view for a content item
+    pub fn record_content_view(env: Env, content_id: u64) {
+        analytics::Analytics::record_view(&env, content_id).unwrap_or_else(|e| panic!("{:?}", e))
+    }
+
+    /// Record an upvote for a content item
+    pub fn record_content_upvote(env: Env, content_id: u64) {
+        analytics::Analytics::record_upvote(&env, content_id).unwrap_or_else(|e| panic!("{:?}", e))
+    }
+
+    /// Record a downvote for a content item
+    pub fn record_content_downvote(env: Env, content_id: u64) {
+        analytics::Analytics::record_downvote(&env, content_id).unwrap_or_else(|e| panic!("{:?}", e))
+    }
+
+    /// Get analytics for a specific content item
+    pub fn get_content_analytics(env: Env, content_id: u64) -> crate::storage::ContentAnalytics {
+        analytics::Analytics::get_content_analytics(&env, content_id).unwrap_or_else(|e| panic!("{:?}", e))
+    }
+
+    /// Get analytics for multiple content items
+    pub fn get_multiple_content_analytics(env: Env, content_ids: Vec<u64>) -> Vec<crate::storage::ContentAnalytics> {
+        analytics::Analytics::get_multiple_content_analytics(&env, &content_ids)
+    }
+
+    /// Update category analytics for a content item
+    pub fn update_category_analytics(env: Env, content_id: u64) {
+        analytics::Analytics::update_category_analytics(&env, content_id).unwrap_or_else(|e| panic!("{:?}", e))
+    }
+
+    /// Get category analytics
+    pub fn get_category_analytics(env: Env, category: String) -> Option<crate::storage::CategoryAnalytics> {
+        analytics::Analytics::get_category_analytics(&env, &category)
+    }
+
+    /// Get top performing content by engagement rate
+    pub fn get_top_content_by_engagement(env: Env, limit: u32) -> Vec<crate::storage::ContentAnalytics> {
+        analytics::Analytics::get_top_content_by_engagement(&env, limit)
+    }
+
+    /// Get content analytics for a specific time period
+    pub fn get_time_based_analytics(
+        env: Env,
+        content_id: u64,
+        timestamp: u64,
+        period: crate::storage::TimePeriod
+    ) -> Option<crate::storage::TimeBasedMetrics> {
+        analytics::Analytics::get_time_based_analytics(&env, content_id, timestamp, period)
+    }
+
+    // ========================================
+    // TRENDING FUNCTIONS
+    // ========================================
+
+    /// Calculate trending score for a content item
+    pub fn calculate_trending_score(
+        env: Env,
+        content_id: u64,
+        period: crate::storage::TrendingPeriod
+    ) -> u32 {
+        trending::Trending::calculate_trending_score(&env, content_id, period).unwrap_or_else(|e| panic!("{:?}", e))
+    }
+
+    /// Update trending content for a specific period
+    pub fn update_trending_content(
+        env: Env,
+        content_id: u64,
+        period: crate::storage::TrendingPeriod
+    ) {
+        trending::Trending::update_trending_content(&env, content_id, period).unwrap_or_else(|e| panic!("{:?}", e))
+    }
+
+    /// Get trending content for a specific period
+    pub fn get_trending_content(
+        env: Env,
+        period: crate::storage::TrendingPeriod,
+        limit: u32
+    ) -> Vec<crate::storage::TrendingContent> {
+        trending::Trending::get_trending_content(&env, period, limit)
+    }
+
+    /// Create a trending snapshot for a specific period
+    pub fn create_trending_snapshot(
+        env: Env,
+        period: crate::storage::TrendingPeriod
+    ) -> crate::storage::TrendingSnapshot {
+        trending::Trending::create_trending_snapshot(&env, period).unwrap_or_else(|e| panic!("{:?}", e))
+    }
+
+    /// Get trending snapshot for a specific period and timestamp
+    pub fn get_trending_snapshot(
+        env: Env,
+        period: crate::storage::TrendingPeriod,
+        timestamp: u64
+    ) -> Option<crate::storage::TrendingSnapshot> {
+        trending::Trending::get_trending_snapshot(&env, period, timestamp)
+    }
+
+    /// Update trending content for all periods
+    pub fn update_all_trending_content(env: Env, content_id: u64) {
+        trending::Trending::update_all_trending_content(&env, content_id).unwrap_or_else(|e| panic!("{:?}", e))
+    }
+
+    /// Get trending content by category
+    pub fn get_trending_content_by_category(
+        env: Env,
+        category: String,
+        period: crate::storage::TrendingPeriod,
+        limit: u32
+    ) -> Vec<crate::storage::TrendingContent> {
+        trending::Trending::get_trending_content_by_category(&env, &category, period, limit)
     }
 }
 
