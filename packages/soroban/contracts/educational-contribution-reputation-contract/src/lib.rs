@@ -1,6 +1,7 @@
 #![no_std]
 use soroban_sdk::{contract, contractimpl, Address, Env, Map, String, Vec};
 
+mod algorithms;
 mod analytics;
 mod credentials;
 mod error;
@@ -67,6 +68,56 @@ impl ContributorReputation {
         reputation::get_reputation(env, user_id, subject)
     }
 
+    /**
+     * @notice Update a user's reputation in a subject/domain using advanced algorithms.
+     * @param env The contract environment.
+     * @param caller The admin address (must be authorized).
+     * @param user_id The ID of the user whose reputation is being updated.
+     * @param subject The subject/domain of the contribution.
+     * @param base_score The base quality score eg(0-100).
+     * @param contribution_type The type of contribution (0=Code, 1=Mentoring, 2=Review, 3=Other).
+     */
+    pub fn update_reputation_advanced(
+        env: Env,
+        caller: Address, // Admin address
+        user_id: u64,
+        subject: String,
+        base_score: u32,
+        contribution_type: u32, // 0=Code, 1=Mentoring, 2=Review, 3=Other
+    ) -> Result<(), Error> {
+        caller.require_auth();
+        security::check_admin_access(&env, &caller)?;
+
+        let user = storage::get_user(&env, user_id)?;
+        if !user.verified {
+            return Err(Error::NotVerified);
+        }
+
+        let contrib_type = match contribution_type {
+            0 => algorithms::ContributionType::Code,
+            1 => algorithms::ContributionType::Mentoring,
+            2 => algorithms::ContributionType::Review,
+            _ => algorithms::ContributionType::Other, // Default for docs, research, etc.
+        };
+
+        algorithms::update_reputation_with_algorithms(
+            env,
+            user_id,
+            subject,
+            base_score,
+            contrib_type,
+        )
+    }
+
+    /**
+     * @notice Get the normalized reputation scores for a user across all domains.
+     * @param env The contract environment.
+     * @param user_id The ID of the user whose normalized reputation is being queried.
+     */
+    pub fn get_normalized_reputation(env: Env, user_id: u64) -> Result<Map<String, u32>, Error> {
+        algorithms::normalize_reputation_across_domains(&env, user_id)
+    }
+
     // Credential functions
     pub fn mint_credential_token(env: Env, caller: Address, user_id: u64) -> Result<u64, Error> {
         credentials::mint_credential_token(env, caller, user_id)
@@ -87,6 +138,72 @@ impl ContributorReputation {
     }
 
     // Verification functions
+
+    /**
+     * @notice Verify a user with a specific tier level in the multi-level verification system.
+     * @param env The contract environment.
+     * @param caller The address performing the verification (must be authorized for the target tier).
+     * @param user_id The ID of the user being verified.
+     * @param verification_details String containing details about the verification process.
+     * @param target_tier The verification tier level (1=Basic, 2=Verified, 3=Expert, 4=Authority).
+     */
+    pub fn verify_user_with_tier(
+        env: Env,
+        caller: Address,
+        user_id: u64,
+        verification_details: String,
+        target_tier: u32,
+    ) -> Result<(), Error> {
+        verify::verify_user_with_tier(env, caller, user_id, verification_details, target_tier)
+    }
+
+    /**
+     * @notice Renew an existing user verification before it expires.
+     * @param env The contract environment.
+     * @param caller The address performing the renewal (must be authorized).
+     * @param user_id The ID of the user whose verification is being renewed.
+     */
+    pub fn renew_verification(env: Env, caller: Address, user_id: u64) -> Result<(), Error> {
+        verify::renew_verification(env, caller, user_id)
+    }
+
+    /**
+     * @notice Delegate verification authority to another address for a specific user.
+     * @param env The contract environment.
+     * @param caller The admin address delegating authority (must be admin).
+     * @param delegate_address The address receiving the verification authority.
+     * @param user_id The specific user ID that the delegate can verify.
+     * @param max_tier The maximum verification tier the delegate can assign (1-4).
+     * @param duration_days How long the delegation remains valid in days.
+     */
+    pub fn add_verification_delegation(
+        env: Env,
+        caller: Address,
+        delegate_address: Address,
+        user_id: u64,
+        max_tier: u32,
+        duration_days: u32,
+    ) -> Result<(), Error> {
+        verify::add_verification_delegation(
+            env,
+            caller,
+            delegate_address,
+            user_id,
+            max_tier,
+            duration_days,
+        )
+    }
+
+    /**
+     * @notice Get the verification details for a specific user.
+     * @param env The contract environment.
+     * @param user_id The ID of the user whose verification details are being queried.
+     * @return UserVerification structure containing tier, verified_by, timestamps, and details.
+     */
+    pub fn get_user_verification(env: Env, user_id: u64) -> Result<UserVerification, Error> {
+        storage::get_user_verification(&env, user_id).ok_or(Error::NotVerified)
+    }
+
     pub fn verify_user(
         env: Env,
         caller: Address,

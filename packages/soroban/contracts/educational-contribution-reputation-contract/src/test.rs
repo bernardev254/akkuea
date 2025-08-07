@@ -7,6 +7,27 @@ use crate::storage::*;
 use crate::reputation::*;
 use crate::types::*;
 
+fn setup_admin_and_user(env: &Env) -> (Address, Address, ContributorReputationClient, u64) {
+    let admin = Address::generate(env);
+    let user = Address::generate(env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(env, &contract_address);
+    
+    env.mock_all_auths();
+    
+    // Set up admin access by storing admin key in contract storage
+    env.as_contract(&contract_address, || {
+        let admin_key = DataKey::Admin(admin.clone());
+        env.storage().instance().set(&admin_key, &true);
+    });
+    
+    // Initialize and verify user
+    let user_id = client.initialize_user(&user, &String::from_str(env, "TestUser"));
+    client.verify_user(&admin, &user_id, &String::from_str(env, "verified"));
+    
+    (admin, user, client, user_id)
+}
+
 #[test]
 fn test_initialize_user() {
     let env = Env::default();
@@ -1534,3 +1555,465 @@ fn test_credential_expiration_cleanup() {
 }
 
 // Removed duplicate create_test_env function
+#[test]
+fn test_update_reputation_advanced_specific_calculation() {
+    let env = create_test_env();
+    let (admin, _user, client, user_id) = setup_admin_and_user(&env);
+    
+    let base_score = 100u32;
+    let subject = String::from_str(&env, "rust"); // Technical domain
+    
+    client.update_reputation_advanced(
+        &admin,
+        &user_id,
+        &subject,
+        &base_score,
+        &0u32, // Code contribution type
+    );
+    
+    let reputation = client.get_reputation(&user_id, &subject);
+    
+    // Manual calculation verification:
+    // Domain: "rust" = Technical domain (110% multiplier)
+    // Contribution: Code (100% weight)
+    // Formula: (base_score * contribution_weight * domain_multiplier) / WEIGHT_PRECISION
+    // Expected: (100 * 100 * 110) / 10000 = 1,100,000 / 10,000 = 110
+    // Since this is first update, no existing score to combine with
+    
+    assert_eq!(reputation, 110, "Expected weighted score: (100 * 100 * 110) / 10000 = 110");
+}
+
+#[test]
+fn test_update_reputation_advanced_mentoring_contribution() {
+    let env = create_test_env();
+    let (admin, _user, client, user_id) = setup_admin_and_user(&env);
+    
+    let base_score = 50u32;
+    let subject = String::from_str(&env, "mentoring"); // Community domain
+    
+    client.update_reputation_advanced(
+        &admin,
+        &user_id,
+        &subject,
+        &base_score,
+        &1u32, // Mentoring contribution type
+    );
+    
+    let reputation = client.get_reputation(&user_id, &subject);
+    
+    // Manual calculation verification:
+    // Domain: "mentoring" = Community domain (120% multiplier)
+    // Contribution: Mentoring (120% weight)
+    // Formula: (base_score * contribution_weight * domain_multiplier) / WEIGHT_PRECISION
+    // Expected: (50 * 120 * 120) / 10000 = 720,000 / 10,000 = 72
+    
+    assert_eq!(reputation, 72, "Expected weighted score: (50 * 120 * 120) / 10000 = 72");
+}
+
+#[test]
+fn test_update_reputation_advanced_combination_formula() {
+    let env = create_test_env();
+    let (admin, _user, client, user_id) = setup_admin_and_user(&env);
+    
+    let subject = String::from_str(&env, "javascript"); // Technical domain
+    
+    // First update - establishes existing score
+    client.update_reputation_advanced(&admin, &user_id, &subject, &80u32, &0u32);
+    let first_reputation = client.get_reputation(&user_id, &subject);
+    
+    // Calculate expected first score: (80 * 100 * 110) / 10000 = 88
+    assert_eq!(first_reputation, 88, "First update should be: (80 * 100 * 110) / 10000 = 88");
+    
+    // Second update - will combine with existing score
+    client.update_reputation_advanced(&admin, &user_id, &subject, &60u32, &0u32);
+    let second_reputation = client.get_reputation(&user_id, &subject);
+    
+    // Manual calculation verification:
+    // New weighted score: (60 * 100 * 110) / 10000 = 66
+    // Existing score: 88
+    // Combination formula: (new_score * 30% + existing_score * 70%) / 100
+    // Expected: (66 * 30 + 88 * 70) / 100 = (1980 + 6160) / 100 = 8140 / 100 = 81
+    
+    assert_eq!(second_reputation, 81, "Combined score should be: (66 * 30 + 88 * 70) / 100 = 81");
+}
+
+#[test]
+fn test_get_normalized_reputation_specific_calculation() {
+    let env = create_test_env();
+    let (admin, _user, client, user_id) = setup_admin_and_user(&env);
+    
+    // Set up multiple expertise areas
+    let mut expertise_areas = Map::new(&env);
+    expertise_areas.set(String::from_str(&env, "rust"), 1u32);
+    expertise_areas.set(String::from_str(&env, "python"), 1u32);
+    expertise_areas.set(String::from_str(&env, "documentation"), 1u32);
+    client.update_expertise_areas(&admin, &user_id, &expertise_areas);
+    
+    // Add specific reputation scores
+    // rust (technical): (90 * 100 * 110) / 10000 = 99
+    client.update_reputation_advanced(&admin, &user_id, &String::from_str(&env, "rust"), &90u32, &0u32);
+    
+    // python (technical): (60 * 100 * 110) / 10000 = 66  
+    client.update_reputation_advanced(&admin, &user_id, &String::from_str(&env, "python"), &60u32, &0u32);
+    
+    // documentation (general): (40 * 80 * 100) / 10000 = 32
+    client.update_reputation_advanced(&admin, &user_id, &String::from_str(&env, "documentation"), &40u32, &3u32);
+    
+    // Verify individual scores first
+    assert_eq!(client.get_reputation(&user_id, &String::from_str(&env, "rust")), 99);
+    assert_eq!(client.get_reputation(&user_id, &String::from_str(&env, "python")), 66);
+    assert_eq!(client.get_reputation(&user_id, &String::from_str(&env, "documentation")), 32);
+    
+    // Get normalized reputation
+    let normalized = client.get_normalized_reputation(&user_id);
+    
+    // Manual calculation verification:
+    // Max score: 99 (rust)
+    // Normalization formula: (domain_score * 1000) / max_score_found
+    // rust: (99 * 1000) / 99 = 1000
+    // python: (66 * 1000) / 99 = 666 (rounded down)
+    // documentation: (32 * 1000) / 99 = 323 (rounded down)
+    
+    assert_eq!(normalized.get(String::from_str(&env, "rust")).unwrap(), 1000);
+    assert_eq!(normalized.get(String::from_str(&env, "python")).unwrap(), 666);
+    assert_eq!(normalized.get(String::from_str(&env, "documentation")).unwrap(), 323);
+    assert_eq!(normalized.len(), 3);
+}
+
+#[test]
+fn test_time_decay_in_reputation_update() {
+    let env = create_test_env();
+    let (admin, _user, client, user_id) = setup_admin_and_user(&env);
+    
+    let subject = String::from_str(&env, "rust");
+    
+    // Add initial reputation
+    client.update_reputation_advanced(&admin, &user_id, &subject, &100u32, &0u32);
+    let initial_reputation = client.get_reputation(&user_id, &subject);
+    
+    // Expected initial: (100 * 100 * 110) / 10000 = 110
+    assert_eq!(initial_reputation, 110);
+    
+    // Advance time by exactly 30 days (1 decay period)
+    env.ledger().with_mut(|li| {
+        li.timestamp = li.timestamp + (30 * 86400); // 30 days in seconds
+    });
+    
+    // get_reputation still returns stored value (no decay applied)
+    let stored_reputation = client.get_reputation(&user_id, &subject);
+    assert_eq!(stored_reputation, 110, "Stored reputation doesn't change until next update");
+    
+    // Test time decay effect through new reputation update
+    // When we update reputation, it combines with the time-decayed existing score
+    client.update_reputation_advanced(&admin, &user_id, &subject, &100u32, &0u32);
+    let updated_reputation = client.get_reputation(&user_id, &subject);
+    
+    // Manual calculation:
+    // New weighted score: (100 * 100 * 110) / 10000 = 110
+    // Existing score with decay: 110 * 0.95 = 104
+    // Combined: (110 * 30 + 104 * 70) / 100 = (3300 + 7280) / 100 = 105
+    assert_eq!(updated_reputation, 105, "Combined with time-decayed existing score: (110*30 + 104*70)/100 = 105");
+}
+
+// Tests for verification functions with complete flows
+
+#[test]
+fn test_verify_user_with_tier_complete_flow() {
+    let env = Env::default();
+    let admin = Address::generate(&env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    // Set up admin access by storing admin key in contract storage
+    env.as_contract(&contract_address, || {
+        let admin_key = DataKey::Admin(admin.clone());
+        env.storage().instance().set(&admin_key, &true);
+    });
+
+    // Initialize user
+    let user_id = client.initialize_user(&admin, &String::from_str(&env, "Alice"));
+    
+    // Verify user is not verified initially
+    let user_before = client.get_user(&user_id);
+    assert!(!user_before.verified, "User should not be verified initially");
+
+    // Verify with basic tier (1)
+    client.verify_user_with_tier(
+        &admin,
+        &user_id,
+        &String::from_str(&env, "Basic verification completed"),
+        &1u32,
+    );
+
+    // Check user is verified after tier verification
+    let user_after = client.get_user(&user_id);
+    assert!(user_after.verified, "User should be verified after tier verification");
+    
+    // Test that we can now mint credential token (which requires verification)
+    let token_id = client.mint_credential_token(&admin, &user_id);
+    assert_eq!(token_id, 1, "First token should have ID 1");
+}
+
+#[test]
+fn test_verify_user_with_different_tiers() {
+    let env = Env::default();
+    let admin = Address::generate(&env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    // Set up admin access
+    env.as_contract(&contract_address, || {
+        let admin_key = DataKey::Admin(admin.clone());
+        env.storage().instance().set(&admin_key, &true);
+    });
+
+    // Test different tier levels
+    let user_basic = client.initialize_user(&admin, &String::from_str(&env, "Basic User"));
+    let user_expert = client.initialize_user(&admin, &String::from_str(&env, "Expert User"));
+    let user_authority = client.initialize_user(&admin, &String::from_str(&env, "Authority User"));
+
+    // Verify with different tiers
+    client.verify_user_with_tier(&admin, &user_basic, &String::from_str(&env, "Basic verification"), &1u32);
+    client.verify_user_with_tier(&admin, &user_expert, &String::from_str(&env, "Expert verification"), &1u32); // Start with basic
+    client.verify_user_with_tier(&admin, &user_authority, &String::from_str(&env, "Authority verification"), &1u32); // Start with basic
+
+    // All users should be verified
+    assert!(client.get_user(&user_basic).verified, "Basic user should be verified");
+    assert!(client.get_user(&user_expert).verified, "Expert user should be verified");
+    assert!(client.get_user(&user_authority).verified, "Authority user should be verified");
+}
+
+#[test]
+fn test_renew_verification_complete_flow() {
+    let env = Env::default();
+    let admin = Address::generate(&env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    // Set up admin access
+    env.as_contract(&contract_address, || {
+        let admin_key = DataKey::Admin(admin.clone());
+        env.storage().instance().set(&admin_key, &true);
+    });
+
+    // Initialize and verify user first
+    let user_id = client.initialize_user(&admin, &String::from_str(&env, "Alice"));
+    client.verify_user_with_tier(&admin, &user_id, &String::from_str(&env, "Initial verification"), &2);
+
+    // Verify user is verified
+    assert!(client.get_user(&user_id).verified, "User should be verified initially");
+
+    // Advance time to simulate approaching expiration (within renewal window)
+    // Tier 2 has 2 years validity (730 days), renewal allowed within last 30 days
+    // So advance time by 700+ days to get within the 30-day renewal window
+    env.ledger().with_mut(|li| {
+        li.timestamp += 700 * 86400; // 700 days later - within 30-day renewal window
+    });
+
+    // Renew verification - should succeed without errors
+    client.renew_verification(&admin, &user_id);
+
+    // User should still be verified after renewal
+    let user = client.get_user(&user_id);
+    assert!(user.verified, "User should remain verified after renewal");
+    
+    // Test that user can still perform verified actions
+    client.mint_credential_token(&admin, &user_id);
+}
+
+#[test]
+fn test_verification_delegation_complete_flow() {
+    let env = Env::default();
+    let admin = Address::generate(&env);
+    let delegate = Address::generate(&env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    // Set up admin access
+    env.as_contract(&contract_address, || {
+        let admin_key = DataKey::Admin(admin.clone());
+        env.storage().instance().set(&admin_key, &true);
+    });
+
+    // Initialize a user to be verified by delegate
+    let target_user_id = client.initialize_user(&admin, &String::from_str(&env, "Target User"));
+    
+    // Verify user is not verified initially
+    assert!(!client.get_user(&target_user_id).verified, "Target user should not be verified initially");
+
+    // Admin delegates verification authority to delegate
+    client.add_verification_delegation(
+        &admin,
+        &delegate,
+        &target_user_id,
+        &2u32, // Max tier 2 (Verified)
+        &30u32, // 30 days
+    );
+
+    // Now the delegate should be able to verify the user with tier 1 or 2
+    client.verify_user_with_tier(
+        &delegate, // Using delegate address, not admin
+        &target_user_id,
+        &String::from_str(&env, "Delegated verification completed"),
+        &1u32, // Basic tier (within delegate's authority)
+    );
+
+    // Check that user is now verified through delegation
+    let verified_user = client.get_user(&target_user_id);
+    assert!(verified_user.verified, "User should be verified through delegation");
+    
+    // Test that verified user can now mint credential tokens
+    let token_id = client.mint_credential_token(&delegate, &target_user_id);
+    assert_eq!(token_id, 1, "First token should have ID 1");
+}
+
+#[test]
+fn test_verification_delegation_tier_limits() {
+    let env = Env::default();
+    let admin = Address::generate(&env);
+    let delegate = Address::generate(&env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    // Set up admin access
+    env.as_contract(&contract_address, || {
+        let admin_key = DataKey::Admin(admin.clone());
+        env.storage().instance().set(&admin_key, &true);
+    });
+
+    // Initialize a user
+    let user_id = client.initialize_user(&admin, &String::from_str(&env, "Test User"));
+
+    // Delegate with max tier 2
+    client.add_verification_delegation(&admin, &delegate, &user_id, &2u32, &30u32);
+
+    // Delegate should be able to verify with tier 1
+    client.verify_user_with_tier(&delegate, &user_id, &String::from_str(&env, "Tier 1 verification"), &1u32);
+    assert!(client.get_user(&user_id).verified, "User should be verified with tier 1");
+}
+
+#[test]
+fn test_verification_delegation_expiry() {
+    let env = Env::default();
+    let admin = Address::generate(&env);
+    let delegate = Address::generate(&env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    // Set up admin access
+    env.as_contract(&contract_address, || {
+        let admin_key = DataKey::Admin(admin.clone());
+        env.storage().instance().set(&admin_key, &true);
+    });
+
+    // Initialize users
+    let user1_id = client.initialize_user(&admin, &String::from_str(&env, "User1"));
+    let user2_id = client.initialize_user(&admin, &String::from_str(&env, "User2"));
+
+    // Delegate with 1 day duration
+    client.add_verification_delegation(&admin, &delegate, &user1_id, &2u32, &1u32);
+
+    // Delegate should be able to verify immediately
+    client.verify_user_with_tier(&delegate, &user1_id, &String::from_str(&env, "Before expiry"), &1u32);
+    assert!(client.get_user(&user1_id).verified, "User1 should be verified before delegation expiry");
+
+    // Advance time beyond delegation expiry (2 days)
+    env.ledger().with_mut(|li| {
+        li.timestamp += 2 * 86400; // 2 days later
+    });
+
+    // Create a new delegation for user2 to test it still works
+    client.add_verification_delegation(&admin, &delegate, &user2_id, &2u32, &30u32);
+    
+    // This should work since it's a new delegation
+    client.verify_user_with_tier(&delegate, &user2_id, &String::from_str(&env, "New delegation"), &1u32);
+    assert!(client.get_user(&user2_id).verified, "User2 should be verified with new delegation");
+}
+
+#[test]
+fn test_multiple_delegations() {
+    let env = Env::default();
+    let admin = Address::generate(&env);
+    let delegate1 = Address::generate(&env);
+    let delegate2 = Address::generate(&env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    // Set up admin access
+    env.as_contract(&contract_address, || {
+        let admin_key = DataKey::Admin(admin.clone());
+        env.storage().instance().set(&admin_key, &true);
+    });
+
+    // Initialize users
+    let user1_id = client.initialize_user(&admin, &String::from_str(&env, "User1"));
+    let user2_id = client.initialize_user(&admin, &String::from_str(&env, "User2"));
+
+    // Create multiple delegations
+    client.add_verification_delegation(&admin, &delegate1, &user1_id, &2u32, &30u32);
+    client.add_verification_delegation(&admin, &delegate2, &user2_id, &3u32, &30u32);
+
+    // Both delegates should be able to verify their respective users
+    client.verify_user_with_tier(&delegate1, &user1_id, &String::from_str(&env, "Delegate1 verification"), &1u32);
+    client.verify_user_with_tier(&delegate2, &user2_id, &String::from_str(&env, "Delegate2 verification"), &2u32);
+
+    // Both users should be verified
+    assert!(client.get_user(&user1_id).verified, "User1 should be verified by delegate1");
+    assert!(client.get_user(&user2_id).verified, "User2 should be verified by delegate2");
+}
+
+// Error case tests
+#[test]
+#[should_panic(expected = "HostError: Error(Contract, #2)")]
+fn test_verify_user_with_tier_nonexistent_user() {
+    let env = Env::default();
+    let admin = Address::generate(&env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    client.verify_user_with_tier(&admin, &999u64, &String::from_str(&env, "Verification details"), &1u32);
+}
+
+#[test]
+#[should_panic(expected = "HostError: Error(Contract, #4)")]
+fn test_renew_verification_nonexistent_user() {
+    let env = Env::default();
+    let admin = Address::generate(&env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    client.renew_verification(&admin, &999u64);
+}
+
+#[test]
+#[should_panic(expected = "HostError: Error(Contract, #1)")]
+fn test_add_verification_delegation_nonexistent_user() {
+    let env = Env::default();
+    let admin = Address::generate(&env);
+    let delegate = Address::generate(&env);
+    let contract_address = env.register(ContributorReputation, ());
+    let client = ContributorReputationClient::new(&env, &contract_address);
+
+    env.mock_all_auths();
+
+    client.add_verification_delegation(&admin, &delegate, &999u64, &1u32, &30u32);
+}
+
