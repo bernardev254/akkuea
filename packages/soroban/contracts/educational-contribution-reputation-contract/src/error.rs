@@ -35,4 +35,8 @@ pub enum Error {
     ExpirationDatePassed = 28,   // Credential has expired
     SyncError = 29,              // Synchronization error with external system
     UnsupportedOperation = 30,   // Operation not supported by bridge
+
+    // Verification tier errors
+    RenewalNotDue = 32,          // Verification renewal not yet due
+    InsufficientExpertise = 35,  // User doesn't have sufficient expertise areas
 }

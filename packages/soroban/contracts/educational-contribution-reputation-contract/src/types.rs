@@ -28,6 +28,9 @@ pub enum DataKey {
     UserExternalCredentials(u64),   // User ID -> List of external credential IDs
     UserProfessionalCerts(u64),     // User ID -> List of professional certification IDs
     CredentialMapping(String),      // External credential ID -> Internal mapping
+    // Verification tier system keys
+    UserVerification(u64),          // User ID -> Verification data
+    VerificationDelegation(Address, u64), // (Delegate Address, User ID) -> Delegation data
 }
 
 #[contracttype]
@@ -296,4 +299,38 @@ pub struct CredentialMapping {
     pub confidence_score: u32,  // How confident we are in this mapping (0-100)
     pub created_at: u64,
     pub verified_by: Option<Address>,
+}
+
+// Verification tier system types
+
+#[contracttype]
+#[derive(Clone)]
+pub struct UserVerification {
+    pub user_id: u64,
+    pub tier: u32,                      // Verification tier (1-4)
+    pub verified_by: Address,           // Who verified this user
+    pub verified_at: u64,               // When verification occurred
+    pub expires_at: u64,                // When verification expires
+    pub verification_details: String,   // Details about verification
+}
+
+#[contracttype]
+#[derive(Clone)]
+pub struct VerificationDelegation {
+    pub delegator: Address,             // Who delegated the authority
+    pub delegate: Address,              // Address who received authority
+    pub user_id: u64,                   // Specific user they can verify
+    pub max_tier: u32,                  // Maximum tier they can verify for this user
+    pub expires_at: u64,                // When delegation expires
+}
+
+#[contracttype]
+#[derive(Clone)]
+pub struct TierValidationRules {
+    pub tier: u32,
+    pub requires_previous_verification: bool,
+    pub min_expertise_areas: u32,
+    pub requires_verified_status: bool,
+    pub validity_years: u64,
+    pub description: String,
 }

@@ -1,6 +1,6 @@
 use crate::error::Error;
 use crate::types::*;
-use soroban_sdk::{Env, Map, String, Vec};
+use soroban_sdk::{Address, Env, Map, String, Vec};
 
 /// Storage operations for the reputation contract
 
@@ -506,4 +506,34 @@ pub fn cleanup_expired_credentials_batch(env: &Env, max_users: u32) {
             }
         }
     }
+}
+
+// Verification tier system storage functions
+
+/// Store user verification data
+pub fn store_user_verification(env: &Env, verification: &UserVerification) {
+    env.storage()
+        .instance()
+        .set(&DataKey::UserVerification(verification.user_id), verification);
+}
+
+/// Get user verification data
+pub fn get_user_verification(env: &Env, user_id: u64) -> Option<UserVerification> {
+    env.storage()
+        .instance()
+        .get(&DataKey::UserVerification(user_id))
+}
+
+/// Store verification delegation
+pub fn store_verification_delegation(env: &Env, delegation: &VerificationDelegation) {
+    env.storage()
+        .instance()
+        .set(&DataKey::VerificationDelegation(delegation.delegate.clone(), delegation.user_id), delegation);
+}
+
+/// Get verification delegation for specific delegate and user
+pub fn get_verification_delegation(env: &Env, delegate: &Address, user_id: u64) -> Option<VerificationDelegation> {
+    env.storage()
+        .instance()
+        .get(&DataKey::VerificationDelegation(delegate.clone(), user_id))
 }
