@@ -293,7 +293,6 @@ export default function Communities() {
     </Card>
   );
 
-
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* Header */}
@@ -390,16 +389,25 @@ export default function Communities() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="discover" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-3 mb-6 bg-muted/20 rounded-lg">
+          <TabsTrigger
+            value="discover"
+            className="flex items-center gap-2 justify-center rounded-md  text-sm font-medium transition-colors data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+          >
             <TrendingUp className="w-4 h-4" />
             Discover
           </TabsTrigger>
-          <TabsTrigger value="your-communities" className="flex items-center gap-2">
+          <TabsTrigger
+            value="your-communities"
+            className="flex items-center gap-2 justify-center rounded-md  text-sm font-medium transition-colors data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+          >
             <User className="w-4 h-4" />
             Your Communities
           </TabsTrigger>
-          <TabsTrigger value="discussions" className="flex items-center gap-2">
+          <TabsTrigger
+            value="discussions"
+            className="flex items-center gap-2 justify-center rounded-md  text-sm font-medium transition-colors data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+          >
             <MessageCircle className="w-4 h-4" />
             Discussions
           </TabsTrigger>
