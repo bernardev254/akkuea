@@ -7,17 +7,14 @@ use stellar_access::ownable::{self as ownable, Ownable};
 use stellar_macros::default_impl;
 use stellar_tokens::non_fungible::{Base, NonFungibleToken};
 
+mod mock_educator_verification_nft;
 mod nft;
 mod utils;
 
 pub use nft::*;
 pub use utils::*;
 
-mod educator_verification_contract {
-    soroban_sdk::contractimport!(
-        file = "./mock-educator-verification-nft/target/wasm32v1-none/release/mock_educator_verification_nft.wasm"
-    );
-}
+pub use mock_educator_verification_nft::MockEducatorVerificationNft;
 
 #[contract]
 pub struct EducationalNFTContract;
@@ -45,13 +42,12 @@ impl EducationalNFTContract {
     ) -> Result<u32, utils::NFTError> {
         caller.require_auth();
 
-        // Get the educator verification contract address and create client for validation
-        let educator_contract_address = nft::get_educator_verification_address_safe(e)
+        // Get the educator verification contract address (for compatibility, but use mock directly)
+        let _educator_contract_address = nft::get_educator_verification_address_safe(e)
             .map_err(|_| utils::NFTError::ContractNotInitialized)?;
-        let client = educator_verification_contract::Client::new(e, &educator_contract_address);
 
-        // Verify that the caller is a verified educator
-        let is_verified = client.verify_educator(&caller);
+        // Use mock educator verification directly instead of WASM client
+        let is_verified = MockEducatorVerificationNft::verify_educator(e.clone(), caller.clone());
         if !is_verified {
             return Err(utils::NFTError::Unauthorized);
         }

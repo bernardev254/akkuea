@@ -1,14 +1,7 @@
 extern crate std;
 
-use crate::{EducationalNFTContract, EducationalNFTContractClient};
+use crate::{EducationalNFTContract, EducationalNFTContractClient, MockEducatorVerificationNft};
 use soroban_sdk::{testutils::Address as _, Address, Bytes, Env, String};
-
-// Mock educator verification contract for testing
-mod educator_verification_contract {
-    soroban_sdk::contractimport!(
-        file = "./mock-educator-verification-nft/target/wasm32v1-none/release/mock_educator_verification_nft.wasm"
-    );
-}
 
 fn setup_test_environment() -> (
     Env,
@@ -25,8 +18,8 @@ fn setup_test_environment() -> (
     let educator = Address::generate(&env);
     let user = Address::generate(&env);
 
-    // Deploy mock educator verification contract
-    let educator_verification_id = env.register(educator_verification_contract::WASM, ());
+    // Deploy mock educator verification contract using the module directly
+    let educator_verification_id = env.register(MockEducatorVerificationNft, ());
 
     // Deploy Educational NFT contract with constructor arguments
     let contract_id = env.register(
