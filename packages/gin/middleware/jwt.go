@@ -7,7 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func sampleHandler(c *gin.Context) {
+func SampleHandler(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 	if token == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
