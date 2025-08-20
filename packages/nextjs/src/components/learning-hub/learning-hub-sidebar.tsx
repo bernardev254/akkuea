@@ -94,7 +94,6 @@ export default function LearningHubSidebar() {
         {
           '--sidebar-width': '20rem',
           '--sidebar-width-icon': '4rem',
-          '--sidebar-background': 'hsl(var(--card))',
         } as React.CSSProperties
       }
     >
