@@ -173,7 +173,7 @@ const Navbar = () => {
               align="end"
               className="w-64 rounded-2xl shadow-lg border border-border p-2 bg-background"
             >
-              <div className="px-3 py-2 mb-2 rounded-xl bg-muted/30">
+              <div className="px-3 py-2 mb-2 rounded-xl cursor-pointer hover:bg-gray-200">
                 <DropdownMenuLabel className="font-semibold text-primary">
                   Jefferson Calderon
                   <div className="text-xs text-muted">@xJeffx23</div>
@@ -184,14 +184,14 @@ const Navbar = () => {
 
               <DropdownMenuItem
                 onClick={() => router.push('/profile')}
-                className="gap-2 px-3 cursor-pointer  py-2 rounded-lg transition-colors hover:bg-muted/30 hover:text-accent-foreground"
+                className="gap-2 px-3 cursor-pointer  py-2 rounded-lg transition-colors hover:bg-gray-200 hover:text-accent-foreground"
               >
                 <User className="h-4 w-4" /> My Profile
               </DropdownMenuItem>
 
               <DropdownMenuItem
                 onClick={() => router.push('/settings')}
-                className="gap-2 px-3 cursor-pointer py-2 h rounded-lg transition-colors hover:bg-muted/30 hover:text-accent-foreground"
+                className="gap-2 px-3 cursor-pointer py-2 h rounded-lg transition-colors hover:bg-gray-200 hover:text-accent-foreground"
               >
                 <Settings className="h-4 w-4" /> Settings
               </DropdownMenuItem>
