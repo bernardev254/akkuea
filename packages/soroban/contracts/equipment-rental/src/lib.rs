@@ -1,10 +1,19 @@
 #![no_std]
-use soroban_sdk::{contract, contractimpl, Address, vec, Env, String, Vec};
+use soroban_sdk::{contract, contractimpl, Address, vec, Env, String, Vec, IntoVal};
+use soroban_sdk::testutils::{Address as _, AuthorizedFunction, AuthorizedInvocation, Ledger};
+use soroban_sdk::{symbol_short, token};
+use token::Client as TokenClient;
+use token::StellarAssetClient as TokenAdminClient;
 
 mod rental;
+mod payment;
 mod utils;
 
+#[cfg(test)]
+mod test;
+
 use rental::{Rental, RentalStatus, RENTAL_KEY, MAX_DURATION};
+use payment::{Payment};
 
 #[contract]
 pub struct EquipmentRentalContract;
@@ -27,8 +36,33 @@ impl EquipmentRentalContract {
     pub fn get_rental(env: &Env, equipment_id: u64) ->Option<Rental> {
         rental::get_rental(&env, equipment_id)
     }
-    
+
+    pub fn get_rental_by_rental_id(env: &Env, rental_id: u64) -> Option<Rental> {
+        rental::get_rental_by_rental_id(&env, rental_id)
+    }
+
+    pub fn process_payment(env: &Env, rental_id: u64, payer: Address, amount: i128) -> bool {
+        payment::process_payment(env, rental_id, payer, amount)
+    }
+
+    pub fn set_token_address(env: &Env, token: Address) {
+        payment::set_token_address(&env, token)
+    }
+
+    pub fn set_equipment_price(env: &Env, equipment_id: u64, price_per_hour: i128) {
+        payment::set_equipment_price(env, equipment_id, price_per_hour)
+
+    }
+
+    pub fn get_equipment_price(env: &Env, equipment_id: u64) -> i128 {
+        payment:: get_equipment_price(env, equipment_id)
+    }
+
+
+
+
 }
+
 
 #[cfg(test)]
 mod test {

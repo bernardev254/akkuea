@@ -2,10 +2,10 @@ use soroban_sdk::{contracttype, Address, Env, Symbol, symbol_short, Vec, log};
 use crate::utils::{validate_duration, generate_rental_id};
 
 pub const RENTAL_KEY: Symbol = symbol_short!("rental");
+pub const RENTAL_ID: Symbol = symbol_short!("rent_id");
 pub const MAX_DURATION: Symbol = symbol_short!("max_dur");
 pub const RENTAL_CREATED: Symbol = symbol_short!("r_created");
 pub const RENTAL_failed: Symbol = symbol_short!("r_failed");
-
 
 #[contracttype]
 #[derive(Clone, PartialEq)]
@@ -25,6 +25,7 @@ pub struct Rental {
     pub duration: u64,
     pub status: RentalStatus,
 }
+
 
 pub fn create_rental(env: &Env, renter: Address, equipment_id: u64, duration: u64) {
     renter.require_auth();
@@ -46,7 +47,8 @@ pub fn create_rental(env: &Env, renter: Address, equipment_id: u64, duration: u6
         duration,
         status: RentalStatus::Active,
     };
-    save_rental(env, equipment_id, rental);
+    save_rental(env, equipment_id, rental.clone());
+    save_rental_by_rental_id(env, rental_id, rental);
     env.events().publish((RENTAL_CREATED, rental_id), (equipment_id, renter, duration));
 }
 
@@ -60,6 +62,16 @@ pub fn save_rental(env: &Env, equipment_id: u64, rental: Rental) {
     env.storage().persistent().set(&key, &rental);
 }
 
+pub fn get_rental_by_rental_id(env: &Env, rental_id: u64) -> Option<Rental> {
+    let key = (RENTAL_ID, rental_id);
+    env.storage().persistent().get(&key)
+}
+
+pub fn save_rental_by_rental_id(env: &Env, rental_id: u64, rental: Rental) {
+    let key = (RENTAL_ID, rental_id);
+    env.storage().persistent().set(&key, &rental);
+}
+
 pub fn check_availability(env: &Env, equipment_id: u64) -> bool  {
     let rentals = get_rental(env, equipment_id);
 
@@ -70,4 +82,3 @@ pub fn check_availability(env: &Env, equipment_id: u64) -> bool  {
     }
     true
 }
-
