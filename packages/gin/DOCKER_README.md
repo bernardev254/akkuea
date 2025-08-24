@@ -18,6 +18,7 @@ The API uses the following database tables:
 - `name` (VARCHAR 100, NOT NULL)
 - `role` (VARCHAR 20, NOT NULL) - Values: 'Educator', 'Student', 'Designer'
 - `email` (VARCHAR 100, UNIQUE, NOT NULL)
+- `password` (VARCHAR 255, NOT NULL) - Hashed password
 - `tokens` (INTEGER, DEFAULT 0)
 - `created_at`, `updated_at`, `deleted_at` (GORM timestamps)
 
@@ -80,10 +81,23 @@ The API uses the following database tables:
 
 The API provides the following endpoints:
 
+### Public Endpoints
 - `GET /ping` - Health check
 - `GET /health` - Detailed health status
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login
+
+### Protected Endpoints (require JWT token)
 - `GET /users` - Get all users
+- `GET /users/:id` - Get specific user by ID
 - `POST /users` - Create a new user
+- `GET /auth/me` - Get current user information
+
+### Authentication
+All protected endpoints require a valid JWT token in the Authorization header:
+```
+Authorization: Bearer <your-jwt-token>
+```
 
 ## Database Setup
 
@@ -190,8 +204,6 @@ packages/gin/
 ├── Dockerfile                 # API container definition
 ├── docker-compose.yml         # Multi-service orchestration
 ├── .dockerignore             # Docker build exclusions
-├── init-scripts/
-│   └── 01-seed-data.sql      # Database initialization
 ├── DOCKER_README.md          # This file
 ├── main.go                   # API entry point
 ├── config/                   # Configuration files
