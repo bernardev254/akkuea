@@ -58,4 +58,9 @@ impl EquipmentRentalContract {
     pub fn get_payment_by_rental_id(env: &Env, rental_id: u64) -> Option<Payment>{
         payment::get_payment_by_rental_id(env, rental_id)
     }
+
+    pub fn refund_payment(env: Env, rental_id: u64, amount: i128) -> bool {
+        payment::refund_payment(env, rental_id, amount)
+    }
+
 }

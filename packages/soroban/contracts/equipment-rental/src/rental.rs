@@ -31,6 +31,10 @@ pub struct Rental {
 pub fn create_rental(env: &Env, renter: Address, equipment_id: u64, duration: u64) {
     renter.require_auth();
 
+    if duration < 0 {
+        panic!("Duration Can't be negative");
+    }
+
     validate_duration(&env, duration);
 
     if check_availability(&env, equipment_id) == false {
@@ -80,8 +84,6 @@ pub fn get_rental_by_rental_id(env: &Env, rental_id: u64) -> Option<Rental> {
 }
 
 pub fn update_rental_status(env: &Env, rental_id: u64, rental_status: RentalStatus) -> bool {
-    log!(&env, "UPDATING RENTAL STATE");
-
     let mut rentals: Vec<Rental> = env.storage().persistent().get(&RENTAL_KEY).unwrap_or(vec![env]);
     if let Some(index) = rentals.iter().position(|r| r.rental_id == rental_id) {
         let mut rental = rentals.get_unchecked((index as usize).try_into().unwrap()).clone();
@@ -103,9 +105,7 @@ pub fn check_availability(env: &Env, equipment_id: u64) -> bool {
 
         match rental.status {
             RentalStatus::Pending => {
-                log!(&env, "PENDING RENTAL DETECTED");
                 if payment_by_rental.is_some() {
-                    log!(&env, "PENDING RENTAL WITH PAYMENT");
                     return false; // Pending with payment, not available
                 }
                 continue; // Pending without payment, considered available
@@ -114,11 +114,9 @@ pub fn check_availability(env: &Env, equipment_id: u64) -> bool {
                 if let Some(payment) = payment_by_rental {
                     let rental_end_time = payment.timestamp + rental.duration;
                     if rental_end_time < timestamp {
-                        log!(&env, "EXPIRED ACTIVE RENTAL");
                         update_rental_status(&env, rental.rental_id, RentalStatus::Completed);
                         continue; // Expired, considered available
                     }
-                    log!(&env, "ACTIVE RENTAL NOT EXPIRED");
                     return false; // Active, not expired, not available
                 }
             }
