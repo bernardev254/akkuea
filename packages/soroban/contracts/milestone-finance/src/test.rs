@@ -208,7 +208,7 @@ fn test_project_approval() {
     env.mock_all_auths();
 
     // Create 20 voters (each with voting power 6 = 120 total, above 100 threshold)
-    for i in 0..20 {
+    for _i in 0..20 {
         let voter = Address::generate(&env);
         client.initialize_user(&voter, &name);
         voters.push_back(voter);
