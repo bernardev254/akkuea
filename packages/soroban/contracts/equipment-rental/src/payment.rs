@@ -31,7 +31,7 @@ pub fn set_token_address(env: &Env, token: Address) {
 
 pub fn set_equipment_price(env: &Env, equipment_id: u64, price_per_hour: i128) {
     if price_per_hour < 0 {
-        panic!("Price Per Hpur Can't be negative");
+        panic!("Price Per Hour Can't be negative");
     }
     let key = (EQUIPMENT_PRICE, equipment_id);
     env.storage().persistent().set(&key, &price_per_hour);

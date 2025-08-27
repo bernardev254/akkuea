@@ -488,3 +488,97 @@ fn test_payment_and_refund_failed() {
 
     let refunded = test.contract.refund_payment(&1, &(60_000_000 as i128));
 }
+
+#[test]
+#[should_panic(expected = "Amount Can't be negative")]
+fn test_payment_and_refund_neg_amount_failed() {
+    let max_duration = 30 * 24; // 30 days
+    let equipment_id = 1;
+    let duration = 1 * 15; // 15hrs
+
+    let test = EquipmentRentalTest::setup();
+
+    let renter = test.renter;
+    let token = &test.token.address;
+
+    test.contract.initialize(&max_duration);
+    test.contract.create_rental(&renter, &equipment_id, &duration);
+
+    let rental = test.contract.get_rental_by_rental_id(&1).unwrap();
+
+    let price_per_hour = 10_000_000; // 1 xlm
+    test.contract.set_token_address(&token);
+    test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
+    let stored_equip_price = test.contract.get_equipment_price(&equipment_id);
+
+    let amount_to_pay = -200_000_000; // 200 xlm
+    test.contract.process_payment(
+        &1,
+        &test.payer,
+        &amount_to_pay,
+    );
+}
+
+#[test]
+#[should_panic(expected = "Insufficient balance/amount")]
+fn test_payment_and_refund_insufficient_amount_failed() {
+    let max_duration = 30 * 24; // 30 days
+    let equipment_id = 1;
+    let duration = 1 * 15; // 15hrs
+
+    let test = EquipmentRentalTest::setup();
+
+    let renter = test.renter;
+    let token = &test.token.address;
+
+    test.contract.initialize(&max_duration);
+    test.contract.create_rental(&renter, &equipment_id, &duration);
+
+    let rental = test.contract.get_rental_by_rental_id(&1).unwrap();
+
+    let price_per_hour = 10_000_000; // 1 xlm
+    test.contract.set_token_address(&token);
+    test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
+    let stored_equip_price = test.contract.get_equipment_price(&equipment_id);
+
+    let amount_to_pay = 100_000_000; // 100 xlm
+    test.contract.process_payment(
+        &1,
+        &test.payer,
+        &amount_to_pay,
+    );
+}
+
+
+#[test]
+#[should_panic(expected = "Insufficient contract balance")]
+fn test_payment_and_refund_insufficient_contract_balance_failed() {
+    let max_duration = 30 * 24; // 30 days
+    let equipment_id = 1;
+    let duration = 1 * 15; // 15hrs
+
+    let test = EquipmentRentalTest::setup();
+
+    let renter = test.renter;
+    let token = &test.token.address;
+
+    test.contract.initialize(&max_duration);
+    test.contract.create_rental(&renter, &equipment_id, &duration);
+
+    let rental = test.contract.get_rental_by_rental_id(&1).unwrap();
+
+
+    let price_per_hour = 10_000_000; // 1 xlm
+    test.contract.set_token_address(&token);
+    test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
+    let stored_equip_price = test.contract.get_equipment_price(&equipment_id);
+
+    let amount_to_pay = 200_000_000; // 200 xlm
+    test.contract.process_payment(
+        &1,
+        &test.payer,
+        &amount_to_pay,
+    );
+
+    let refunded = test.contract.refund_payment(&1, &(600_000_000 as i128));
+}
