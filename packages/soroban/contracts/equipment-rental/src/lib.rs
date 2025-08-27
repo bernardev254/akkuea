@@ -1,6 +1,5 @@
 #![no_std]
 use soroban_sdk::{contract, contractimpl, Address, Env, Vec};
-use soroban_sdk::testutils::{Address as _,};
 
 mod rental;
 mod payment;

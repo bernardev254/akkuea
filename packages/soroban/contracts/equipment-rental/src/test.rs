@@ -1,10 +1,9 @@
 #![cfg(test)]
 extern crate std;
-use soroban_sdk::{log};
 
 use super::*;
-use soroban_sdk::testutils::{Ledger};
-use soroban_sdk::{token, Env};
+use soroban_sdk::testutils::{Address as _, Ledger};
+use soroban_sdk::{token, Address, Env};
 use token::Client as TokenClient;
 use token::StellarAssetClient as TokenAdminClient;
 use soroban_sdk::testutils::{LedgerInfo};
@@ -125,8 +124,6 @@ fn test_create_rental_equipment_time_ended() {
     let renter = Address::generate(&env);
     let renter2 = Address::generate(&env);
 
-    let timestamp = env.ledger().timestamp();
-
     // Create first rental
     env.mock_all_auths();
     client.create_rental(&renter, &equipment_id, &duration);
@@ -148,8 +145,6 @@ fn test_create_rental_multiple_pending() {
     let duration = 1 * 24;  //1day
     let renter = Address::generate(&env);
     let renter2 = Address::generate(&env);
-
-    let timestamp = env.ledger().timestamp();
 
     // Create first rental
     env.mock_all_auths();
@@ -200,7 +195,7 @@ fn test_payment() {
     let price_per_hour = 10_000_000; // 1 xlm
     test.contract.set_token_address(&token);
     test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
-    let stored_equip_price = test.contract.get_equipment_price(&equipment_id);
+    let _stored_equip_price = test.contract.get_equipment_price(&equipment_id);
 
     let amount_to_pay = 240_000_000; // 240 xlm
     test.contract.process_payment(
@@ -277,7 +272,6 @@ fn test_payment_multiple() {
     assert_eq!(test.token.balance(&test.contract.address), amount_to_pay + amount_to_pay_2);
 
     let pay_rent_1 = test.contract.get_payment_by_rental_id(&1);
-
     let pay_rent_2 = test.contract.get_payment_by_rental_id(&2);
 }
 
@@ -384,7 +378,7 @@ fn test_payment_same_equipmnent_available_after_completed() {
     test.contract.set_token_address(&token);
     test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
 
-    let res = test.contract.get_rental_by_rental_id(&(1 as u64));
+    let _ = test.contract.get_rental_by_rental_id(&(1 as u64));
 
     let amount_to_pay = 240_000_000; // 240 xlm
     test.contract.process_payment(
@@ -393,9 +387,8 @@ fn test_payment_same_equipmnent_available_after_completed() {
         &amount_to_pay,
     );
 
-    let res = test.contract.get_rental_by_rental_id(&(1 as u64));
-
-    let res = test.contract.get_rentals_by_equipment_id(&(1 as u64));
+    let _ = test.contract.get_rental_by_rental_id(&(1 as u64));
+    let _ = test.contract.get_rentals_by_equipment_id(&(1 as u64));
 
     let next_timestamp = test.env.ledger().timestamp() + duration + 10;
 
@@ -434,12 +427,10 @@ fn test_payment_and_refund() {
     test.contract.initialize(&max_duration);
     test.contract.create_rental(&renter, &equipment_id, &duration);
 
-    let rental = test.contract.get_rental_by_rental_id(&1).unwrap();
-
     let price_per_hour = 10_000_000; // 1 xlm
     test.contract.set_token_address(&token);
     test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
-    let stored_equip_price = test.contract.get_equipment_price(&equipment_id);
+    let _ = test.contract.get_equipment_price(&equipment_id);
 
     let amount_to_pay = 200_000_000; // 200 xlm
     test.contract.process_payment(
@@ -451,7 +442,7 @@ fn test_payment_and_refund() {
     assert_eq!(test.token.balance(&test.contract.address), 200_000_000);
     assert_eq!(test.token.balance(&test.payer), 50_000_000);
 
-    let refunded = test.contract.refund_payment(&1, &(50_000_000 as i128));
+    let _ = test.contract.refund_payment(&1, &(50_000_000 as i128));
     assert_eq!(test.token.balance(&test.contract.address), 150_000_000);
     assert_eq!(test.token.balance(&test.payer), 100_000_000);
 }
@@ -471,13 +462,9 @@ fn test_payment_and_refund_failed() {
     test.contract.initialize(&max_duration);
     test.contract.create_rental(&renter, &equipment_id, &duration);
 
-    let rental = test.contract.get_rental_by_rental_id(&1).unwrap();
-
-
     let price_per_hour = 10_000_000; // 1 xlm
     test.contract.set_token_address(&token);
     test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
-    let stored_equip_price = test.contract.get_equipment_price(&equipment_id);
 
     let amount_to_pay = 200_000_000; // 200 xlm
     test.contract.process_payment(
@@ -486,7 +473,7 @@ fn test_payment_and_refund_failed() {
         &amount_to_pay,
     );
 
-    let refunded = test.contract.refund_payment(&1, &(60_000_000 as i128));
+    let _ = test.contract.refund_payment(&1, &(60_000_000 as i128));
 }
 
 #[test]
@@ -504,12 +491,10 @@ fn test_payment_and_refund_neg_amount_failed() {
     test.contract.initialize(&max_duration);
     test.contract.create_rental(&renter, &equipment_id, &duration);
 
-    let rental = test.contract.get_rental_by_rental_id(&1).unwrap();
-
     let price_per_hour = 10_000_000; // 1 xlm
     test.contract.set_token_address(&token);
     test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
-    let stored_equip_price = test.contract.get_equipment_price(&equipment_id);
+    let _ = test.contract.get_equipment_price(&equipment_id);
 
     let amount_to_pay = -200_000_000; // 200 xlm
     test.contract.process_payment(
@@ -534,12 +519,10 @@ fn test_payment_and_refund_insufficient_amount_failed() {
     test.contract.initialize(&max_duration);
     test.contract.create_rental(&renter, &equipment_id, &duration);
 
-    let rental = test.contract.get_rental_by_rental_id(&1).unwrap();
-
     let price_per_hour = 10_000_000; // 1 xlm
     test.contract.set_token_address(&token);
     test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
-    let stored_equip_price = test.contract.get_equipment_price(&equipment_id);
+    let _ = test.contract.get_equipment_price(&equipment_id);
 
     let amount_to_pay = 100_000_000; // 100 xlm
     test.contract.process_payment(
@@ -565,13 +548,10 @@ fn test_payment_and_refund_insufficient_contract_balance_failed() {
     test.contract.initialize(&max_duration);
     test.contract.create_rental(&renter, &equipment_id, &duration);
 
-    let rental = test.contract.get_rental_by_rental_id(&1).unwrap();
-
-
     let price_per_hour = 10_000_000; // 1 xlm
     test.contract.set_token_address(&token);
     test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
-    let stored_equip_price = test.contract.get_equipment_price(&equipment_id);
+    let _ = test.contract.get_equipment_price(&equipment_id);
 
     let amount_to_pay = 200_000_000; // 200 xlm
     test.contract.process_payment(
@@ -580,5 +560,5 @@ fn test_payment_and_refund_insufficient_contract_balance_failed() {
         &amount_to_pay,
     );
 
-    let refunded = test.contract.refund_payment(&1, &(600_000_000 as i128));
+    let _ = test.contract.refund_payment(&1, &(600_000_000 as i128));
 }

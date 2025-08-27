@@ -1,4 +1,4 @@
-use soroban_sdk::{contracttype, token, Address, Env, Symbol, symbol_short, Vec, log};
+use soroban_sdk::{contracttype, token, Address, Env, Symbol, symbol_short, Vec};
 use crate::rental::{Rental, update_rental_status, get_rental_by_rental_id, check_availability, RENTAL_FAILED, RentalStatus};
 
 pub const PAYMENT_KEY: Symbol = symbol_short!("payments");
@@ -95,7 +95,7 @@ pub fn process_payment(env: &Env, rental_id: u64, payer: Address, amount: i128) 
     payments.push_back(payment.clone());
     env.storage().persistent().set(&PAYMENT_KEY, &payments);
 
-    let res = update_rental_status(&env, rental_data.rental_id, RentalStatus::Active);
+    let _ = update_rental_status(&env, rental_data.rental_id, RentalStatus::Active);
 
     env.events().publish((PAYMENT_SUCCESS, rental_id), (payer, amount));
     true

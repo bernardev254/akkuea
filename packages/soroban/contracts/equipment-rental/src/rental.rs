@@ -1,4 +1,4 @@
-use soroban_sdk::{contracttype, Address, Env, Symbol, symbol_short, Vec, log, vec};
+use soroban_sdk::{contracttype, symbol_short, Address, Env, Symbol, Vec};
 use crate::utils::{validate_duration, generate_rental_id};
 use crate::payment::{get_payment_by_rental_id};
 
@@ -65,8 +65,8 @@ pub fn save_rental(env: &Env, rental: &Rental) {
 }
 
 pub fn get_rentals_by_equipment_id(env: &Env, equipment_id: u64) -> Vec<Rental> {
-    let rentals: Vec<Rental> = env.storage().persistent().get(&RENTAL_KEY).unwrap_or(vec![env]);
-    let mut result = vec![env];
+    let rentals: Vec<Rental> = env.storage().persistent().get(&RENTAL_KEY).unwrap_or(Vec::new(&env));
+    let mut result = Vec::new(&env);
     for rental in rentals.iter() {
         if rental.equipment_id == equipment_id {
             result.push_back(rental);
@@ -84,7 +84,7 @@ pub fn get_rental_by_rental_id(env: &Env, rental_id: u64) -> Option<Rental> {
 }
 
 pub fn update_rental_status(env: &Env, rental_id: u64, rental_status: RentalStatus) -> bool {
-    let mut rentals: Vec<Rental> = env.storage().persistent().get(&RENTAL_KEY).unwrap_or(vec![env]);
+    let mut rentals: Vec<Rental> = env.storage().persistent().get(&RENTAL_KEY).unwrap_or(Vec::new(&env));
     if let Some(index) = rentals.iter().position(|r| r.rental_id == rental_id) {
         let mut rental = rentals.get_unchecked((index as usize).try_into().unwrap()).clone();
         rental.status = rental_status;
