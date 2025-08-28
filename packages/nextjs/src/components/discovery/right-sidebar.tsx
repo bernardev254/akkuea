@@ -201,7 +201,7 @@ export default function RightSidebar() {
             className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           >
             <Tabs defaultValue="recommendations" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-200">
                 <TabsTrigger value="recommendations" className="text-xs">
                   <Sparkles className="w-4 h-4 mr-1" />
                   For You
@@ -234,7 +234,7 @@ export default function RightSidebar() {
                       </CardHeader>
                       <CardContent className="pt-0 pb-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center">
+                          <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
                             <User size={12} className="text-muted-foreground" />
                           </div>
                           <span className="text-xs text-muted-foreground">{item.author}</span>
