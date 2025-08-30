@@ -201,7 +201,7 @@ export default function RightSidebar() {
             className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           >
             <Tabs defaultValue="recommendations" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-200">
+              <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-200 dark:bg-gray-800 rounded-lg p-1">
                 <TabsTrigger value="recommendations" className="text-xs">
                   <Sparkles className="w-4 h-4 mr-1" />
                   For You
