@@ -1,5 +1,5 @@
-use soroban_sdk::{Address, Env, Map, String, Vec};
-use crate::datatype::{AnalyticsData, Educator, VerificationLevel, Review, Dispute, ReviewerPerformance};
+use soroban_sdk::{Address, Env, Map, String, Vec, BytesN};
+use crate::datatype::{AnalyticsData, Educator, VerificationLevel, Review, Dispute, ReviewerPerformance, Credential, NFT, NFTTemplate, AchievementBadge};
 
 pub trait EducatorVerificationInterface {
     // --- Administration Functions ---
@@ -29,6 +29,28 @@ pub trait EducatorVerificationInterface {
     fn get_verified_educators(env: Env) -> Vec<Address>;
     fn get_educators_by_specialty(env: Env, specialty: String) -> Vec<Address>;
     fn get_educator_reviews(env: Env, educator_address: Address) -> Vec<Review>;
+
+    // --- Enhanced Credential Functions ---
+    fn create_credential(env: Env, issuer: Address, subject: Address, credential_hash: String, tier: u32, w3c_compliant: bool) -> BytesN<32>;
+    fn renew_credential(env: Env, issuer: Address, credential_id: BytesN<32>) -> bool;
+    fn verify_cross_chain(env: Env, verifier: Address, credential_id: BytesN<32>, chain_id: u32, verification_hash: String) -> bool;
+    fn get_credential_info(env: Env, credential_id: BytesN<32>) -> Option<Credential>;
+    fn get_credentials_by_subject(env: Env, subject: Address) -> Vec<Credential>;
+
+    // --- Dynamic NFT Functions ---
+    fn create_dynamic_nft(env: Env, admin: Address, owner: Address, template_id: u32, is_badge: bool, initial_metadata: Map<String, String>) -> BytesN<32>;
+    fn update_nft_metadata(env: Env, owner: Address, nft_id: BytesN<32>, new_metadata: Map<String, String>) -> bool;
+    fn upgrade_nft(env: Env, owner: Address, nft_id: BytesN<32>, additional_metadata: Map<String, String>) -> bool;
+    fn list_nfts(env: Env, owner: Address) -> Vec<NFT>;
+    fn get_nft_info(env: Env, nft_id: BytesN<32>) -> Option<NFT>;
+
+    // --- NFT Template Functions ---
+    fn create_nft_template(env: Env, admin: Address, name: String, description: String, image_url: String, attributes: Map<String, String>, is_badge_template: bool) -> u32;
+    fn get_nft_template(env: Env, template_id: u32) -> Option<NFTTemplate>;
+
+    // --- Achievement Badge Functions ---
+    fn issue_badge(env: Env, admin: Address, educator: Address, badge_name: String, badge_description: String, criteria: String, required_tier: u32, template_id: u32) -> BytesN<32>;
+    fn get_achievement_badge(env: Env, badge_id: BytesN<32>) -> Option<AchievementBadge>;
     fn get_disputes(env: Env) -> Vec<Dispute>;
 
     // --- Analytics Functions (UPDATED) ---
