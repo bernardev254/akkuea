@@ -1,15 +1,13 @@
 use soroban_sdk::{
-    contract, contractimpl, Address, Env, String, Vec, Map, BytesN, symbol_short,
+    Address, Env, String, Vec, Map, BytesN, symbol_short,
 };
 use crate::datatype::{VerificationLevel, NFT, NFTTemplate, AchievementBadge};
 use crate::storage::{NFTS, NFT_TEMPLATES, ACHIEVEMENT_BADGES, NFT_COUNTER, TEMPLATE_COUNTER, BADGE_COUNTER};
 use crate::utils::Utils;
 
 /// NFT implementation for educator verification credentials
-#[contract]
 pub struct NFTImplementation;
 
-#[contractimpl]
 impl NFTImplementation {
     /// Initialize the NFT contract and return its address
     pub fn initialize_nft(env: Env, _admin: Address) -> Address {
@@ -79,8 +77,8 @@ impl NFTImplementation {
         env.storage().persistent().remove(&nft_id);
     }
 
-    /// Create a new dynamic NFT with metadata and template
-    pub fn create_dynamic_nft(
+    /// Create a new dynamic NFT with metadata and template (internal function)
+    pub fn create_nft_internal(
         env: Env,
         admin: Address,
         owner: Address,
@@ -275,7 +273,7 @@ impl NFTImplementation {
         badge_metadata.set(String::from_str(&env, "required_tier"), String::from_str(&env, tier_str));
 
         // Create the badge NFT
-        let nft_id = Self::create_dynamic_nft(
+        let nft_id = Self::create_nft_internal(
             env.clone(),
             admin,
             educator,

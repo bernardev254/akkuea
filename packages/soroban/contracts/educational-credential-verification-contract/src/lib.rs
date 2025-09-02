@@ -307,7 +307,7 @@ impl EducatorVerificationInterface for EducatorVerificationContract {
         is_badge: bool,
         initial_metadata: Map<String, String>,
     ) -> BytesN<32> {
-        NFTImplementation::create_dynamic_nft(env, admin, owner, template_id, is_badge, initial_metadata)
+        NFTImplementation::create_nft_internal(env, admin, owner, template_id, is_badge, initial_metadata)
     }
 
     fn update_nft_metadata(
