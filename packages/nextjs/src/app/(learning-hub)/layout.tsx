@@ -1,6 +1,6 @@
 import LearningHubSidebar from '@/components/learning-hub/learning-hub-sidebar';
-import RightSidebar from '@/components/learning-hub/right-sidebar';
 import Navbar from '@/components/navbar/navbar';
+import RightSidebar from '@/components/learning-hub/right-sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
