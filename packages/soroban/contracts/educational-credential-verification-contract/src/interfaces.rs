@@ -1,5 +1,9 @@
 use soroban_sdk::{Address, Env, Map, String, Vec, BytesN};
-use crate::datatype::{AnalyticsData, Educator, VerificationLevel, Review, Dispute, ReviewerPerformance, Credential, NFT, NFTTemplate, AchievementBadge};
+use crate::datatype::{
+    AnalyticsData, Educator, VerificationLevel, Review, Dispute, ReviewerPerformance, 
+    Credential, NFT, NFTTemplate, AchievementBadge, SecurityConfig, 
+    ReputationStake, ContractVersion
+};
 
 pub trait EducatorVerificationInterface {
     // --- Administration Functions ---
@@ -58,4 +62,58 @@ pub trait EducatorVerificationInterface {
     fn recalculate_analytics(env: Env, admin: Address);
     // Function to get performance metrics for a specific reviewer.
     fn get_reviewer_performance(env: Env, reviewer: Address) -> Option<ReviewerPerformance>;
+
+    // --- Security Functions ---
+    fn configure_security(env: Env, admin: Address, config: SecurityConfig);
+    fn get_security_config(env: Env) -> SecurityConfig;
+    
+    // Multi-signature functions
+    fn create_multisig_proposal(env: Env, proposer: Address, operation: String, target: Address, data: Vec<String>) -> BytesN<32>;
+    fn approve_proposal(env: Env, approver: Address, proposal_id: BytesN<32>) -> bool;
+    fn execute_multisig_operation(env: Env, executor: Address, proposal_id: BytesN<32>) -> bool;
+    
+    // Time-lock functions
+    fn schedule_time_locked_operation(env: Env, proposer: Address, operation: String, target: Address, data: Vec<String>) -> BytesN<32>;
+    fn execute_time_locked_operation(env: Env, executor: Address, operation_id: BytesN<32>) -> bool;
+    fn cancel_time_locked_operation(env: Env, admin: Address, operation_id: BytesN<32>) -> bool;
+    
+    // Fraud detection functions
+    fn flag_fraudulent_activity(env: Env, reporter: Address, target: Address, fraud_type: String, evidence_hash: String) -> BytesN<32>;
+    
+    // Reputation staking functions
+    fn stake_reputation(env: Env, staker: Address, amount: u64, lock_duration: u64) -> bool;
+    fn slash_stake(env: Env, admin: Address, staker: Address, slash_amount: u64) -> bool;
+    fn withdraw_stake(env: Env, staker: Address) -> u64;
+    fn get_active_stake(env: Env, staker: Address) -> Option<ReputationStake>;
+    
+    // Account security functions
+    fn is_account_suspended(env: Env, account: Address) -> bool;
+
+    // --- Upgrade Functions ---
+    fn get_version_info(env: Env) -> Option<ContractVersion>;
+    fn upgrade_contract(env: Env, admin: Address, new_implementation: Address, new_version: String) -> bool;
+    fn set_implementation(env: Env, admin: Address, implementation: Address) -> bool;
+    fn get_implementation(env: Env) -> Option<Address>;
+    
+    // Contract pause functions
+    fn pause_contract(env: Env, admin: Address, reason: String) -> bool;
+    fn unpause_contract(env: Env, admin: Address) -> bool;
+    fn is_contract_paused(env: Env) -> bool;
+    fn emergency_stop(env: Env, admin: Address, reason: String) -> bool;
+    
+    // Data migration functions
+    fn initialize_migration(env: Env, admin: Address, to_version: String) -> BytesN<32>;
+    fn migrate_educators(env: Env, admin: Address, batch_size: u32) -> u32;
+    fn migrate_credentials(env: Env, admin: Address, batch_size: u32) -> u32;
+    fn migrate_nfts(env: Env, admin: Address, batch_size: u32) -> u32;
+    fn complete_migration(env: Env, admin: Address, migration_id: BytesN<32>) -> bool;
+    fn validate_migration_integrity(env: Env, admin: Address, data_type: String) -> bool;
+    
+    // Backward compatibility functions
+    fn create_compatibility_adapter(env: Env, old_function: String, new_function: String) -> bool;
+    fn is_function_deprecated(env: Env, function_name: String) -> bool;
+    fn get_deprecation_warning(env: Env, function_name: String) -> Option<String>;
+    
+    // Rollback functions
+    fn rollback_to_previous_version(env: Env, admin: Address) -> bool;
 }

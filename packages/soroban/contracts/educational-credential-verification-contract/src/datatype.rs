@@ -164,3 +164,134 @@ pub struct AnalyticsData {
     pub specialty_distribution: Map<String, u32>,
     pub reviewer_performance: Map<Address, ReviewerPerformance>,
 }
+
+// --- Security and Upgrade Data Structures ---
+
+/// Security configuration for the contract
+#[contracttype]
+#[derive(Clone)]
+pub struct SecurityConfig {
+    pub multi_sig_threshold: u32,
+    pub time_lock_duration: u64,
+    pub reputation_stake: u64,
+    pub fraud_detection_enabled: bool,
+    pub max_operations_per_hour: u32,
+}
+
+/// Multi-signature proposal structure
+#[contracttype]
+#[derive(Clone)]
+pub struct MultiSigProposal {
+    pub id: BytesN<32>,
+    pub operation: String,
+    pub target: Address,
+    pub data: Vec<String>,
+    pub proposer: Address,
+    pub approvals: Vec<Address>,
+    pub required_signatures: u32,
+    pub created_at: u64,
+    pub executed: bool,
+    pub cancelled: bool,
+}
+
+/// Time-locked operation structure  
+#[contracttype]
+#[derive(Clone)]
+pub struct TimeLockOperation {
+    pub id: BytesN<32>,
+    pub operation: String,
+    pub target: Address,
+    pub data: Vec<String>,
+    pub proposer: Address,
+    pub execution_time: u64,
+    pub executed: bool,
+    pub cancelled: bool,
+}
+
+/// Fraud detection report
+#[contracttype]
+#[derive(Clone)]
+pub struct FraudReport {
+    pub id: BytesN<32>,
+    pub reporter: Address,
+    pub target: Address,
+    pub fraud_type: String,
+    pub evidence_hash: String,
+    pub timestamp: u64,
+    pub resolved: bool,
+    pub fraud_score: u32,
+}
+
+/// Reputation stake record
+#[contracttype]
+#[derive(Clone)]
+pub struct ReputationStake {
+    pub staker: Address,
+    pub amount: u64,
+    pub locked_until: u64,
+    pub active: bool,
+    pub slashed_amount: u64,
+}
+
+/// Contract version information
+#[contracttype]
+#[derive(Clone)]
+pub struct ContractVersion {
+    pub version_id: BytesN<32>,
+    pub version_string: String,
+    pub active: bool,
+    pub deployed_at: u64,
+    pub implementation_address: Address,
+    pub migration_completed: bool,
+}
+
+/// Migration state tracking
+#[contracttype]
+#[derive(Clone)]
+pub struct MigrationState {
+    pub migration_id: BytesN<32>,
+    pub from_version: String,
+    pub to_version: String,
+    pub started_at: u64,
+    pub completed_at: Option<u64>,
+    pub progress: u32,
+    pub status: MigrationStatus,
+    pub batch_size: u32,
+    pub current_batch: u32,
+    pub total_batches: u32,
+}
+
+/// Migration status enum
+#[contracttype]
+#[derive(Clone, PartialEq)]
+pub enum MigrationStatus {
+    Pending,
+    InProgress,
+    Completed,
+    Failed,
+    Paused,
+}
+
+/// Data migration batch information
+#[contracttype]
+#[derive(Clone)]
+pub struct MigrationBatch {
+    pub batch_id: u32,
+    pub data_type: String,
+    pub start_index: u32,
+    pub end_index: u32,
+    pub migrated_count: u32,
+    pub failed_count: u32,
+    pub errors: Vec<String>,
+}
+
+/// Contract pause state
+#[contracttype]
+#[derive(Clone)]
+pub struct PauseState {
+    pub is_paused: bool,
+    pub paused_at: u64,
+    pub paused_by: Address,
+    pub reason: String,
+    pub functions_paused: Vec<String>,
+}

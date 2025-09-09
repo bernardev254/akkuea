@@ -9,15 +9,27 @@ mod review;
 mod analytics;
 mod storage;
 mod utils;
+mod security;
+mod upgrade;
 #[cfg(test)]
 mod test;
+#[cfg(test)]
+mod test_security;
+#[cfg(test)]
+mod test_upgrade;
 
-use datatype::{AnalyticsData, Educator, VerificationLevel, Review, Dispute, ReviewerPerformance, Credential, NFT, NFTTemplate, AchievementBadge};
+use datatype::{
+    AnalyticsData, Educator, VerificationLevel, Review, Dispute, ReviewerPerformance, 
+    Credential, NFT, NFTTemplate, AchievementBadge, SecurityConfig, MultiSigProposal, 
+    TimeLockOperation, FraudReport, ReputationStake, ContractVersion, MigrationState
+};
 use interfaces::EducatorVerificationInterface;
 use verification::VerificationSystem;
 use review::ReviewSystem;
 use analytics::AnalyticsSystem;
 use nft::NFTImplementation;
+use security::SecuritySystem;
+use upgrade::UpgradeSystem;
 use storage::{EDUCATORS, ADMIN, REVOKED, DISPUTES, DataKey};
 
 
@@ -371,5 +383,190 @@ impl EducatorVerificationInterface for EducatorVerificationContract {
 
     fn get_achievement_badge(env: Env, badge_id: BytesN<32>) -> Option<AchievementBadge> {
         NFTImplementation::get_achievement_badge(env, badge_id)
+    }
+
+    // --- Security Functions ---
+    
+    fn configure_security(env: Env, admin: Address, config: SecurityConfig) {
+        SecuritySystem::configure_security(&env, &admin, config);
+    }
+
+    fn get_security_config(env: Env) -> SecurityConfig {
+        SecuritySystem::get_security_config(&env)
+    }
+
+    // Multi-signature functions
+    fn create_multisig_proposal(
+        env: Env,
+        proposer: Address,
+        operation: String,
+        target: Address,
+        data: Vec<String>,
+    ) -> BytesN<32> {
+        // Check if contract is paused
+        if UpgradeSystem::is_contract_paused(&env) {
+            panic!("contract is paused");
+        }
+        SecuritySystem::create_multisig_proposal(&env, &proposer, operation, target, data)
+    }
+
+    fn approve_proposal(env: Env, approver: Address, proposal_id: BytesN<32>) -> bool {
+        if UpgradeSystem::is_contract_paused(&env) {
+            panic!("contract is paused");
+        }
+        SecuritySystem::approve_proposal(&env, &approver, proposal_id)
+    }
+
+    fn execute_multisig_operation(env: Env, executor: Address, proposal_id: BytesN<32>) -> bool {
+        if UpgradeSystem::is_contract_paused(&env) {
+            panic!("contract is paused");
+        }
+        SecuritySystem::execute_multisig_operation(&env, &executor, proposal_id)
+    }
+
+    // Time-lock functions
+    fn schedule_time_locked_operation(
+        env: Env,
+        proposer: Address,
+        operation: String,
+        target: Address,
+        data: Vec<String>,
+    ) -> BytesN<32> {
+        if UpgradeSystem::is_contract_paused(&env) {
+            panic!("contract is paused");
+        }
+        SecuritySystem::schedule_time_locked_operation(&env, &proposer, operation, target, data)
+    }
+
+    fn execute_time_locked_operation(env: Env, executor: Address, operation_id: BytesN<32>) -> bool {
+        if UpgradeSystem::is_contract_paused(&env) {
+            panic!("contract is paused");
+        }
+        SecuritySystem::execute_time_locked_operation(&env, &executor, operation_id)
+    }
+
+    fn cancel_time_locked_operation(env: Env, admin: Address, operation_id: BytesN<32>) -> bool {
+        SecuritySystem::cancel_time_locked_operation(&env, &admin, operation_id)
+    }
+
+    // Fraud detection functions
+    fn flag_fraudulent_activity(
+        env: Env,
+        reporter: Address,
+        target: Address,
+        fraud_type: String,
+        evidence_hash: String,
+    ) -> BytesN<32> {
+        SecuritySystem::flag_fraudulent_activity(&env, &reporter, &target, fraud_type, evidence_hash)
+    }
+
+    // Reputation staking functions
+    fn stake_reputation(env: Env, staker: Address, amount: u64, lock_duration: u64) -> bool {
+        if UpgradeSystem::is_contract_paused(&env) {
+            panic!("contract is paused");
+        }
+        SecuritySystem::stake_reputation(&env, &staker, amount, lock_duration)
+    }
+
+    fn slash_stake(env: Env, admin: Address, staker: Address, slash_amount: u64) -> bool {
+        SecuritySystem::slash_stake(&env, &admin, &staker, slash_amount)
+    }
+
+    fn withdraw_stake(env: Env, staker: Address) -> u64 {
+        if UpgradeSystem::is_contract_paused(&env) {
+            panic!("contract is paused");
+        }
+        SecuritySystem::withdraw_stake(&env, &staker)
+    }
+
+    fn get_active_stake(env: Env, staker: Address) -> Option<ReputationStake> {
+        SecuritySystem::get_active_stake(&env, &staker)
+    }
+
+    // Account security functions
+    fn is_account_suspended(env: Env, account: Address) -> bool {
+        SecuritySystem::is_account_suspended(&env, &account)
+    }
+
+    // --- Upgrade Functions ---
+
+    fn get_version_info(env: Env) -> Option<ContractVersion> {
+        UpgradeSystem::get_version_info(&env)
+    }
+
+    fn upgrade_contract(env: Env, admin: Address, new_implementation: Address, new_version: String) -> bool {
+        UpgradeSystem::upgrade_contract(&env, &admin, new_implementation, new_version)
+    }
+
+    fn set_implementation(env: Env, admin: Address, implementation: Address) -> bool {
+        UpgradeSystem::set_implementation(&env, &admin, implementation)
+    }
+
+    fn get_implementation(env: Env) -> Option<Address> {
+        UpgradeSystem::get_implementation(&env)
+    }
+
+    // Contract pause functions
+    fn pause_contract(env: Env, admin: Address, reason: String) -> bool {
+        UpgradeSystem::pause_contract(&env, &admin, reason)
+    }
+
+    fn unpause_contract(env: Env, admin: Address) -> bool {
+        UpgradeSystem::unpause_contract(&env, &admin)
+    }
+
+    fn is_contract_paused(env: Env) -> bool {
+        UpgradeSystem::is_contract_paused(&env)
+    }
+
+    fn emergency_stop(env: Env, admin: Address, reason: String) -> bool {
+        UpgradeSystem::emergency_stop(&env, &admin, reason)
+    }
+
+    // Data migration functions
+    fn initialize_migration(env: Env, admin: Address, to_version: String) -> BytesN<32> {
+        UpgradeSystem::initialize_migration(&env, &admin, to_version)
+    }
+
+    fn migrate_educators(env: Env, admin: Address, batch_size: u32) -> u32 {
+        UpgradeSystem::migrate_educators(&env, &admin, batch_size)
+    }
+
+    fn migrate_credentials(env: Env, admin: Address, batch_size: u32) -> u32 {
+        UpgradeSystem::migrate_credentials(&env, &admin, batch_size)
+    }
+
+    fn migrate_nfts(env: Env, admin: Address, batch_size: u32) -> u32 {
+        UpgradeSystem::migrate_nfts(&env, &admin, batch_size)
+    }
+
+    fn complete_migration(env: Env, admin: Address, migration_id: BytesN<32>) -> bool {
+        UpgradeSystem::complete_migration(&env, &admin, migration_id)
+    }
+
+    fn validate_migration_integrity(env: Env, admin: Address, data_type: String) -> bool {
+        UpgradeSystem::validate_migration_integrity(&env, &admin, data_type)
+    }
+
+    // Backward compatibility functions
+    fn create_compatibility_adapter(
+        env: Env, 
+        old_function: String, 
+        new_function: String, 
+    ) -> bool {
+        UpgradeSystem::create_compatibility_adapter(&env, old_function, new_function)
+    }
+
+    fn is_function_deprecated(env: Env, function_name: String) -> bool {
+        UpgradeSystem::is_function_deprecated(&env, function_name)
+    }
+
+    fn get_deprecation_warning(env: Env, function_name: String) -> Option<String> {
+        UpgradeSystem::get_deprecation_warning(&env, function_name)
+    }
+
+    // Rollback functions
+    fn rollback_to_previous_version(env: Env, admin: Address) -> bool {
+        UpgradeSystem::rollback_to_previous_version(&env, &admin)
     }
 }
