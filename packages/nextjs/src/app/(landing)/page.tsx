@@ -1,3 +1,9 @@
+import Benefits from '@/components/landing/Benefits';
+
 export default function LandingPage() {
-  return <div>Landing Page</div>;
+  return (
+    <div>
+      <Benefits />
+    </div>
+  );
 }
