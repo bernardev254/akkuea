@@ -1,3 +1,9 @@
+import CommunitySection from '@/components/landing/CommunitySection';
+
 export default function LandingPage() {
-  return <div>Landing Page</div>;
+  return (
+    <section>
+      <CommunitySection />
+    </section>
+  );
 }
