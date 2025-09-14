@@ -65,7 +65,6 @@ export default function Roadmap() {
             primary: '#5EEAD4',
             secondary: '#F3F4F6',
           }}
-          items={roadmapTimeLineData}
           mode="VERTICAL_ALTERNATING"
           disableToolbar={true}
         >
