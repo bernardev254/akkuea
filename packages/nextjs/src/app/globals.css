@@ -98,3 +98,7 @@
   }
 }
 
+/* Hide the react-chrono timeline card pointers */
+span[class^='TriangleIconWrapper'] {
+  display: none !important;
+}
