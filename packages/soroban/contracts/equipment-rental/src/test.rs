@@ -2,8 +2,9 @@
 extern crate std;
 
 use super::*;
+use crate::rental::RentalStatus;
 use soroban_sdk::testutils::{Address as _, Ledger};
-use soroban_sdk::{token, Address, Env};
+use soroban_sdk::{token, Address, Env, log};
 use token::Client as TokenClient;
 use token::StellarAssetClient as TokenAdminClient;
 use soroban_sdk::testutils::{LedgerInfo};
@@ -159,7 +160,7 @@ fn test_create_rental_invalid_duration() {
     let contract_id = env.register(EquipmentRentalContract, ());
     let client = EquipmentRentalContractClient::new(&env, &contract_id);
 
-    let max_duration = 30 * 24;
+    let max_duration = 30 * 24 * 3600 + 1;
     client.initialize(&max_duration);
 
     let equipment_id = 1;
@@ -174,7 +175,7 @@ fn test_create_rental_invalid_duration() {
 fn test_payment() {
     let max_duration = 30 * 24; // 30 days
     let equipment_id = 1;
-    let duration = 1 * 24; // 1 day
+    let duration = 24; // 24hrs
 
     let test = EquipmentRentalTest::setup();
 
@@ -234,9 +235,9 @@ fn test_payment_equipment_price_unset() {
 
 #[test]
 fn test_payment_multiple() {
-    let max_duration = 30 * 24; // 30 days
+    let max_duration = 30 * 24 * 3600; // 30 days
     let equipment_id = 1;
-    let duration = 1 * 24; // 1 day
+    let duration = 24; // 24hrs
     let equipment_id_2 = 2;
 
     let test = EquipmentRentalTest::setup();
@@ -415,9 +416,9 @@ fn test_payment_same_equipmnent_available_after_completed() {
 
 #[test]
 fn test_payment_and_refund() {
-    let max_duration = 30 * 24; // 30 days
+    let max_duration = 30 * 24 * 3600; // 30 days
     let equipment_id = 1;
-    let duration = 1 * 15; // 15hrs
+    let duration = 15; // 15hrs
 
     let test = EquipmentRentalTest::setup();
 
@@ -450,9 +451,9 @@ fn test_payment_and_refund() {
 #[test]
 #[should_panic(expected = "Max Refundable Amount:")]
 fn test_payment_and_refund_failed() {
-    let max_duration = 30 * 24; // 30 days
+    let max_duration = 30 * 24 * 3600; // 30 days
     let equipment_id = 1;
-    let duration = 1 * 15; // 15hrs
+    let duration = 15; // 15hrs
 
     let test = EquipmentRentalTest::setup();
 
@@ -507,9 +508,9 @@ fn test_payment_and_refund_neg_amount_failed() {
 #[test]
 #[should_panic(expected = "Insufficient balance/amount")]
 fn test_payment_and_refund_insufficient_amount_failed() {
-    let max_duration = 30 * 24; // 30 days
+    let max_duration = 30 * 24 * 3600; // 30 days
     let equipment_id = 1;
-    let duration = 1 * 15; // 15hrs
+    let duration = 15; // 15hrs
 
     let test = EquipmentRentalTest::setup();
 
@@ -536,9 +537,9 @@ fn test_payment_and_refund_insufficient_amount_failed() {
 #[test]
 #[should_panic(expected = "Insufficient contract balance")]
 fn test_payment_and_refund_insufficient_contract_balance_failed() {
-    let max_duration = 30 * 24; // 30 days
+    let max_duration = 30 * 24 * 3600; // 30 days
     let equipment_id = 1;
-    let duration = 1 * 15; // 15hrs
+    let duration = 15; // 15hrs
 
     let test = EquipmentRentalTest::setup();
 
@@ -561,4 +562,50 @@ fn test_payment_and_refund_insufficient_contract_balance_failed() {
     );
 
     let _ = test.contract.refund_payment(&1, &(600_000_000 as i128));
+}
+
+#[test]
+fn test_payment_and_cancel() {
+    let max_duration = 30 * 24 * 3600; // 30 days
+    let equipment_id = 1;
+    let duration = 15; // 15hrs
+
+    let test = EquipmentRentalTest::setup();
+
+    let renter = test.renter;
+    let token = &test.token.address;
+
+    test.contract.initialize(&max_duration);
+    let rental_id = test.contract.create_rental(&renter, &equipment_id, &duration);
+
+    let price_per_hour = 10_000_000; // 1 xlm
+    test.contract.set_token_address(&token);
+    test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
+    let _ = test.contract.get_equipment_price(&equipment_id);
+
+    let amount_to_pay = 200_000_000; // 200 xlm
+    test.contract.process_payment(
+        &1,
+        &test.payer,
+        &amount_to_pay,
+    );
+
+    assert_eq!(test.token.balance(&test.contract.address), 200_000_000);
+    assert_eq!(test.token.balance(&test.payer), 50_000_000);
+
+    let rent = test.contract.get_rental_by_rental_id(&rental_id);
+    
+    test.env.ledger().with_mut(|li| {
+        li.timestamp = 1 * 13; // 24 hours + 1 second
+    });
+
+    test.contract.cancel_rental(&renter, &rental_id);
+
+    let rental = test.contract.get_rental_by_rental_id(&rental_id).unwrap();
+
+    assert_eq!(test.token.balance(&test.contract.address), 170000000);
+    assert_eq!(test.token.balance(&test.payer), 80000000);
+
+    assert_eq!(rental.rental_id, 1);
+    assert_eq!(rental.status, RentalStatus::Cancelled);
 }
