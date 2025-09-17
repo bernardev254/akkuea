@@ -1,4 +1,4 @@
-name: CI - Vitest with Bun
+name: Github Actions workflow for Vitest with Bun
 
 on:
 	push:
