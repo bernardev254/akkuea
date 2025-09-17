@@ -69,21 +69,8 @@ pub fn create_rental(env: &Env, renter: Address, equipment_id: u64, duration: u6
 }
 
 pub fn cancel_rental(env: &Env, renter: Address, rental_id: u64) {
-    renter.require_auth();
     let current_time = env.ledger().timestamp();
-
-    let rental = get_rental_by_rental_id(&env, rental_id);
-    if let Some(ref rental) = rental {
-        if renter != rental.renter {
-            panic!("Can initiate cancel rental");
-        }
-
-        if rental.status != RentalStatus::Active {
-            panic!("Rental is not Active, can't cancel");
-        }
-    }
-
-    let mut rental = rental.unwrap();
+    let mut rental = validate_cancellation(&env, rental_id, renter).unwrap();
 
     let payment = get_payment_by_rental_id(&env, rental_id).unwrap();
     let payment_timestamp = payment.timestamp;
@@ -108,6 +95,22 @@ pub fn cancel_rental(env: &Env, renter: Address, rental_id: u64) {
     refund_payment(env.clone(), rental_id, amount_to_refund.into());
 
     env.events().publish((RENTAL_CANCEL, rental_id), (rental.equipment_id, rental.renter, amount_to_refund));
+}
+
+pub fn validate_cancellation(env: &Env, rental_id: u64, caller: Address) -> Option<Rental> {
+    caller.require_auth();
+
+    let rental = get_rental_by_rental_id(&env, rental_id);
+    if let Some(ref rental) = rental {
+        if caller != rental.renter {
+            panic!("Can initiate cancel rental");
+        }
+
+        if rental.status != RentalStatus::Active {
+            panic!("Rental is not Active, can't cancel");
+        }
+    }
+    rental
 }
 
 
