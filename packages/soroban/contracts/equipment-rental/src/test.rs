@@ -609,3 +609,51 @@ fn test_payment_and_cancel() {
     assert_eq!(rental.rental_id, 1);
     assert_eq!(rental.status, RentalStatus::Cancelled);
 }
+
+
+#[test]
+fn test_payment_and_cancel_create() {
+    let max_duration = 30 * 24 * 3600; // 30 days
+    let equipment_id = 1;
+    let duration = 15; // 15hrs
+
+    let test = EquipmentRentalTest::setup();
+
+    let renter = test.renter;
+    let token = &test.token.address;
+
+    test.contract.initialize(&max_duration);
+    let rental_id = test.contract.create_rental(&renter, &equipment_id, &duration);
+    let rental = test.contract.get_rental_by_rental_id(&rental_id).unwrap();
+
+    let price_per_hour = 10_000_000; // 1 xlm
+    test.contract.set_token_address(&token);
+    test.contract.set_equipment_price(&equipment_id, &(price_per_hour as i128));
+    let _ = test.contract.get_equipment_price(&equipment_id);
+
+    let amount_to_pay = 200_000_000; // 200 xlm
+    test.contract.process_payment(
+        &1,
+        &test.payer,
+        &amount_to_pay,
+    );
+
+    
+    test.env.ledger().with_mut(|li| {
+        li.timestamp = 1 * 13; // 24 hours + 1 second
+    });
+
+    test.contract.cancel_rental(&renter, &rental_id);
+
+    let new_renter = Address::generate(&test.env);
+    let duration = 25; // 25hrs
+    let equipment_id_2 = 1;
+
+    let new_rental_id = test.contract.create_rental(&new_renter, &equipment_id_2, &duration);
+    let rental = test.contract.get_rental_by_rental_id(&new_rental_id).unwrap();
+
+    assert_eq!(rental.rental_id, 2);
+    assert_eq!(rental.equipment_id, equipment_id);
+    assert_eq!(rental.renter, new_renter);
+    assert_eq!(rental.duration, duration);
+}
