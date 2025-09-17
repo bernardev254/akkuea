@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import './HeaderLanding.css';
 
@@ -80,7 +80,7 @@ export default function HeaderLanding() {
         contentEl.style.position = 'static';
         contentEl.style.height = 'auto';
 
-        contentEl.offsetHeight; // Force reflow
+        void contentEl.offsetHeight; // Force reflow
 
         const topBar = 60;
         const padding = 16;
@@ -98,7 +98,7 @@ export default function HeaderLanding() {
     return 260;
   };
 
-  const createTimeline = () => {
+  const createTimeline = useCallback(() => {
     const navEl = navRef.current;
     if (!navEl) return null;
 
@@ -122,7 +122,7 @@ export default function HeaderLanding() {
     }, '-=0.1');
 
     return tl;
-  };
+  }, []);
 
   useLayoutEffect(() => {
     const tl = createTimeline();
@@ -132,7 +132,7 @@ export default function HeaderLanding() {
       tl?.kill();
       tlRef.current = null;
     };
-  }, [navItems]);
+  }, [createTimeline, navItems]);
 
   useLayoutEffect(() => {
     const handleResize = () => {
@@ -159,7 +159,7 @@ export default function HeaderLanding() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isExpanded]);
+  }, [isExpanded, createTimeline]);
 
   const toggleMenu = () => {
     const tl = tlRef.current;
