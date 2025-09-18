@@ -18,6 +18,35 @@ type ResourceRequest struct {
     Format   string `json:"format"`
 }
 
+type ResourcesResponse struct {
+    Data    []models.Resource `json:"data"`
+    Count   int               `json:"count"`
+    Message string            `json:"message"`
+}
+
+// GET /resources?status=Approved|Pending|Rejected
+func ListResources(c *gin.Context) {
+    db := config.GetDB()
+
+    status := c.Query("status")
+
+    var resources []models.Resource
+    tx := db
+    if status != "" {
+        tx = tx.Where("status = ?", status)
+    }
+    if err := tx.Order("created_at DESC").Find(&resources).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to list resources"})
+        return
+    }
+
+    c.JSON(http.StatusOK, ResourcesResponse{
+        Data:    resources,
+        Count:   len(resources),
+        Message: "Resources retrieved successfully",
+    })
+}
+
 // POST /resources
 func CreateResource(c *gin.Context) {
     db := config.GetDB()

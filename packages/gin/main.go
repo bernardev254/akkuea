@@ -40,6 +40,7 @@ func main() {
 		protected.POST("/users", api.CreateUser)
 
 		// Resource endpoints (protected)
+		protected.GET("/resources", api.ListResources)
 		protected.POST("/resources", api.CreateResource)
 		protected.PUT("/resources/:id", api.UpdateResource)
 
