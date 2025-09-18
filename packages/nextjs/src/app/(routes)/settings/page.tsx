@@ -1,5 +1,8 @@
 'use client';
 
+import { useGlobalAuthenticationStore } from '@/stores/authentication';
+import { useRouter } from 'next/navigation';
+
 import { useState, useEffect } from 'react';
 import { Palette, Bell, LockKeyhole, User, Eye } from 'lucide-react';
 import { TabProvider } from '@/contexts/TabContext';
@@ -10,17 +13,24 @@ import NotificationsTab from '@/components/settings/tabs/notifications-tab';
 import AccessibilityTab from '@/components/settings/tabs/accessibility-tab';
 import Navbar from '@/components/navbar/navbar';
 import { AccountTab } from '@/components/settings/tabs/account-tab';
+
 // import { useTheme } from "next-themes"
 
 export default function SettingsPage() {
   const [mounted, setMounted] = useState(false);
-  // const { resolvedTheme } = useTheme()
+  const address = useGlobalAuthenticationStore((state) => state.address);
+  const router = useRouter();
 
+  // const { resolvedTheme } = useTheme()
+   
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if(!address){
+      router.push('/')
+    }
+  }, [address, router]);
 
-  if (!mounted) return null;
+  if (!mounted || !adddress) return null;
 
   // const isDarkMode = resolvedTheme === "dark"
 
