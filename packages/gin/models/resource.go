@@ -9,6 +9,8 @@ type Resource struct {
 	Language  string `json:"language" gorm:"size:10"`
 	Format    string `json:"format" gorm:"size:50"` // pdf, video, audio, text, etc.
 	CreatorID uint   `json:"creator_id" gorm:"not null;index"`
+	// Curation status of the resource: Approved, Pending, or Rejected
+	Status    string `json:"status" gorm:"not null;size:20;default:Pending;check:status IN ('Approved','Pending','Rejected')"`
 	
 	// Foreign key relationship
 	Creator User `json:"creator" gorm:"foreignKey:CreatorID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
