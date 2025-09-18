@@ -1,110 +1,119 @@
-Akkuea 🚀🎓
+# Akkuea 🚀🎓  
+[⭐ GitHub Stars] · [🐛 Issues] · [📜 Licencia MIT]  
 
-GitHub stars · GitHub issues · Licencia
+## 🌟 Bienvenido a Akkuea  
 
-🌟 Bienvenido a Akkuea
+**Akkuea** no es solo una plataforma, es una comunidad global que está redefiniendo el futuro de la educación. Impulsada por tecnologías de código abierto, inteligencia artificial y blockchain, Akkuea transforma la manera en que se accede, crea y comparte el conocimiento.
 
-Akkuea no es solo una plataforma, es una comunidad global que está redefiniendo el futuro de la educación. Impulsada por tecnología de código abierto, inteligencia artificial y blockchain, Akkuea transforma la forma en que se accede, crea y comparte el conocimiento. Nuestra misión es ofrecer educación gratuita, accesible y colaborativa de alta calidad para todas las personas, en cualquier lugar del mundo. 🌍
+🎓 **Nuestra misión** es ofrecer educación gratuita, accesible y de alta calidad para todas las personas, en cualquier lugar del mundo. 🌍
 
-Únete a nosotros para construir un ecosistema educativo descentralizado donde educadores, estudiantes y creadores estén empoderados, recompensados y conectados. Akkuea es una red social con propósito. ✨
+Únete a nosotros para construir un ecosistema educativo descentralizado donde educadores, estudiantes y creadores estén empoderados, recompensados y conectados. **Akkuea es una red social con propósito.** ✨  
 
-🎯 Misión y Visión
-Misión
+---
 
+## 🎯 Misión y Visión  
+
+### 🎓 Misión  
 Crear una plataforma colaborativa donde la educación sea gratuita, accesible y de alta calidad, construida por una comunidad diversa y motivada. Empoderamos a quienes enseñan, aprenden y comparten, reconociendo el valor de cada contribución.
 
-Visión
+### 🌍 Visión  
+Un mundo donde cualquier persona, sin importar su origen, pueda acceder y contribuir a una biblioteca global del conocimiento. Akkuea aspira a ser el ecosistema educativo líder para el aprendizaje colectivo, descentralizado y recompensado.
 
-Un mundo donde cualquier persona, sin importar su origen, pueda acceder y contribuir a una biblioteca global del conocimiento. Akkuea busca ser el ecosistema educativo líder para el aprendizaje colectivo, descentralizado y recompensado.
+---
 
-🚀 ¿Por qué Akkuea?
-El Problema
+## 🚀 ¿Por qué Akkuea?  
 
-📚 Recursos dispersos: El contenido educativo está fragmentado entre múltiples plataformas, lo que dificulta su búsqueda y reutilización.
-🖼️ Baja calidad: Muchos recursos carecen de buen diseño visual u organización.
-💸 Falta de incentivos: Educadores y creadores a menudo no reciben recompensas por sus esfuerzos.
-🌐 Barreras de idioma: El contenido suele estar limitado a los idiomas más hablados.
-🔒 Plataformas cerradas: Los sistemas propietarios priorizan las ganancias por encima del impacto.
+### El Problema  
+- 📚 **Recursos dispersos**: El contenido educativo está fragmentado entre múltiples plataformas.  
+- 🖼️ **Baja calidad**: Muchos recursos carecen de buen diseño visual u organización.  
+- 💸 **Falta de incentivos**: Creadores y educadores a menudo no reciben recompensas.  
+- 🌐 **Barreras idiomáticas**: Mucho contenido está limitado a pocos idiomas.  
+- 🔒 **Plataformas cerradas**: Prioridad en las ganancias en lugar del impacto.  
 
-Nuestra Solución
+### Nuestra Solución  
+- ✅ **Centro unificado** de recursos con filtros inteligentes.  
+- 🤖 **Mejoras con IA**: legibilidad, visuales y estructura.  
+- 💎 **Recompensas transparentes** vía tokens en blockchain Stellar.  
+- 🌐 **Acceso global**: traducciones automáticas y compatibilidad multi-dispositivo.  
+- 🎨 **Marketplace de creadores**: recursos personalizados pagados con tokens.  
 
-Centro unificado: Una sola plataforma con filtros inteligentes por nivel, idioma y formato.
+---
 
-Mejoras con IA: Mejoras automáticas en legibilidad, visuales y estructura de los contenidos.
+## 📚 Funcionalidades Clave  
 
-Recompensas transparentes: Sistema de tokens en blockchain Stellar que recompensa de forma justa.
+| Funcionalidad               | Descripción |
+|----------------------------|-------------|
+| 📚 Recursos centralizados  | Encuentra y comparte materiales educativos en un solo lugar. |
+| 💰 Recompensas             | Gana tokens por aportar valor a la comunidad. |
+| 🧠 Mejora visual con IA    | Mejora documentos e imágenes automáticamente. |
+| 🔗 Blockchain transparente | Recompensas rastreables mediante Stellar. |
+| 🛍️ Mercado interno        | Solicita recursos personalizados a diseñadores. |
+| 🌍 Traducción automática   | Acceso multilingüe para todo el mundo. |
+| 📱 Multi-plataforma        | Compatible con computadoras, tabletas y móviles. |
+| ♿ Accesibilidad           | Recursos legibles y en múltiples formatos. |
+| 🌐 Código abierto          | Cualquiera puede contribuir al desarrollo del proyecto. |
 
-Acceso global: Traducciones automáticas, recursos en múltiples formatos y compatibilidad con todos los dispositivos.
+---
 
-Mercado de creadores: Conecta con diseñadores para recursos personalizados, pagados con tokens.
+## 👥 Usuarios Principales  
 
-📚 Funcionalidades Clave
-Funcionalidad	Descripción
-Recursos centralizados	Encuentra y comparte materiales educativos en un solo lugar.
-Recompensas por participar	Gana tokens por aportar valor a la comunidad.
-Mejora visual con IA	Mejora documentos e imágenes para mayor impacto educativo.
-Blockchain transparente	Recompensas seguras y rastreables mediante Stellar.
-Mercado interno	Solicita recursos personalizados a diseñadores, pagados con tokens.
-Traducción automática	Acceso multilingüe para una inclusión global.
-Multi-plataforma	Funciona completamente en computadoras, tabletas y móviles.
-Accesibilidad	Recursos legibles y en múltiples formatos para todo tipo de usuarios.
-Código abierto	Desarrolladores de todo el mundo pueden contribuir al crecimiento de Akkuea.
-👥 Usuarios Principales
+- **👨‍🏫 Educadores**: Comparte recursos, accede a materiales y gana recompensas.  
+- **🎓 Estudiantes**: Descubre documentos, quizzes e infografías.  
+- **🎨 Diseñadores y artistas**: Crea materiales visuales y gana comisiones.  
+- **🤖 Asistencia con IA**: Traduce, simplifica y mejora el contenido de forma ética.  
 
-Educadores: Comparte materiales, accede a recursos de otros docentes y gana recompensas.
+---
 
-Estudiantes: Descubre documentos, exámenes, infografías y únete a grupos de estudio.
+## 💰 Sistema de Recompensas  
 
-Diseñadores y artistas: Crea recursos visuales, animaciones y multimedia, ganando créditos y comisiones.
+Akkuea utiliza blockchain Stellar para ofrecer un sistema de incentivos transparente:
 
-Asistencia con IA: Curaduría de contenidos, traducción, simplificación y mejora de recursos de forma ética.
+- 🔸 **Gana tokens**: Publica contenido y recibe recompensas según su impacto.  
+- ⭐ **Bonificaciones**: Reconocimiento para contribuidores constantes.  
+- 🧾 **Créditos rastreables**: Cada recurso indica claramente sus contribuciones.  
+- 🪙 **Usa tus tokens**: Accede a servicios o retíralos para uso externo.  
 
-💰 Sistema de Recompensas
+> **Compartir conocimiento = Crear valor. Ese valor ahora es recompensado.** 💡
 
-La blockchain de Stellar impulsa un sistema de incentivos transparente en Akkuea:
+---
 
-Gana tokens: Publica contenido educativo valioso y recibe tokens según la interacción de la comunidad.
+## 🛠️ Tecnologías Utilizadas  
 
-Bonificaciones: Contribuidores constantes reciben distinciones y recompensas adicionales.
+- **Next.js**: Framework moderno y escalable para el frontend.  
+- **Stellar Blockchain**: Recompensas transparentes y seguras.  
+- **IA Generativa y Analítica**: Traducción, mejora visual y creación de contenido.  
+- **Código abierto**: Contribución global y colaborativa.
 
-Créditos rastreables: Todos los recursos mejorados por IA o creados colaborativamente registran las contribuciones.
+---
 
-Usa tus tokens: Accede a servicios del marketplace o retíralos para uso externo.
+## 📊 Estado del Proyecto  
 
-Compartir conocimiento = Crear valor. ¡Ahora ese valor es recompensado! 💡
+🧱 **Desarrollo activo**  
+Estamos construyendo el futuro de la educación. Puedes contribuir, dar feedback o simplemente dejar una estrella en el repo para apoyar. 🌟
 
-🛠️ Tecnologías Utilizadas
+---
 
-Next.js: Framework moderno, rápido y escalable para frontend.
+## 💬 ¿Cómo Participar?  
 
-Blockchain Stellar: Sistema seguro y transparente para recompensas.
+- 📄 **Contribuye**: Lee nuestra guía de contribución.  
+- 🐞 **Reporta errores**: Abre un *issue* en GitHub.  
+- 🤝 **Únete a la comunidad**: Únete al grupo de Telegram: [https://t.me/Akkuea](https://t.me/Akkuea)  
+- ⭐ **Dale estrella al repo**: ¡Tu apoyo cuenta!
 
-IA Generativa y Analítica: Traducción, mejora de imágenes y creación de contenido.
+---
 
-Código abierto: Desarrollo impulsado por la comunidad para colaboración global.
+## 🫡 Agradecimientos  
 
-📊 Estado del Proyecto
+¡Gracias a todos los contribuidores que ayudan a revolucionar la educación! 🙌  
 
-🧱 En desarrollo activo
-Estamos construyendo el futuro de la educación, ¡y necesitamos tu ayuda! Contribuye, déjanos tus comentarios o simplemente deja una estrella en el repositorio para mostrar tu apoyo. 🌟
+---
 
-💬 Participa
+## 📜 Licencia  
 
-Contribuye: Revisa nuestra guía de contribución para empezar.
+Este proyecto está licenciado bajo la [Licencia MIT](./LICENSE).  
 
-Reporta problemas: Abre un issue en GitHub.
+---
 
-Únete a la comunidad: Conéctate con nosotros en nuestro grupo de Telegram.
+## 🚀🎓 ¡Únete a la revolución educativa!
 
-Dale estrella al repo: Apoya el proyecto marcando el repositorio con una estrella en GitHub. ⭐
-
-🫡 Gracias a nuestros contribuidores
-
-Estamos agradecidos por cada contribución que nos acerca a revolucionar la educación. 🙌
-
-📜 Licencia
-
-Este proyecto está licenciado bajo la Licencia MIT.
-
-¡Únete a la revolución educativa! 🚀🎓
-¡Feliz aprendizaje y contribución! ✨
+**¡Feliz aprendizaje y contribución!** ✨
