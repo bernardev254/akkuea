@@ -2,7 +2,6 @@ package common
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // ErrorResponse represents a standardized error response format
