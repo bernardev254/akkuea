@@ -1,12 +1,12 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { defaultShortcuts, formatShortcut, getShortcutKeys, type ShortcutAction } from '@/utils/shortcuts';
+import {
+  defaultShortcuts,
+  formatShortcut,
+  getShortcutKeys,
+  type ShortcutAction,
+} from '@/utils/shortcuts';
 import { Keyboard } from 'lucide-react';
 
 interface KeyboardShortcutsProps {
@@ -20,7 +20,7 @@ const KeyboardShortcuts = ({ isOpen, onClose, customActions = [] }: KeyboardShor
     navigation: 'Navigation',
     editing: 'Editing',
     view: 'View',
-    help: 'Help'
+    help: 'Help',
   };
 
   const allShortcuts = [
@@ -29,18 +29,21 @@ const KeyboardShortcuts = ({ isOpen, onClose, customActions = [] }: KeyboardShor
       name: id.charAt(0).toUpperCase() + id.slice(1).replace(/([A-Z])/g, ' $1'),
       description: shortcut.description,
       keys: getShortcutKeys(shortcut),
-      category: shortcut.category
+      category: shortcut.category,
     })),
-    ...customActions
+    ...customActions,
   ];
 
-  const groupedShortcuts = allShortcuts.reduce((acc, shortcut) => {
-    if (!acc[shortcut.category]) {
-      acc[shortcut.category] = [];
-    }
-    acc[shortcut.category].push(shortcut);
-    return acc;
-  }, {} as Record<string, typeof allShortcuts>);
+  const groupedShortcuts = allShortcuts.reduce(
+    (acc, shortcut) => {
+      if (!acc[shortcut.category]) {
+        acc[shortcut.category] = [];
+      }
+      acc[shortcut.category].push(shortcut);
+      return acc;
+    },
+    {} as Record<string, typeof allShortcuts>
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -59,12 +62,12 @@ const KeyboardShortcuts = ({ isOpen, onClose, customActions = [] }: KeyboardShor
             {/* <X className="h-4 w-4" /> */}
           </Button>
         </DialogHeader>
-        
+
         <div className="grid gap-6 max-h-96 overflow-y-auto pr-2">
           {Object.entries(categories).map(([categoryKey, categoryName]) => {
             const shortcuts = groupedShortcuts[categoryKey as keyof typeof categories];
             if (!shortcuts?.length) return null;
-            
+
             return (
               <div key={categoryKey} className="space-y-3">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
@@ -77,27 +80,27 @@ const KeyboardShortcuts = ({ isOpen, onClose, customActions = [] }: KeyboardShor
                       className="flex items-center justify-between p-2 rounded-lg hover:bg-accent/50 transition-colors"
                     >
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-foreground">
-                          {shortcut.name}
-                        </span>
+                        <span className="text-sm font-medium text-foreground">{shortcut.name}</span>
                         <span className="text-xs text-muted-foreground">
                           {shortcut.description}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
-                        {formatShortcut(shortcut.keys).split('+').map((key, index, array) => (
-                          <div key={index} className="flex items-center">
-                            <Badge
-                              variant="secondary"
-                              className="px-2 py-1 text-xs font-mono bg-shortcut-key-bg text-shortcut-key border border-shortcut-separator"
-                            >
-                              {key}
-                            </Badge>
-                            {index < array.length - 1 && (
-                              <span className="mx-1 text-shortcut-separator">+</span>
-                            )}
-                          </div>
-                        ))}
+                        {formatShortcut(shortcut.keys)
+                          .split('+')
+                          .map((key, index, array) => (
+                            <div key={index} className="flex items-center">
+                              <Badge
+                                variant="secondary"
+                                className="px-2 py-1 text-xs font-mono bg-shortcut-key-bg text-shortcut-key border border-shortcut-separator"
+                              >
+                                {key}
+                              </Badge>
+                              {index < array.length - 1 && (
+                                <span className="mx-1 text-shortcut-separator">+</span>
+                              )}
+                            </div>
+                          ))}
                       </div>
                     </div>
                   ))}
@@ -106,10 +109,14 @@ const KeyboardShortcuts = ({ isOpen, onClose, customActions = [] }: KeyboardShor
             );
           })}
         </div>
-        
+
         <div className="pt-4 border-t border-border">
           <p className="text-xs text-muted-foreground text-center">
-            Press <Badge variant="outline" className="mx-1 text-xs">Esc</Badge> or click outside to close
+            Press{' '}
+            <Badge variant="outline" className="mx-1 text-xs">
+              Esc
+            </Badge>{' '}
+            or click outside to close
           </p>
         </div>
       </DialogContent>

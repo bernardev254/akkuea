@@ -1,6 +1,6 @@
-import { useHotkeys } from "react-hotkeys-hook";
-import { defaultShortcuts, getShortcutKeys, type ShortcutAction } from "@/utils/shortcuts";
-import { toast } from "sonner";
+import { useHotkeys } from 'react-hotkeys-hook';
+import { defaultShortcuts, getShortcutKeys, type ShortcutAction } from '@/utils/shortcuts';
+import { toast } from 'sonner';
 
 interface UseKeyboardShortcutsProps {
   onHelp: () => void;
@@ -37,8 +37,8 @@ export const useKeyboardShortcuts = ({
       if (onSave) {
         onSave();
       } else {
-        toast("Save", {
-          description: "Save functionality not implemented yet",
+        toast('Save', {
+          description: 'Save functionality not implemented yet',
         });
       }
     },
@@ -53,8 +53,8 @@ export const useKeyboardShortcuts = ({
       if (onSearch) {
         onSearch();
       } else {
-        toast("Search", {
-          description: "Search functionality not implemented yet",
+        toast('Search', {
+          description: 'Search functionality not implemented yet',
         });
       }
     },
@@ -69,8 +69,8 @@ export const useKeyboardShortcuts = ({
       if (onNewFile) {
         onNewFile();
       } else {
-        toast("New File", {
-          description: "New file functionality not implemented yet",
+        toast('New File', {
+          description: 'New file functionality not implemented yet',
         });
       }
     },
@@ -98,10 +98,8 @@ export const useKeyboardShortcuts = ({
     customActions.flatMap((action) => action.keys),
     (e, handler) => {
       e.preventDefault();
-      const pressed = handler.keys?.join("+") ?? "";
-      const matched = customActions.find((a) =>
-        a.keys.includes(pressed)
-      );
+      const pressed = handler.keys?.join('+') ?? '';
+      const matched = customActions.find((a) => a.keys.includes(pressed));
       matched?.action();
     },
     { enableOnContentEditable: false },
