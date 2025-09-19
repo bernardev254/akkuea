@@ -41,8 +41,10 @@ func main() {
 
 		// Resource endpoints (protected)
 		protected.GET("/resources", api.ListResources)
+		protected.GET("/resources/:id", api.GetResource)
 		protected.POST("/resources", api.CreateResource)
 		protected.PUT("/resources/:id", api.UpdateResource)
+		protected.DELETE("/resources/:id", api.DeleteResource)
 
 		// Current user endpoint
 		protected.GET("/auth/me", api.GetCurrentUser)

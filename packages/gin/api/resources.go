@@ -1,145 +1,212 @@
 package api
 
 import (
-    "net/http"
+	"net/http"
+	"strconv"
 
-    "gin/config"
-    "gin/middleware"
-    "gin/models"
-    "gin/services"
+	"gin/config"
+	"gin/middleware"
+	"gin/models"
+	"gin/services"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 type ResourceRequest struct {
-    Title    string `json:"title" binding:"required"`
-    Content  string `json:"content" binding:"required"`
-    Language string `json:"language"`
-    Format   string `json:"format"`
+	Title    string `json:"title" binding:"required"`
+	Content  string `json:"content" binding:"required"`
+	Language string `json:"language"`
+	Format   string `json:"format"`
 }
 
 type ResourcesResponse struct {
-    Data    []models.Resource `json:"data"`
-    Count   int               `json:"count"`
-    Message string            `json:"message"`
+	Data    []models.Resource `json:"data"`
+	Count   int64             `json:"count"`
+	Limit   int               `json:"limit"`
+	Offset  int               `json:"offset"`
+	Message string            `json:"message"`
 }
 
 // GET /resources?status=Approved|Pending|Rejected
 func ListResources(c *gin.Context) {
-    db := config.GetDB()
+	db := config.GetDB()
 
-    status := c.Query("status")
+	status := c.Query("status")
+	// pagination params
+	limit := 50
+	offset := 0
+	if v := c.Query("limit"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 && n <= 200 {
+			limit = n
+		}
+	}
+	if v := c.Query("offset"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n >= 0 {
+			offset = n
+		}
+	}
 
-    var resources []models.Resource
-    tx := db
-    if status != "" {
-        tx = tx.Where("status = ?", status)
-    }
-    if err := tx.Order("created_at DESC").Find(&resources).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to list resources"})
-        return
-    }
+	var resources []models.Resource
+	tx := db.Model(&models.Resource{})
+	if status != "" {
+		tx = tx.Where("status = ?", status)
+	}
+	// total count
+	var total int64
+	if err := tx.Count(&total).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to count resources"})
+		return
+	}
+	// page
+	if err := tx.Order("created_at DESC").Limit(limit).Offset(offset).Find(&resources).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to list resources"})
+		return
+	}
 
-    c.JSON(http.StatusOK, ResourcesResponse{
-        Data:    resources,
-        Count:   len(resources),
-        Message: "Resources retrieved successfully",
-    })
+	c.JSON(http.StatusOK, ResourcesResponse{
+		Data:    resources,
+		Count:   total,
+		Limit:   limit,
+		Offset:  offset,
+		Message: "Resources retrieved successfully",
+	})
+}
+
+// GET /resources/:id
+func GetResource(c *gin.Context) {
+	db := config.GetDB()
+	id := c.Param("id")
+	var resource models.Resource
+	if err := db.First(&resource, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, ErrorResponse{Error: "not_found", Message: "Resource not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data":    resource,
+		"message": "Resource retrieved successfully",
+	})
+}
+
+// DELETE /resources/:id (only creator can delete)
+func DeleteResource(c *gin.Context) {
+	db := config.GetDB()
+	id := c.Param("id")
+
+	userID, ok := middleware.GetUserIDFromContext(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "unauthorized", Message: "User not authenticated"})
+		return
+	}
+
+	var resource models.Resource
+	if err := db.First(&resource, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, ErrorResponse{Error: "not_found", Message: "Resource not found"})
+		return
+	}
+	if resource.CreatorID != userID {
+		c.JSON(http.StatusForbidden, ErrorResponse{Error: "forbidden", Message: "You cannot delete this resource"})
+		return
+	}
+	if err := db.Delete(&resource).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to delete resource"})
+		return
+	}
+	c.Status(http.StatusNoContent)
 }
 
 // POST /resources
 func CreateResource(c *gin.Context) {
-    db := config.GetDB()
+	db := config.GetDB()
 
-    userID, ok := middleware.GetUserIDFromContext(c)
-    if !ok {
-        c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "unauthorized", Message: "User not authenticated"})
-        return
-    }
+	userID, ok := middleware.GetUserIDFromContext(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "unauthorized", Message: "User not authenticated"})
+		return
+	}
 
-    var req ResourceRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid_input", Message: "Invalid resource payload"})
-        return
-    }
+	var req ResourceRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid_input", Message: "Invalid resource payload"})
+		return
+	}
 
-    cur := services.NewCurationService()
-    result := cur.CurateContent(req.Title, req.Content, req.Language, req.Format)
+	cur := services.NewCurationService()
+	result := cur.CurateContent(req.Title, req.Content, req.Language, req.Format)
 
-    resource := models.Resource{
-        Title:     req.Title,
-        Content:   req.Content,
-        Language:  req.Language,
-        Format:    req.Format,
-        CreatorID: userID,
-        Status:    string(result.Status),
-    }
+	resource := models.Resource{
+		Title:     req.Title,
+		Content:   req.Content,
+		Language:  req.Language,
+		Format:    req.Format,
+		CreatorID: userID,
+		Status:    string(result.Status),
+	}
 
-    if err := db.Create(&resource).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to create resource"})
-        return
-    }
+	if err := db.Create(&resource).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to create resource"})
+		return
+	}
 
-    c.JSON(http.StatusCreated, gin.H{
-        "data":    resource,
-        "message": "Resource created",
-        "curation": result,
-    })
+	c.JSON(http.StatusCreated, gin.H{
+		"data":     resource,
+		"message":  "Resource created",
+		"curation": result,
+	})
 }
 
 // PUT /resources/:id
 func UpdateResource(c *gin.Context) {
-    db := config.GetDB()
+	db := config.GetDB()
 
-    userID, ok := middleware.GetUserIDFromContext(c)
-    if !ok {
-        c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "unauthorized", Message: "User not authenticated"})
-        return
-    }
+	userID, ok := middleware.GetUserIDFromContext(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "unauthorized", Message: "User not authenticated"})
+		return
+	}
 
-    id := c.Param("id")
-    var resource models.Resource
-    if err := db.First(&resource, id).Error; err != nil {
-        c.JSON(http.StatusNotFound, ErrorResponse{Error: "not_found", Message: "Resource not found"})
-        return
-    }
+	id := c.Param("id")
+	var resource models.Resource
+	if err := db.First(&resource, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, ErrorResponse{Error: "not_found", Message: "Resource not found"})
+		return
+	}
 
-    // Optional: only creator can update
-    if resource.CreatorID != userID {
-        c.JSON(http.StatusForbidden, ErrorResponse{Error: "forbidden", Message: "You cannot update this resource"})
-        return
-    }
+	// Optional: only creator can update
+	if resource.CreatorID != userID {
+		c.JSON(http.StatusForbidden, ErrorResponse{Error: "forbidden", Message: "You cannot update this resource"})
+		return
+	}
 
-    var req ResourceRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid_input", Message: "Invalid resource payload"})
-        return
-    }
+	var req ResourceRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid_input", Message: "Invalid resource payload"})
+		return
+	}
 
-    cur := services.NewCurationService()
-    result := cur.CurateContent(req.Title, req.Content, req.Language, req.Format)
+	cur := services.NewCurationService()
+	result := cur.CurateContent(req.Title, req.Content, req.Language, req.Format)
 
-    updates := map[string]interface{}{
-        "title":   req.Title,
-        "content": req.Content,
-        "language": req.Language,
-        "format":  req.Format,
-        "status":  string(result.Status),
-    }
+	updates := map[string]interface{}{
+		"title":    req.Title,
+		"content":  req.Content,
+		"language": req.Language,
+		"format":   req.Format,
+		"status":   string(result.Status),
+	}
 
-    if err := db.Model(&resource).Updates(updates).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to update resource"})
-        return
-    }
+	if err := db.Model(&resource).Updates(updates).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to update resource"})
+		return
+	}
 
-    // Reload updated resource
-    if err := db.First(&resource, id).Error; err == nil {
-        // continue
-    }
+	// Reload updated resource
+	if err := db.First(&resource, id).Error; err == nil {
+		// continue
+	}
 
-    c.JSON(http.StatusOK, gin.H{
-        "data":    resource,
-        "message": "Resource updated",
-        "curation": result,
-    })
+	c.JSON(http.StatusOK, gin.H{
+		"data":     resource,
+		"message":  "Resource updated",
+		"curation": result,
+	})
 }
