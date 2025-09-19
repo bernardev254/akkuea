@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,7 +7,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { defaultShortcuts, formatShortcut, getShortcutKeys, type ShortcutAction } from '@/utils/shortcuts';
-import { Keyboard, X } from 'lucide-react';
+import { Keyboard } from 'lucide-react';
 
 interface KeyboardShortcutsProps {
   isOpen: boolean;
