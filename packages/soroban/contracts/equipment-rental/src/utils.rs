@@ -4,7 +4,7 @@ use crate::rental::{MAX_DURATION};
 const LAST_ID: Symbol = symbol_short!("last_id");
 
 pub fn validate_duration(env: &Env, duration: u64) {
-    let max_duration: u64 = env.storage().instance().get(&MAX_DURATION).unwrap_or(30 * 24); // Default: 30 days in hours
+    let max_duration: u64 = env.storage().instance().get(&MAX_DURATION).unwrap_or(30 * 24 * 3600); // Default: 30 days in hours
     if duration == 0 || duration > max_duration {
         panic!("Invalid rental duration");
     }
