@@ -21,9 +21,14 @@ impl EquipmentRentalContract {
         env.storage().persistent().set(&MAX_DURATION, &max_duration);
     }
 
-    pub fn create_rental(env: &Env, renter: Address, equipment_id: u64, duration: u64) {
+    pub fn create_rental(env: &Env, renter: Address, equipment_id: u64, duration: u64) -> u64 {
         rental::create_rental(&env, renter, equipment_id, duration)
     }
+
+    pub fn cancel_rental(env: &Env, renter: Address, rental_id: u64) {
+        rental::cancel_rental(env, renter, rental_id)
+    }
+
 
     pub fn check_availability(env: &Env, equipment_id: u64) -> bool {
         rental::check_availability(&env, equipment_id)
