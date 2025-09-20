@@ -91,7 +91,7 @@ Akkuea’s **Stellar blockchain** powers a transparent incentive system:
 
 ---
 
-## � PGetting Started
+## 🚀 Getting Started
 
 Ready to contribute to the future of education? Follow these steps to get Akkuea running on your local machine.
 
