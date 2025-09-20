@@ -50,12 +50,12 @@ const roadmapTimeLineData = [
 
 export default function Roadmap() {
   return (
-    <section className="bg-[#F3F4F6] py-16 px-4">
+    <section className="bg-[#F3F4F6] dark:bg-muted/20 py-16 px-4">
       <div className="max-w-4xl mx-auto text-center space-y-2">
-        <h2 className="text-3xl font-bold mb-4">
-          <span className="text-primary">Akkuea</span> Roadmap
+        <h2 className="text-3xl font-bold mb-4 text-black dark:text-foreground">
+          <span className="text-[#5EEAD4] dark:text-primary">Akkuea</span> Roadmap
         </h2>
-        <p className="text-gray-700 text-lg">
+        <p className="text-gray-700 dark:text-muted text-lg">
           From development in 2025 to the official MVP launch in 2026.
         </p>
       </div>
