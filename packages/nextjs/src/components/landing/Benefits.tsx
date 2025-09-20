@@ -35,6 +35,7 @@ const Benefits = () => {
             width={472}
             height={410}
             className="w-full max-w-sm md:max-w-md"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 384px, 448px"
           />
         </div>
 
