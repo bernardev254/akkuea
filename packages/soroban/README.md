@@ -8,7 +8,7 @@ Welcome to the Akkuea smart contracts package! This is where all the blockchain 
 <table align="center">
   <tr>
     <td align="center">
-      <img src="https://github.com/xJeffx23.webp" alt="xJeffx23" width="150" />
+      <img src="https://github.com/xJeffx23.png" alt="xJeffx23" width="150" />
       <br /><br />
       <strong>Software Engineer | OSS contributor</strong>
       <br /><br />
@@ -17,7 +17,7 @@ Welcome to the Akkuea smart contracts package! This is where all the blockchain 
       <a href="https://t.me/xJeffx23" target="_blank">Telegram</a>
     </td>
     <td align="center">
-      <img src="https://github.com/salazarsebas.webp" alt="salazarsebas" width="150" />
+      <img src="https://github.com/salazarsebas.png" alt="salazarsebas" width="150" />
       <br /><br />
       <strong>Software Engineer | OSS contributor</strong>
       <br /><br />
@@ -26,7 +26,7 @@ Welcome to the Akkuea smart contracts package! This is where all the blockchain 
       <a href="https://t.me/salazarsebas" target="_blank">Telegram</a>
     </td>
     <td align="center">
-      <img src="https://github.com/kimcascante.webp" alt="kimcascante" width="150" />
+      <img src="https://github.com/kimcascante.png" alt="kimcascante" width="150" />
       <br /><br />
       <strong>QA Engineer | OSS contributor</strong>
       <br /><br />
