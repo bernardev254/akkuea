@@ -22,7 +22,7 @@ jobs:
         run: bun install
 
       - name: Run tests with coverage
-        run: bun test --coverage --reporter=default --reporter=lcov
+        run: bun test --coverage --reporter=default --reporter=junit
 
       - name: Display coverage summary
         if: always()
