@@ -26,7 +26,7 @@ jobs:
         working-directory: packages/nextjs
 
       - name: Run tests with coverage
-        run: bun test --coverage --reporter=default --reporter=junit --reporter-outfile=./bun.xml
+        run: bun vitest run --coverage --reporter=default --reporter=junit --reporter-outfile=./bun.xml
         working-directory: packages/nextjs
 
       - name: Display coverage summary
