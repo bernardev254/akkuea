@@ -1,13 +1,22 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Menu, XIcon } from 'lucide-react';
+import { Menu, XIcon, Sun, Moon, Monitor } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { useTheme } from 'next-themes';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function HeaderLanding() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -24,7 +33,7 @@ export default function HeaderLanding() {
 
   return (
     <nav
-      className="flex justify-between items-center px-4 md:px-20 py-5 bg-card fixed inset-x-0 z-50 text-[#0A0A0A]"
+      className="flex justify-between items-center px-4 md:px-20 py-5 bg-white dark:bg-card fixed inset-x-0 z-50 text-[#0A0A0A] dark:text-foreground border-b border-gray-200 dark:border-border"
       ref={navRef}
     >
       <Link href="/" className="text-xl font-semibold">
@@ -45,9 +54,45 @@ export default function HeaderLanding() {
           <li>Open Source</li>
         </ul>
       </div>
-      <button className="md:hidden" onClick={() => setIsNavOpen(!isNavOpen)}>
-        {isNavOpen ? <XIcon /> : <Menu />}
-      </button>
+      <div className="flex items-center gap-4">
+        {/* Theme Toggle */}
+        {mounted && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    if (theme === 'light') setTheme('dark');
+                    else if (theme === 'dark') setTheme('system');
+                    else setTheme('light');
+                  }}
+                  className="p-2 hover:bg-muted/50 rounded-full transition-colors"
+                >
+                  {theme === 'system' ? (
+                    <Monitor className="h-5 w-5 text-muted" />
+                  ) : resolvedTheme === 'dark' ? (
+                    <Moon className="h-5 w-5 text-primary" />
+                  ) : (
+                    <Sun className="h-5 w-5 text-achievement" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>
+                  {theme === 'light' ? 'Switch to dark mode' : 
+                   theme === 'dark' ? 'Switch to system theme' : 
+                   'Switch to light mode'}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+        <button className="md:hidden" onClick={() => setIsNavOpen(!isNavOpen)}>
+          {isNavOpen ? <XIcon /> : <Menu />}
+        </button>
+      </div>
     </nav>
   );
 }
