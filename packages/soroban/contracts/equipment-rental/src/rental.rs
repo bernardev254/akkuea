@@ -1,14 +1,16 @@
 use soroban_sdk::{contracttype, symbol_short, Address, Env, Symbol, Vec};
 use crate::utils::{validate_duration, generate_rental_id};
-use crate::payment::{get_payment_by_rental_id};
+use crate::payment::{get_payment_by_rental_id, get_equipment_price, refund_payment};
 
 pub const RENTAL_KEY: Symbol = symbol_short!("rentals");
+pub const RENTAL_KEY_CANCEL: Symbol = symbol_short!("rentalcan");
 pub const MAX_DURATION: Symbol = symbol_short!("max_dur");
 pub const RENTAL_CREATED: Symbol = symbol_short!("r_created");
 pub const RENTAL_FAILED: Symbol = symbol_short!("r_failed");
+pub const RENTAL_CANCEL: Symbol = symbol_short!("r_cancel");
 
 #[contracttype]
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum RentalStatus {
     Pending,    // Rental created, awaiting payment
     Active,     // Payment processed, rental active
@@ -17,7 +19,7 @@ pub enum RentalStatus {
 }
 
 #[contracttype]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Rental {
     pub rental_id: u64,
     pub equipment_id: u64,
@@ -27,8 +29,16 @@ pub struct Rental {
     pub status: RentalStatus,
 }
 
+#[contracttype]
+#[derive(Clone)]
+pub struct Cancellation {
+    pub rental_id: u64,        // Associated rental ID
+    pub canceller: Address,    // Stellar address of the canceller
+    pub refund_amount: i128,   // Refund amount in XLM (Stroops)
+    pub timestamp: u64,        // Cancellation timestamp
+}
 
-pub fn create_rental(env: &Env, renter: Address, equipment_id: u64, duration: u64) {
+pub fn create_rental(env: &Env, renter: Address, equipment_id: u64, duration: u64) -> u64 {
     renter.require_auth();
 
     if duration < 0 {
@@ -55,6 +65,52 @@ pub fn create_rental(env: &Env, renter: Address, equipment_id: u64, duration: u6
 
     save_rental(&env, &rental);
     env.events().publish((RENTAL_CREATED, rental_id), (equipment_id, renter, duration));
+    rental_id
+}
+
+pub fn cancel_rental(env: &Env, renter: Address, rental_id: u64) {
+    let current_time = env.ledger().timestamp();
+    let mut rental = validate_cancellation(&env, rental_id, renter).unwrap();
+
+    let payment = get_payment_by_rental_id(&env, rental_id).unwrap();
+    let payment_timestamp = payment.timestamp;
+    let payment_amount = payment.amount;
+    let duration = rental.duration;
+    let rent_per_hour = get_equipment_price(&env, rental.equipment_id);
+
+    // Amount of refund =  (duration - (current_time - payment_timestamp))
+    // Maybe remove a cancellation fee
+    let amount_to_refund = (duration - (current_time - payment_timestamp)) * rent_per_hour as u64;
+
+    update_rental_status(&env, rental_id, RentalStatus::Cancelled);
+
+    let cancellation = Cancellation {
+        rental_id,
+        canceller: rental.renter.clone(),
+        refund_amount: amount_to_refund as i128,
+        timestamp: current_time
+    };
+
+    env.storage().persistent().set(&RENTAL_KEY_CANCEL, &cancellation);
+    refund_payment(env.clone(), rental_id, amount_to_refund.into());
+
+    env.events().publish((RENTAL_CANCEL, rental_id), (rental.equipment_id, rental.renter, amount_to_refund));
+}
+
+pub fn validate_cancellation(env: &Env, rental_id: u64, caller: Address) -> Option<Rental> {
+    caller.require_auth();
+
+    let rental = get_rental_by_rental_id(&env, rental_id);
+    if let Some(ref rental) = rental {
+        if caller != rental.renter {
+            panic!("Can initiate cancel rental");
+        }
+
+        if rental.status != RentalStatus::Active {
+            panic!("Rental is not Active, can't cancel");
+        }
+    }
+    rental
 }
 
 
