@@ -81,9 +81,11 @@ export default function HeaderLanding() {
               </TooltipTrigger>
               <TooltipContent side="bottom">
                 <p>
-                  {theme === 'light' ? 'Switch to dark mode' : 
-                   theme === 'dark' ? 'Switch to system theme' : 
-                   'Switch to light mode'}
+                  {theme === 'light'
+                    ? 'Switch to dark mode'
+                    : theme === 'dark'
+                      ? 'Switch to system theme'
+                      : 'Switch to light mode'}
                 </p>
               </TooltipContent>
             </Tooltip>
