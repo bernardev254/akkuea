@@ -20,6 +20,7 @@ interface NavItem {
   links: NavLink[];
 }
 
+// All cards now white like the first one
 const navItems: NavItem[] = [
   {
     label: "About",
@@ -33,8 +34,8 @@ const navItems: NavItem[] = [
   },
   {
     label: "Benefits", 
-    bgColor: "hsl(var(--muted))",
-    textColor: "hsl(var(--muted-foreground))",
+    bgColor: "hsl(var(--card))",
+    textColor: "hsl(var(--card-foreground))",
     links: [
       { label: "Features", href: "/benefits/features", ariaLabel: "Platform Features" },
       { label: "Pricing", href: "/benefits/pricing", ariaLabel: "Pricing Plans" },
@@ -43,8 +44,8 @@ const navItems: NavItem[] = [
   },
   {
     label: "Community",
-    bgColor: "hsl(var(--primary))",
-    textColor: "hsl(var(--primary-foreground))",
+    bgColor: "hsl(var(--card))",
+    textColor: "hsl(var(--card-foreground))",
     links: [
       { label: "Discord", href: "/community/discord", ariaLabel: "Join Discord" },
       { label: "Forum", href: "/community/forum", ariaLabel: "Community Forum" },
@@ -69,7 +70,6 @@ export default function HeaderLanding() {
     if (isMobile) {
       const contentEl = navEl.querySelector('.card-nav-content') as HTMLElement;
       if (contentEl) {
-        // Temporarily show content to measure
         const wasVisible = contentEl.style.visibility;
         const wasPointerEvents = contentEl.style.pointerEvents;
         const wasPosition = contentEl.style.position;
@@ -86,7 +86,6 @@ export default function HeaderLanding() {
         const padding = 16;
         const contentHeight = contentEl.scrollHeight;
 
-        // Restore original styles
         contentEl.style.visibility = wasVisible;
         contentEl.style.pointerEvents = wasPointerEvents;
         contentEl.style.position = wasPosition;
