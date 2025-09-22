@@ -1,17 +1,46 @@
+'use client';
 import { Trophy, Award } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { achievements } from '@/lib/achievements-data';
 import { AchievementList } from '@/components/achievements/AchievementList';
+import { Pagination, PaginationInfo } from '@/components/pagination';
+import { usePagination } from '@/hooks/usePagination';
+import { useState } from 'react';
 
 export default function Component() {
+  // Fixed page size - no user selection needed
+  const pageSize = 5;
+  const [activeTab, setActiveTab] = useState('all');
+
   const completedAchievements = achievements.filter((a) => a.status === 'completed');
   const inProgressAchievements = achievements.filter((a) => a.status === 'in-progress');
   const lockedAchievements = achievements.filter((a) => a.status === 'locked');
 
+  // Pagination hooks for different achievement categories
+  const allPagination = usePagination({
+    data: achievements,
+    pageSize,
+  });
+
+  const completedPagination = usePagination({
+    data: completedAchievements,
+    pageSize,
+  });
+
+  const inProgressPagination = usePagination({
+    data: inProgressAchievements,
+    pageSize,
+  });
+
+  const lockedPagination = usePagination({
+    data: lockedAchievements,
+    pageSize,
+  });
+
   return (
     <>
-      <div className="min-h-screen bg-background text-card p-6">
+      <div className="min-h-screen bg-background text-foreground p-6">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="flex items-center space-x-2 sm:space-x-3">
@@ -52,8 +81,9 @@ export default function Component() {
             </div>
           </article>
 
+
           {/* Achievement Tabs */}
-          <Tabs defaultValue="all" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-background">
               <TabsTrigger
                 value="all"
@@ -82,19 +112,95 @@ export default function Component() {
             </TabsList>
 
             <TabsContent value="all" className="mt-6">
-              <AchievementList achievements={achievements} />
+              <div className="space-y-6">
+                <PaginationInfo
+                  currentPage={allPagination.currentPage}
+                  totalItems={allPagination.totalItems}
+                  pageSize={allPagination.pageSize}
+                  className="mb-4"
+                />
+                <AchievementList achievements={allPagination.currentPageData} />
+                {allPagination.totalPages > 1 && (
+                  <div className="mt-6">
+                    <Pagination
+                      currentPage={allPagination.currentPage}
+                      totalItems={allPagination.totalItems}
+                      pageSize={allPagination.pageSize}
+                      onPageChange={allPagination.goToPage}
+                      maxVisiblePages={5}
+                    />
+                  </div>
+                )}
+              </div>
             </TabsContent>
 
             <TabsContent value="completed" className="mt-6">
-              <AchievementList achievements={completedAchievements} />
+              <div className="space-y-6">
+                <PaginationInfo
+                  currentPage={completedPagination.currentPage}
+                  totalItems={completedPagination.totalItems}
+                  pageSize={completedPagination.pageSize}
+                  className="mb-4"
+                />
+                <AchievementList achievements={completedPagination.currentPageData} />
+                {completedPagination.totalPages > 1 && (
+                  <div className="mt-6">
+                    <Pagination
+                      currentPage={completedPagination.currentPage}
+                      totalItems={completedPagination.totalItems}
+                      pageSize={completedPagination.pageSize}
+                      onPageChange={completedPagination.goToPage}
+                      maxVisiblePages={5}
+                    />
+                  </div>
+                )}
+              </div>
             </TabsContent>
 
             <TabsContent value="in-progress" className="mt-6">
-              <AchievementList achievements={inProgressAchievements} />
+              <div className="space-y-6">
+                <PaginationInfo
+                  currentPage={inProgressPagination.currentPage}
+                  totalItems={inProgressPagination.totalItems}
+                  pageSize={inProgressPagination.pageSize}
+                  className="mb-4"
+                />
+                <AchievementList achievements={inProgressPagination.currentPageData} />
+                {inProgressPagination.totalPages > 1 && (
+                  <div className="mt-6">
+                    <Pagination
+                      currentPage={inProgressPagination.currentPage}
+                      totalItems={inProgressPagination.totalItems}
+                      pageSize={inProgressPagination.pageSize}
+                      onPageChange={inProgressPagination.goToPage}
+                      maxVisiblePages={5}
+                    />
+                  </div>
+                )}
+              </div>
             </TabsContent>
 
             <TabsContent value="locked" className="mt-6">
-              <AchievementList achievements={lockedAchievements} />
+              <div className="space-y-6">
+                <PaginationInfo
+                  currentPage={lockedPagination.currentPage}
+                  totalItems={lockedPagination.totalItems}
+                  pageSize={lockedPagination.pageSize}
+                  className="mb-4"
+                />
+                <AchievementList achievements={lockedPagination.currentPageData} />
+                {lockedPagination.totalPages > 1 && (
+                  <div className="mt-6">
+                    <Pagination
+                      currentPage={lockedPagination.currentPage}
+                      totalItems={lockedPagination.totalItems}
+                      pageSize={lockedPagination.pageSize}
+                      onPageChange={lockedPagination.goToPage}
+                      maxVisiblePages={5}
+                    />
+                  </div>
+                )}
+              </div>
             </TabsContent>
           </Tabs>
         </div>
