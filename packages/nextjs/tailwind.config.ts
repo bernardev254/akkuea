@@ -11,7 +11,10 @@ export default {
   theme: {
   	extend: {
   		colors: {
-  			primary: 'hsl(var(--primary))',
+  			primary: {
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
+  			},
   			secondary: 'hsl(var(--secondary))',
   			achievement: 'hsl(var(--achievement))',
   			destructive: 'hsl(var(--destructive))',
