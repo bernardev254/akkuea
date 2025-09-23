@@ -113,5 +113,31 @@ Issue 336
 ---
 
 Issue 337
-<!-- Make the changes from issue number 337 here. Thank you for contributing to Akkuea! -->
+
+## Future Roadmap
+
+### Phase 1: Foundation (Q1 2026)
+- ⏳ Basic agent creation framework
+- ⏳ Template-based agent builder
+- ⏳ Initial domain specializations
+- ⏳ Community validation system
+
+### Phase 2: Enhancement (Q2 2026)
+- ⏳ Advanced natural language capabilities
+- ⏳ Multi-modal interaction support
+- ⏳ Collaborative agent networks
+- ⏳ Cultural knowledge integration
+
+### Phase 3: Innovation (Q3 2026)
+- ⏳ Real-time learning adaptation
+- ⏳ Cross-platform agent deployment
+- ⏳ Advanced personalization
+- ⏳ Research automation tools
+
+### Phase 4: Ecosystem (Q4 2026)
+- ⏳ Agent marketplace
+- ⏳ Third-party integrations
+- ⏳ Global knowledge network
+- ⏳ Advanced analytics dashboard
+
 
