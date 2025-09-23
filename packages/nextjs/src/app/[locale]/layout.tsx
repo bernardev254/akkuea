@@ -13,11 +13,12 @@ export default async function LocaleLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { locale: (typeof routing.locales)[number] };
+  params: Promise<{ locale: string }>;
 }) {
   // Ensure that the incoming `locale` is valid
-  const { locale } = params;
-  if (!routing.locales.includes(locale)) {
+  const { locale } = await params;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!routing.locales.includes(locale as any)) {
     notFound();
   }
 
