@@ -13,7 +13,7 @@ export default {
       colors: {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))'
+          foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: 'hsl(var(--secondary))',
         achievement: 'hsl(var(--achievement))',
@@ -21,7 +21,7 @@ export default {
         background: 'hsl(var(--background))',
         card: {
           DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))'
+          foreground: 'hsl(var(--card-foreground))',
         },
         foreground: 'hsl(var(--foreground))',
         muted: 'hsl(var(--muted))',
@@ -33,27 +33,27 @@ export default {
           '2': 'hsl(var(--chart-2))',
           '3': 'hsl(var(--chart-3))',
           '4': 'hsl(var(--chart-4))',
-          '5': 'hsl(var(--chart-5))'
+          '5': 'hsl(var(--chart-5))',
         },
         contribution: {
           bg: 'hsl(var(--contribution-bg))',
           text: 'hsl(var(--contribution-text))',
-          border: 'hsl(var(--contribution-border))'
+          border: 'hsl(var(--contribution-border))',
         },
         community: {
           bg: 'hsl(var(--community-bg))',
           text: 'hsl(var(--community-text))',
-          border: 'hsl(var(--community-border))'
+          border: 'hsl(var(--community-border))',
         },
         learning: {
           bg: 'hsl(var(--learning-bg))',
           text: 'hsl(var(--learning-text))',
-          border: 'hsl(var(--learning-border))'
+          border: 'hsl(var(--learning-border))',
         },
         impact: {
           bg: 'hsl(var(--impact-bg))',
           text: 'hsl(var(--impact-text))',
-          border: 'hsl(var(--impact-border))'
+          border: 'hsl(var(--impact-border))',
         },
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
@@ -63,15 +63,15 @@ export default {
           accent: 'hsl(var(--sidebar-accent))',
           'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
           border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))'
-        }
+          ring: 'hsl(var(--sidebar-ring))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
-      }
-    }
+        sm: 'calc(var(--radius) - 4px)',
+      },
+    },
   },
   plugins: [require('tailwindcss-animate')],
 } satisfies Config;
