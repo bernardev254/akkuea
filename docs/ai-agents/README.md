@@ -48,7 +48,20 @@ Issue 323
 ---
 
 Issue 324
-<!-- Make the changes from issue number 324 here. Thank you for contributing to Akkuea! -->
+
+#### Sample Interactions
+**Research Query Example**:
+---
+User: "What genetic markers should I look for when selecting breeding pairs for improved disease resistance in green iguanas?"
+
+Dr. RepGen: "For green iguana disease resistance breeding, focus on these key genetic markers:
+
+1. **MHC Class II genes**: Associated with immune response diversity
+2. **TLR4 variants**: Toll-like receptor for pathogen recognition
+3. **IL-10 polymorphisms**: Anti-inflammatory response regulation
+
+I recommend screening for heterozygosity in these regions to maximize immune system diversity. Would you like me to explain the specific testing protocols or breeding strategies for optimizing these markers?"
+---
 
 ---
 
