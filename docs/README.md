@@ -11,6 +11,9 @@ Welcome to the comprehensive documentation for Akkuea, the educational social pl
 
 ---
 
+Issue 295
+<!-- Make the changes from issue number 295 here. Thank you for contributing to Akkuea! -->
+
 
 ## 📚 Documentation Structure
 
@@ -30,6 +33,7 @@ Complete guide to the designer-educator marketplace, including project workflows
 
 #### [🤖 AI Agents](ai-agents/README.md)
 Documentation for native AI agent creation, training, and management systems that enable specialized educational assistance.
+
 
 
 
@@ -64,6 +68,9 @@ Issue 301
 <!-- Make the changes from issue number 301 here. Thank you for contributing to Akkuea! -->
 
 ---
+
+Issue 302
+<!-- Make the changes from issue number 302 here. Thank you for contributing to Akkuea! -->
 
 
 ## 📊 Documentation Statistics

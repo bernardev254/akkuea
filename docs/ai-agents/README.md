@@ -151,6 +151,14 @@ Issue 335
 
 ---
 
+Issue 336
+<!-- Make the changes from issue number 336 here. Thank you for contributing to Akkuea! -->
+
+---
+
+Issue 337
+<!-- Make the changes from issue number 337 here. Thank you for contributing to Akkuea! -->
+
 
 #### Performance Optimization
 | Optimization Area | Technique | Expected Improvement |
