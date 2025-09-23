@@ -1,16 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import ExploreHeader from '@/components/explore/explore-header';
 import ContentCard from '@/components/explore/content-card';
 import PeopleCard from '@/components/explore/people-card';
 import PopularTopics from '@/components/explore/popular-topics';
 import EmptyState from '@/components/explore/empty-components';
 import TabNavigation from '@/components/explore/tab-navigation';
+import { Pagination, PaginationInfo } from '@/components/pagination';
+import { usePagination } from '@/hooks/usePagination';
 
 const ExplorePage = () => {
   const [activeTab, setActiveTab] = useState<string | number>('trending');
   const [searchQuery, setSearchQuery] = useState('');
+  const pageSize = 3;
 
   const popularTopics = [
     'Artificial Intelligence',
@@ -27,7 +30,7 @@ const ExplorePage = () => {
     'Cybersecurity',
   ];
 
-  const trendingContent = [
+  const trendingContent = useMemo(() => [
     {
       id: 1,
       title: 'Introduction to Machine Learning: A Comprehensive Guide',
@@ -68,9 +71,9 @@ const ExplorePage = () => {
       likes: 432,
       comments: 56,
     },
-  ];
+  ], []);
 
-  const featuredContent = [
+  const featuredContent = useMemo(() => [
     {
       id: 1,
       title: 'The Future of Education: AI-Powered Learning',
@@ -98,9 +101,9 @@ const ExplorePage = () => {
       comments: 134,
       featured: true,
     },
-  ];
+  ], []);
 
-  const people = [
+  const people = useMemo(() => [
     {
       id: 1,
       name: 'Dr. Alex Thompson',
@@ -149,7 +152,7 @@ const ExplorePage = () => {
       followers: 7890,
       posts: 198,
     },
-  ];
+  ], []);
 
   const tabs = [
     { id: 'trending', label: 'Trending', icon: '📈' },
@@ -157,38 +160,173 @@ const ExplorePage = () => {
     { id: 'people', label: 'People', icon: '👥' },
   ];
 
+  // Memoized filtered data for better performance
+  const filteredTrendingContent = useMemo(() => {
+    if (!searchQuery.trim()) return trendingContent;
+    
+    const query = searchQuery.toLowerCase().trim();
+    return trendingContent.filter(item =>
+      item.title.toLowerCase().includes(query) ||
+      item.author.toLowerCase().includes(query) ||
+      item.topic.toLowerCase().includes(query)
+    );
+  }, [trendingContent, searchQuery]);
+
+  const filteredFeaturedContent = useMemo(() => {
+    if (!searchQuery.trim()) return featuredContent;
+    
+    const query = searchQuery.toLowerCase().trim();
+    return featuredContent.filter(item =>
+      item.title.toLowerCase().includes(query) ||
+      item.author.toLowerCase().includes(query) ||
+      item.specialty.toLowerCase().includes(query)
+    );
+  }, [featuredContent, searchQuery]);
+
+  const filteredPeople = useMemo(() => {
+    if (!searchQuery.trim()) return people;
+    
+    const query = searchQuery.toLowerCase().trim();
+    return people.filter(person =>
+      person.name.toLowerCase().includes(query) ||
+      person.username.toLowerCase().includes(query) ||
+      person.specialty.toLowerCase().includes(query)
+    );
+  }, [people, searchQuery]);
+
+  // Pagination hooks for different content types
+  const trendingPagination = usePagination({
+    data: filteredTrendingContent,
+    pageSize,
+  });
+
+  const featuredPagination = usePagination({
+    data: filteredFeaturedContent,
+    pageSize,
+  });
+
+  const peoplePagination = usePagination({
+    data: filteredPeople,
+    pageSize,
+  });
+
+  // Event handlers
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    // Reset to page 1 when searching
+    trendingPagination.goToPage(1);
+    featuredPagination.goToPage(1);
+    peoplePagination.goToPage(1);
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'trending':
         return (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6">
-            {trendingContent.map((item) => (
-              <ContentCard key={item.id} type="trending" item={item} />
-            ))}
+          <div className="space-y-6">
+            <PaginationInfo
+              currentPage={trendingPagination.currentPage}
+              totalItems={trendingPagination.totalItems}
+              pageSize={trendingPagination.pageSize}
+              className="mb-4"
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6">
+              {trendingPagination.currentPageData.map((item) => (
+                <ContentCard key={item.id} type="trending" item={item} />
+              ))}
+            </div>
+            {trendingPagination.totalPages > 1 && (
+              <div className="mt-6">
+                <Pagination
+                  currentPage={trendingPagination.currentPage}
+                  totalItems={trendingPagination.totalItems}
+                  pageSize={trendingPagination.pageSize}
+                  onPageChange={trendingPagination.goToPage}
+                  maxVisiblePages={5}
+                />
+              </div>
+            )}
           </div>
         );
       case 'featured':
         return (
           <div className="space-y-6">
-            {featuredContent.map((item) => (
-              <ContentCard key={item.id} type="featured" item={item} />
-            ))}
+            <PaginationInfo
+              currentPage={featuredPagination.currentPage}
+              totalItems={featuredPagination.totalItems}
+              pageSize={featuredPagination.pageSize}
+              className="mb-4"
+            />
+            <div className="space-y-6">
+              {featuredPagination.currentPageData.map((item) => (
+                <ContentCard key={item.id} type="featured" item={item} />
+              ))}
+            </div>
+            {featuredPagination.totalPages > 1 && (
+              <div className="mt-6">
+                <Pagination
+                  currentPage={featuredPagination.currentPage}
+                  totalItems={featuredPagination.totalItems}
+                  pageSize={featuredPagination.pageSize}
+                  onPageChange={featuredPagination.goToPage}
+                  maxVisiblePages={5}
+                />
+              </div>
+            )}
           </div>
         );
       case 'people':
         return (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {people.map((person) => (
-              <PeopleCard key={person.id} person={person} />
-            ))}
+          <div className="space-y-6">
+            <PaginationInfo
+              currentPage={peoplePagination.currentPage}
+              totalItems={peoplePagination.totalItems}
+              pageSize={peoplePagination.pageSize}
+              className="mb-4"
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {peoplePagination.currentPageData.map((person) => (
+                <PeopleCard key={person.id} person={person} />
+              ))}
+            </div>
+            {peoplePagination.totalPages > 1 && (
+              <div className="mt-6">
+                <Pagination
+                  currentPage={peoplePagination.currentPage}
+                  totalItems={peoplePagination.totalItems}
+                  pageSize={peoplePagination.pageSize}
+                  onPageChange={peoplePagination.goToPage}
+                  maxVisiblePages={5}
+                />
+              </div>
+            )}
           </div>
         );
       default:
         return (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6">
-            {trendingContent.map((item) => (
-              <ContentCard key={item.id} type="trending" item={item} />
-            ))}
+          <div className="space-y-6">
+            <PaginationInfo
+              currentPage={trendingPagination.currentPage}
+              totalItems={trendingPagination.totalItems}
+              pageSize={trendingPagination.pageSize}
+              className="mb-4"
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6">
+              {trendingPagination.currentPageData.map((item) => (
+                <ContentCard key={item.id} type="trending" item={item} />
+              ))}
+            </div>
+            {trendingPagination.totalPages > 1 && (
+              <div className="mt-6">
+                <Pagination
+                  currentPage={trendingPagination.currentPage}
+                  totalItems={trendingPagination.totalItems}
+                  pageSize={trendingPagination.pageSize}
+                  onPageChange={trendingPagination.goToPage}
+                  maxVisiblePages={5}
+                />
+              </div>
+            )}
           </div>
         );
     }
@@ -197,8 +335,9 @@ const ExplorePage = () => {
   return (
     <div className="min-h-screen">
       <div className="px-4 sm:px-6 lg:px-8 py-6 bg-background transition-colors duration-300">
-        <ExploreHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <ExploreHeader searchQuery={searchQuery} setSearchQuery={handleSearchChange} />
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
+        
         {activeTab === 'trending' && <PopularTopics topics={popularTopics} />}
         {activeTab === 'trending' && (
           <h2 className="text-lg font-semibold text-foreground mb-6">Trending Content</h2>
