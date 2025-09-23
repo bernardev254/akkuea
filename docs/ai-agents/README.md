@@ -112,8 +112,6 @@ Issue 336
 
 ---
 
-Issue 337
-
 ## Future Roadmap
 
 ### Phase 1: Foundation (Q1 2026)
