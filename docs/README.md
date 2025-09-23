@@ -5,7 +5,9 @@
 ---
 
 Issue 294
-<!-- Make the changes from issue number 294 here. Thank you for contributing to Akkuea! -->
+## 🦅 About This Documentation
+
+Welcome to the comprehensive documentation for Akkuea, the educational social platform that honors Costa Rica's indigenous heritage while building innovative learning experiences. This documentation is designed to be accessible, well-structured, and culturally sensitive.
 
 ---
 
