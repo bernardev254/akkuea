@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "packageManager": "bun@1.0.25",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "format": "prettier --write .",
     "format:check": "prettier --check .",
