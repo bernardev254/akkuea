@@ -17,10 +17,10 @@ export default function LanguageSwitcher() {
     <select
       value={locale}
       onChange={handleChange}
-      className="bg-transparent text-white"
+      className="bg-transparent text-foreground"
     >
-      <option value="en">English</option>
-      <option value="es">Español</option>
+      <option value="en" className="text-black dark:text-white bg-white dark:bg-black">English</option>
+      <option value="es" className="text-black dark:text-white bg-white dark:bg-black">Español</option>
     </select>
   );
 }
