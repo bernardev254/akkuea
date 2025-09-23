@@ -44,8 +44,18 @@ Issue 301
 
 ---
 
-Issue 302
-<!-- Make the changes from issue number 302 here. Thank you for contributing to Akkuea! -->
+
+## 📊 Documentation Statistics
+
+```mermaid
+pie title Documentation Coverage
+    "User Guides (25%)" : 25
+    "Technical Docs (25%)" : 25
+    "Platform Features (20%)" : 20
+    "Developer Resources (15%)" : 15
+    "Design System (10%)" : 10
+    "Analytics (5%)" : 5
+```
 
 ---
 
