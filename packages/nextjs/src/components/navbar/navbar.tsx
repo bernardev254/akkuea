@@ -106,7 +106,7 @@ const Navbar = () => {
     <nav className="fixed top-0 right-0 left-0 border-b border-border bg-background text-foreground z-50">
       <div className="h-14 flex items-center justify-between px-4">
         {/* Logo */}
-        <Link href={address ? "/home" : "/"} className="flex items-center">
+        <Link href={address ? '/home' : '/'} className="flex items-center">
           <AkkueaLogo className="h-8 w-auto" />
         </Link>
 
@@ -174,9 +174,11 @@ const Navbar = () => {
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
                   <p>
-                    {theme === 'light' ? 'Switch to dark mode' : 
-                     theme === 'dark' ? 'Switch to system theme' : 
-                     'Switch to light mode'}
+                    {theme === 'light'
+                      ? 'Switch to dark mode'
+                      : theme === 'dark'
+                        ? 'Switch to system theme'
+                        : 'Switch to light mode'}
                   </p>
                 </TooltipContent>
               </Tooltip>

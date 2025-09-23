@@ -181,12 +181,10 @@ docker-compose logs -f postgres
 ### Common Issues
 
 1. **Port already in use:**
-
    - Change the port mappings in `docker-compose.yml`
    - Or stop other services using the same ports
 
 2. **Database connection issues:**
-
    - Ensure the database container is healthy before starting the API
    - Check the database logs: `docker-compose logs postgres`
 
@@ -203,13 +201,11 @@ The setup includes health checks for the database service. The API will wait for
 For production deployment:
 
 1. **Security:**
-
    - Change default passwords
    - Use environment-specific configuration
    - Enable SSL for database connections
 
 2. **Performance:**
-
    - Adjust database connection pool settings
    - Configure proper resource limits
    - Use production-grade PostgreSQL configuration
