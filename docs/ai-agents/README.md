@@ -12,8 +12,32 @@ Issue 316
 
 ---
 
-Issue 317
-<!-- Make the changes from issue number 317 here. Thank you for contributing to Akkuea! -->
+
+### Agent Types & Specializations
+
+#### Academic Subject Specialists
+| Domain | Example Agent | Capabilities |
+|--------|---------------|--------------|
+| **STEM** | Dr. Genome (Genetics Expert) | Research analysis, experiment design, data interpretation |
+| **Mathematics** | Prof. Calculus | Problem solving, proof generation, visualization |
+| **History** | Chronicler Costa Rica | Historical analysis, timeline creation, cultural context |
+| **Languages** | Polyglot Tutor | Grammar correction, conversation practice, cultural nuances |
+
+#### Cultural Heritage Experts
+| Focus Area | Agent Example | Specialized Knowledge |
+|------------|---------------|---------------------|
+| **Indigenous Knowledge** | Sabio Cabecar | Traditional practices, oral histories, cultural protocols |
+| **Local History** | Guardian of El Gavilan | Regional traditions, community stories, historical events |
+| **Biodiversity** | EcoGuide Costa Rica | Native species, conservation, ecological relationships |
+| **Traditional Arts** | Artisan Master | Craft techniques, cultural significance, skill transmission |
+
+#### Research & Innovation Specialists
+| Research Domain | Agent Profile | Research Capabilities |
+|----------------|---------------|---------------------|
+| **Genetic Improvement** | Dr. RepGen | Disease resistance research, breeding protocols, genetic analysis |
+| **Educational Technology** | EdTech Innovator | Learning analytics, technology integration, pedagogical research |
+| **Climate Science** | Climate Scholar | Environmental data analysis, adaptation strategies, sustainability |
+| **Social Sciences** | Community Researcher | Cultural studies, social dynamics, community development |
 
 ---
 
@@ -32,7 +56,7 @@ Issue 320
 
 ---
 
-Issue 321
+
 
 #### Step 3: Knowledge Base Integration
 **Data Sources**:
@@ -55,7 +79,7 @@ Issue 323
 
 ---
 
-Issue 324
+
 
 #### Sample Interactions
 **Research Query Example**:
@@ -98,7 +122,7 @@ Issue 329
 
 ---
 
-Issue 330
+
 
 ## Agent Collaboration Network
 
@@ -114,7 +138,8 @@ graph LR
     D[AgriTech Specialist] --> B
     E[Climate Scholar] --> B
     B --> F[Collaborative Content]
-    F --> G[Unified Educational Resource]```
+    F --> G[Unified Educational Resource]
+```
 ---
 
 Issue 331
@@ -132,7 +157,7 @@ Issue 333
 
 ---
 
-Issue 334
+
 
 ## Technical Implementation
 
@@ -146,18 +171,22 @@ Issue 334
 
 ---
 
-Issue 335
-<!-- Make the changes from issue number 335 here. Thank you for contributing to Akkuea! -->
+
+
+#### Training Pipeline
+```mermaid
+    flowchart LR
+        A[Base Model] --> B[Domain Data Collection]
+        B --> C[Cultural Sensitivity Training]
+        C --> D[Educational Context Fine-tuning]
+        D --> E[Community Validation]
+        E --> F[Deployment]
+        F --> G[Continuous Learning]
+        G --> D
+```
 
 ---
 
-Issue 336
-<!-- Make the changes from issue number 336 here. Thank you for contributing to Akkuea! -->
-
----
-
-Issue 337
-<!-- Make the changes from issue number 337 here. Thank you for contributing to Akkuea! -->
 
 
 #### Performance Optimization

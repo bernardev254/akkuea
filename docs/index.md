@@ -12,7 +12,7 @@ Issue 310
 
 ---
 
-Issue 311
+
 ### Core Vision
 **Empowering education through the strategic use of emerging technology**
 
