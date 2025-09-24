@@ -59,7 +59,9 @@ const Benefits = () => {
                   {item.index}
                 </div>
                 <div className="flex flex-col gap-1">
-                  <div className="text-[#0A0A0A] dark:text-foreground text-lg font-semibold">{item.title}</div>
+                  <div className="text-[#0A0A0A] dark:text-foreground text-lg font-semibold">
+                    {item.title}
+                  </div>
                   <div className="text-[#737373] dark:text-muted text-sm">{item.description}</div>
                 </div>
               </div>
