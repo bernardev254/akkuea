@@ -14,32 +14,34 @@ Issue 316
 
 ---
 
-
 ### Agent Types & Specializations
 
 #### Academic Subject Specialists
-| Domain | Example Agent | Capabilities |
-|--------|---------------|--------------|
-| **STEM** | Dr. Genome (Genetics Expert) | Research analysis, experiment design, data interpretation |
-| **Mathematics** | Prof. Calculus | Problem solving, proof generation, visualization |
-| **History** | Chronicler Costa Rica | Historical analysis, timeline creation, cultural context |
-| **Languages** | Polyglot Tutor | Grammar correction, conversation practice, cultural nuances |
+
+| Domain          | Example Agent                | Capabilities                                                |
+| --------------- | ---------------------------- | ----------------------------------------------------------- |
+| **STEM**        | Dr. Genome (Genetics Expert) | Research analysis, experiment design, data interpretation   |
+| **Mathematics** | Prof. Calculus               | Problem solving, proof generation, visualization            |
+| **History**     | Chronicler Costa Rica        | Historical analysis, timeline creation, cultural context    |
+| **Languages**   | Polyglot Tutor               | Grammar correction, conversation practice, cultural nuances |
 
 #### Cultural Heritage Experts
-| Focus Area | Agent Example | Specialized Knowledge |
-|------------|---------------|---------------------|
-| **Indigenous Knowledge** | Sabio Cabecar | Traditional practices, oral histories, cultural protocols |
-| **Local History** | Guardian of El Gavilan | Regional traditions, community stories, historical events |
-| **Biodiversity** | EcoGuide Costa Rica | Native species, conservation, ecological relationships |
-| **Traditional Arts** | Artisan Master | Craft techniques, cultural significance, skill transmission |
+
+| Focus Area               | Agent Example          | Specialized Knowledge                                       |
+| ------------------------ | ---------------------- | ----------------------------------------------------------- |
+| **Indigenous Knowledge** | Sabio Cabecar          | Traditional practices, oral histories, cultural protocols   |
+| **Local History**        | Guardian of El Gavilan | Regional traditions, community stories, historical events   |
+| **Biodiversity**         | EcoGuide Costa Rica    | Native species, conservation, ecological relationships      |
+| **Traditional Arts**     | Artisan Master         | Craft techniques, cultural significance, skill transmission |
 
 #### Research & Innovation Specialists
-| Research Domain | Agent Profile | Research Capabilities |
-|----------------|---------------|---------------------|
-| **Genetic Improvement** | Dr. RepGen | Disease resistance research, breeding protocols, genetic analysis |
-| **Educational Technology** | EdTech Innovator | Learning analytics, technology integration, pedagogical research |
-| **Climate Science** | Climate Scholar | Environmental data analysis, adaptation strategies, sustainability |
-| **Social Sciences** | Community Researcher | Cultural studies, social dynamics, community development |
+
+| Research Domain            | Agent Profile        | Research Capabilities                                              |
+| -------------------------- | -------------------- | ------------------------------------------------------------------ |
+| **Genetic Improvement**    | Dr. RepGen           | Disease resistance research, breeding protocols, genetic analysis  |
+| **Educational Technology** | EdTech Innovator     | Learning analytics, technology integration, pedagogical research   |
+| **Climate Science**        | Climate Scholar      | Environmental data analysis, adaptation strategies, sustainability |
+| **Social Sciences**        | Community Researcher | Cultural studies, social dynamics, community development           |
 
 ---
 
@@ -60,8 +62,6 @@ Issue 320
 <!-- Make the changes from issue number 320 here. Thank you for contributing to Akkuea! -->
 
 ---
-
-
 
 <!-- Make the changes from issue number 321 here. Thank you for contributing to Akkuea! -->
 
@@ -88,8 +88,6 @@ Issue 323
 <!-- Make the changes from issue number 323 here. Thank you for contributing to Akkuea! -->
 
 ---
-
-
 
 <!-- Make the changes from issue number 324 here. Thank you for contributing to Akkuea! -->
 
@@ -138,8 +136,6 @@ Issue 329
 <!-- Make the changes from issue number 329 here. Thank you for contributing to Akkuea! -->
 
 ---
-
-
 
 <!-- Make the changes from issue number 330 here. Thank you for contributing to Akkuea! -->
 

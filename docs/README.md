@@ -4,12 +4,13 @@ _Empowering education through the strategic use of emerging technology_
 
 ---
 
-<<<<<<< HEAD
-=======
+# <<<<<<< HEAD
+
 Issue 294
 
 <!-- Make the changes from issue number 294 here. Thank you for contributing to Akkuea! -->
->>>>>>> eliminate-duplicate-code
+
+> > > > > > > eliminate-duplicate-code
 
 ## 🦅 About This Documentation
 
@@ -20,8 +21,6 @@ Welcome to the comprehensive documentation for Akkuea, the educational social pl
 Issue 295
 
 <!-- Make the changes from issue number 295 here. Thank you for contributing to Akkuea! -->
-
-
 
 ## 📚 Documentation Structure
 
@@ -46,7 +45,6 @@ Complete guide to the designer-educator marketplace, including project workflows
 #### [🤖 AI Agents](ai-agents/README.md)
 
 Documentation for native AI agent creation, training, and management systems that enable specialized educational assistance.
-
 
 ---
 
@@ -88,10 +86,10 @@ Issue 301
 
 <<<<<<< HEAD
 
-
-
 =======
->>>>>>> eliminate-duplicate-code
+
+> > > > > > > eliminate-duplicate-code
+
 ## 📊 Documentation Statistics
 
 ```mermaid
