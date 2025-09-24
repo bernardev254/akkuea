@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -28,6 +28,8 @@ import {
 import { Users, Search, Plus, MessageCircle, TrendingUp, User } from 'lucide-react';
 import { toast } from 'sonner';
 import DiscussionItem from './DiscussionItem';
+import { Pagination, PaginationInfo } from '@/components/pagination';
+import { usePagination } from '@/hooks/usePagination';
 
 // Mock data
 const allCommunities = [
@@ -162,17 +164,64 @@ export default function Communities() {
     tags: '',
     visibility: 'public',
   });
+  
+  // Pagination state
+  // Fixed page size - no user selection needed
+  const pageSize = 5;
 
-  const filteredCommunities = communities.filter(
-    (community) =>
-      community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      community.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+  // Memoized filtered data for better performance
+  const joinedCommunities = useMemo(
+    () => communities.filter(community => community.joined),
+    [communities]
   );
 
-  const joinedCommunities = communities.filter((community) => community.joined);
-  const joinedDiscussions = discussions.filter((discussion) =>
-    joinedCommunities.some((community) => community.name === discussion.community)
+  const joinedDiscussions = useMemo(
+    () => discussions.filter(discussion =>
+      joinedCommunities.some(community => community.name === discussion.community)
+    ),
+    [joinedCommunities]
   );
+
+  // Memoized filtered data for better performance
+  const filteredCommunities = useMemo(() => {
+    if (!searchQuery.trim()) return communities;
+    
+    const query = searchQuery.toLowerCase().trim();
+    return communities.filter(community =>
+      community.name.toLowerCase().includes(query) ||
+      community.tags.some(tag => tag.toLowerCase().includes(query))
+    );
+  }, [communities, searchQuery]);
+
+  const filteredJoinedCommunities = useMemo(() => {
+    if (!searchQuery.trim()) return joinedCommunities;
+    
+    const query = searchQuery.toLowerCase().trim();
+    return joinedCommunities.filter(community =>
+      community.name.toLowerCase().includes(query) ||
+      community.tags.some(tag => tag.toLowerCase().includes(query))
+    );
+  }, [joinedCommunities, searchQuery]);
+
+  // Pagination hooks for different tabs
+  const discoverPagination = usePagination({
+    data: filteredCommunities,
+    pageSize,
+  });
+
+  const joinedPagination = usePagination({
+    data: filteredJoinedCommunities,
+    pageSize,
+  });
+
+  // Event handlers
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    // Reset to page 1 when searching
+    discoverPagination.goToPage(1);
+    joinedPagination.goToPage(1);
+  };
+
 
   const handleJoinCommunity = (communityId: number) => {
     setCommunities((prev) =>
@@ -376,15 +425,17 @@ export default function Communities() {
         </Dialog>
       </div>
 
-      {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted w-4 h-4" />
-        <Input
-          placeholder="Search communities..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
-        />
+      {/* Search and Page Size */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted w-4 h-4" />
+          <Input
+            placeholder="Search communities..."
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="pl-10"
+          />
+        </div>
       </div>
 
       {/* Tabs */}
@@ -414,21 +465,40 @@ export default function Communities() {
         </TabsList>
 
         <TabsContent value="discover" className="space-y-4">
-          {filteredCommunities.length === 0 ? (
+          {discoverPagination.isEmpty ? (
             <div className="text-center py-12">
               <p className="text-muted">{'No communities found matching your search.'}</p>
             </div>
           ) : (
-            <div className="grid gap-4">
-              {filteredCommunities.map((community) => (
-                <CommunityCard key={community.id} community={community} />
-              ))}
-            </div>
+            <>
+              <PaginationInfo
+                currentPage={discoverPagination.currentPage}
+                totalItems={discoverPagination.totalItems}
+                pageSize={discoverPagination.pageSize}
+                className="mb-4"
+              />
+              <div className="grid gap-4">
+                {discoverPagination.currentPageData.map((community) => (
+                  <CommunityCard key={community.id} community={community} />
+                ))}
+              </div>
+              {discoverPagination.totalPages > 1 && (
+                <div className="mt-6">
+                  <Pagination
+                    currentPage={discoverPagination.currentPage}
+                    totalItems={discoverPagination.totalItems}
+                    pageSize={discoverPagination.pageSize}
+                    onPageChange={discoverPagination.goToPage}
+                    maxVisiblePages={5}
+                  />
+                </div>
+              )}
+            </>
           )}
         </TabsContent>
 
         <TabsContent value="your-communities" className="space-y-4">
-          {joinedCommunities.length === 0 ? (
+          {joinedPagination.isEmpty ? (
             <div className="text-center py-12">
               <p className="text-muted">{"You haven't joined any communities yet."}</p>
               <Button
@@ -440,11 +510,30 @@ export default function Communities() {
               </Button>
             </div>
           ) : (
-            <div className="grid gap-4">
-              {joinedCommunities.map((community) => (
-                <CommunityCard key={community.id} community={community} showLeaveButton />
-              ))}
-            </div>
+            <>
+              <PaginationInfo
+                currentPage={joinedPagination.currentPage}
+                totalItems={joinedPagination.totalItems}
+                pageSize={joinedPagination.pageSize}
+                className="mb-4"
+              />
+              <div className="grid gap-4">
+                {joinedPagination.currentPageData.map((community) => (
+                  <CommunityCard key={community.id} community={community} showLeaveButton />
+                ))}
+              </div>
+              {joinedPagination.totalPages > 1 && (
+                <div className="mt-6">
+                  <Pagination
+                    currentPage={joinedPagination.currentPage}
+                    totalItems={joinedPagination.totalItems}
+                    pageSize={joinedPagination.pageSize}
+                    onPageChange={joinedPagination.goToPage}
+                    maxVisiblePages={5}
+                  />
+                </div>
+              )}
+            </>
           )}
         </TabsContent>
 
