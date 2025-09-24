@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageCircle, Plus, Search, TrendingUp, User,Users } from 'lucide-react';
+import { MessageCircle, Plus, Search, TrendingUp, User, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -32,6 +32,8 @@ import { Textarea } from '@/components/ui/textarea';
 import DiscussionItem from './DiscussionItem';
 import { Pagination, PaginationInfo } from '@/components/pagination';
 import { usePagination } from '@/hooks/usePagination';
+import { useMemo } from 'react';
+
 
 // Mock data
 const allCommunities = [
@@ -166,42 +168,45 @@ export default function Communities() {
     tags: '',
     visibility: 'public',
   });
-  
+
   // Pagination state
   // Fixed page size - no user selection needed
   const pageSize = 5;
 
   // Memoized filtered data for better performance
   const joinedCommunities = useMemo(
-    () => communities.filter(community => community.joined),
+    () => communities.filter((community) => community.joined),
     [communities]
   );
 
   const joinedDiscussions = useMemo(
-    () => discussions.filter(discussion =>
-      joinedCommunities.some(community => community.name === discussion.community)
-    ),
+    () =>
+      discussions.filter((discussion) =>
+        joinedCommunities.some((community) => community.name === discussion.community)
+      ),
     [joinedCommunities]
   );
 
   // Memoized filtered data for better performance
   const filteredCommunities = useMemo(() => {
     if (!searchQuery.trim()) return communities;
-    
+
     const query = searchQuery.toLowerCase().trim();
-    return communities.filter(community =>
-      community.name.toLowerCase().includes(query) ||
-      community.tags.some(tag => tag.toLowerCase().includes(query))
+    return communities.filter(
+      (community) =>
+        community.name.toLowerCase().includes(query) ||
+        community.tags.some((tag) => tag.toLowerCase().includes(query))
     );
   }, [communities, searchQuery]);
 
   const filteredJoinedCommunities = useMemo(() => {
     if (!searchQuery.trim()) return joinedCommunities;
-    
+
     const query = searchQuery.toLowerCase().trim();
-    return joinedCommunities.filter(community =>
-      community.name.toLowerCase().includes(query) ||
-      community.tags.some(tag => tag.toLowerCase().includes(query))
+    return joinedCommunities.filter(
+      (community) =>
+        community.name.toLowerCase().includes(query) ||
+        community.tags.some((tag) => tag.toLowerCase().includes(query))
     );
   }, [joinedCommunities, searchQuery]);
 
@@ -223,7 +228,6 @@ export default function Communities() {
     discoverPagination.goToPage(1);
     joinedPagination.goToPage(1);
   };
-
 
   const handleJoinCommunity = (communityId: number) => {
     setCommunities((prev) =>

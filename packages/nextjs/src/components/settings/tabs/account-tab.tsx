@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle2,LogOutIcon, RefreshCcw, User, WalletIcon } from 'lucide-react';
+import { CheckCircle2, LogOutIcon, RefreshCcw, User, WalletIcon } from 'lucide-react';
 
 import { formatAddress } from '@/lib/utils';
 

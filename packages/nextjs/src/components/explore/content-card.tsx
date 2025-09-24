@@ -1,4 +1,4 @@
-import { Heart, MessageCircle,User } from 'lucide-react';
+import { Heart, MessageCircle, User } from 'lucide-react';
 import type React from 'react';
 
 type ContentCardProps = {

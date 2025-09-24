@@ -2,7 +2,7 @@
 import type React from 'react';
 import type { ReactNode } from 'react';
 
-import { type TabType,useTab } from '@/contexts/TabContext';
+import { type TabType, useTab } from '@/contexts/TabContext';
 
 interface TabNavProps {
   children: ReactNode;

@@ -1,4 +1,4 @@
-import { BookOpen, Code, MessageCircle, Share2,Star, Users } from 'lucide-react';
+import { BookOpen, Code, MessageCircle, Share2, Star, Users } from 'lucide-react';
 
 import { Achievement } from '@/lib/types';
 

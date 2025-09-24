@@ -4,7 +4,7 @@ import { LogOut, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
-import { useEffect, useRef,useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useWallet } from '@/components/auth/hooks/useWallet.hook';
 import { useGlobalAuthenticationStore } from '@/components/auth/store/data';
@@ -108,7 +108,7 @@ const Navbar = () => {
     <nav className="fixed top-0 right-0 left-0 border-b border-border bg-background text-foreground z-50">
       <div className="h-14 flex items-center justify-between px-4">
         {/* Logo */}
-        <Link href={address ? "/home" : "/"} className="flex items-center">
+        <Link href={address ? '/home' : '/'} className="flex items-center">
           <AkkueaLogo className="h-8 w-auto" />
         </Link>
 
@@ -176,9 +176,11 @@ const Navbar = () => {
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
                   <p>
-                    {theme === 'light' ? 'Switch to dark mode' : 
-                     theme === 'dark' ? 'Switch to system theme' : 
-                     'Switch to light mode'}
+                    {theme === 'light'
+                      ? 'Switch to dark mode'
+                      : theme === 'dark'
+                        ? 'Switch to system theme'
+                        : 'Switch to light mode'}
                   </p>
                 </TooltipContent>
               </Tooltip>

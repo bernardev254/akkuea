@@ -18,7 +18,7 @@ const eslintConfig = [
     plugins: {
       'simple-import-sort': simpleImportSort,
       import: pluginImport,
-      'unused-imports': unusedImports,          
+      'unused-imports': unusedImports,
     },
     rules: {
       'simple-import-sort/imports': 'warn',

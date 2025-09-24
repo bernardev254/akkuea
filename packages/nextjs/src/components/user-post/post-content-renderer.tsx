@@ -1,4 +1,4 @@
-import { ExternalLink, FileText,Link as LinkIcon, Play } from 'lucide-react';
+import { ExternalLink, FileText, Link as LinkIcon, Play } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 

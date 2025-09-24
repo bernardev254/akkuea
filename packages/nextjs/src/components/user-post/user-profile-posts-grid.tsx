@@ -1,7 +1,7 @@
 'use client';
-import { AlertCircle,FileText, Link, Play } from 'lucide-react';
+import { AlertCircle, FileText, Link, Play } from 'lucide-react';
 import Image from 'next/image';
-import React, { useCallback,useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { Card } from '@/components/ui/card';

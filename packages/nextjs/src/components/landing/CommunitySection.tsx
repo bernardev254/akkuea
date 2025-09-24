@@ -1,6 +1,6 @@
 'use client';
 
-import { Github,MessageCircle } from 'lucide-react';
+import { Github, MessageCircle } from 'lucide-react';
 
 import TwitterIcon from '../ui/twitter-icon';
 

@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { TabNav, TabItem, TabContent } from '@/components/settings/tab-components';
-import { Bell, Eye,LockKeyhole, Palette, User } from 'lucide-react';
-import { useEffect,useState } from 'react';
+import { Bell, Eye, LockKeyhole, Palette, User } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import { AppearanceTab } from '@/components/settings/tabs/appearance-tab';
 import NotificationsTab from '@/components/settings/tabs/notifications-tab';
@@ -22,11 +22,11 @@ export default function SettingsPage() {
   const router = useRouter();
 
   // const { resolvedTheme } = useTheme()
-   
+
   useEffect(() => {
     setMounted(true);
-    if(!address){
-      router.push('/')
+    if (!address) {
+      router.push('/');
     }
   }, [address, router]);
 

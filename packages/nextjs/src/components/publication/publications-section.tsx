@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Publication } from '../types/index';
 import { FilterTabs } from './filter-tabs';

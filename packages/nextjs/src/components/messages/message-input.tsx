@@ -1,7 +1,7 @@
 'use client';
 
 import { Send } from 'lucide-react';
-import { useEffect,useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import MediaUpload from '@/components/quick-post/media-upload';
 import { Button } from '@/components/ui/button';

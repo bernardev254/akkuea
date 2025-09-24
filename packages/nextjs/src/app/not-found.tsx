@@ -23,22 +23,18 @@ export default function NotFound() {
             Page Not Found
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
-            Oops! The page you&apos;re looking for seems to have wandered off into the digital void. 
+            Oops! The page you&apos;re looking for seems to have wandered off into the digital void.
             Don&apos;t worry, even the best explorers sometimes take a wrong turn.
           </p>
         </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            onClick={() => router.back()}
-            variant="outline"
-            className="cursor-pointer"
-          >
+          <Button onClick={() => router.back()} variant="outline" className="cursor-pointer">
             <ArrowLeft className="w-4 h-4" />
             Go Back
           </Button>
-          
+
           <Button asChild className="cursor-pointer">
             <Link href="/">
               <Home className="w-4 h-4" />
@@ -58,7 +54,9 @@ export default function NotFound() {
             className="cursor-pointer"
             onClick={() => {
               // You can implement a search modal or redirect to search page
-              const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
+              const searchInput = document.querySelector(
+                'input[type="search"]'
+              ) as HTMLInputElement;
               if (searchInput) {
                 searchInput.focus();
               } else {
