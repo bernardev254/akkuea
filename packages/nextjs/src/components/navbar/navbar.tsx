@@ -23,6 +23,8 @@ import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useMessages } from '@/store/messaging-store';
 import { usePostsStore } from '@/store/postsStore';
+import { useTheme } from 'next-themes';
+import { Monitor, Moon, Sun } from 'lucide-react';
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');

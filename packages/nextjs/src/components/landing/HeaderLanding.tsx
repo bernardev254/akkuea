@@ -1,8 +1,61 @@
 'use client';
 
-import { Menu, XIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { gsap } from 'gsap';
+import './HeaderLanding.css';
+import { useLayoutEffect, useCallback } from 'react';
+import { ArrowUpRight } from 'lucide-react';
+
+interface NavLink {
+  label: string;
+  href: string;
+  ariaLabel: string;
+}
+
+interface NavItem {
+  label: string;
+  bgColor: string;
+  textColor: string;
+  links: NavLink[];
+}
+
+
+// All cards now white like the first one
+const navItems: NavItem[] = [
+  {
+    label: "About",
+    bgColor: "hsl(var(--card))",
+    textColor: "hsl(var(--card-foreground))",
+    links: [
+      { label: "Company", href: "/about/company", ariaLabel: "About Company" },
+      { label: "Team", href: "/about/team", ariaLabel: "About Team" },
+      { label: "Mission", href: "/about/mission", ariaLabel: "Our Mission" }
+    ]
+  },
+  {
+    label: "Benefits", 
+    bgColor: "hsl(var(--card))",
+    textColor: "hsl(var(--card-foreground))",
+    links: [
+      { label: "Features", href: "/benefits/features", ariaLabel: "Platform Features" },
+      { label: "Pricing", href: "/benefits/pricing", ariaLabel: "Pricing Plans" },
+      { label: "ROI Calculator", href: "/benefits/roi", ariaLabel: "ROI Calculator" }
+    ]
+  },
+  {
+    label: "Community",
+    bgColor: "hsl(var(--card))",
+    textColor: "hsl(var(--card-foreground))",
+    links: [
+      { label: "Discord", href: "/community/discord", ariaLabel: "Join Discord" },
+      { label: "Forum", href: "/community/forum", ariaLabel: "Community Forum" },
+      { label: "Events", href: "/community/events", ariaLabel: "Community Events" }
+    ]
+  }
+];
+
 
 import { cn } from '@/lib/utils';
 
@@ -13,6 +66,7 @@ export default function HeaderLanding() {
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const pathname = usePathname();
+
 
   const calculateHeight = () => {
     const navEl = navRef.current;
