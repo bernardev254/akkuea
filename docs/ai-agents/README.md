@@ -147,11 +147,10 @@ Issue 334
 ---
 
 Issue 335
-<!-- Make the changes from issue number 336 here. Thank you for contributing to Akkuea! -->
 
 
 #### Training Pipeline
-    ```mermaid
+```mermaid
     flowchart LR
         A[Base Model] --> B[Domain Data Collection]
         B --> C[Cultural Sensitivity Training]
@@ -160,7 +159,7 @@ Issue 335
         E --> F[Deployment]
         F --> G[Continuous Learning]
         G --> D
-    ```
+```
 
 ---
 
