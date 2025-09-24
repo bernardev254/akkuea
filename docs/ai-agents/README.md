@@ -147,9 +147,10 @@ Issue 334
 ---
 
 Issue 335
+<!-- Make the changes from issue number 336 here. Thank you for contributing to Akkuea! -->
+
 
 #### Training Pipeline
-
 ````mermaid
 flowchart LR
     A[Base Model] --> B[Domain Data Collection]
