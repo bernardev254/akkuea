@@ -1,5 +1,4 @@
 # Akkuea 🚀🎓  
-[⭐ GitHub Stars] · [🐛 Issues] · [📜 Licencia MIT]  
 
 ## 🌟 Bienvenido a Akkuea  
 
