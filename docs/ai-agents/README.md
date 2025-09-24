@@ -147,7 +147,9 @@ Issue 334
 ---
 
 Issue 335
+
 #### Training Pipeline
+
 ````mermaid
 flowchart LR
     A[Base Model] --> B[Domain Data Collection]
