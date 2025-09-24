@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation";
-import { getMessages } from "next-intl/server";
-import { setRequestLocale } from "next-intl/server";
-import { routing } from "@/i18n/routing";
-import { NextIntlClientProvider } from "next-intl";
+import { notFound } from 'next/navigation';
+import { getMessages } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
+import { routing } from '@/i18n/routing';
+import { NextIntlClientProvider } from 'next-intl';
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

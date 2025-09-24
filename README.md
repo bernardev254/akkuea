@@ -149,25 +149,29 @@ Before you begin, ensure you have the following installed:
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/akkuea/akkuea.git
    cd akkuea
    ```
 
 2. **Install dependencies**
+
    ```bash
    bun install
    ```
 
 3. **Set up environment variables**
-   
+
    For the Go backend:
+
    ```bash
    cd packages/gin
    cp env.example .env
    ```
-   
+
    Edit the `.env` file with your database credentials and configuration:
+
    ```env
    DB_HOST=localhost
    DB_USER=your_postgres_user
@@ -178,24 +182,27 @@ Before you begin, ensure you have the following installed:
    ```
 
 4. **Set up the database**
-   
+
    Create a PostgreSQL database:
+
    ```bash
    createdb akkuea
    ```
-   
+
    Or using PostgreSQL CLI:
+
    ```sql
    CREATE DATABASE akkuea;
    ```
 
 5. **Start the development servers**
-   
+
    From the root directory:
+
    ```bash
    bun run dev
    ```
-   
+
    This will start all services in parallel:
    - **Frontend**: http://localhost:3000
    - **Go API**: http://localhost:8080
@@ -237,12 +244,14 @@ Once everything is running, you should be able to:
 
 **Port conflicts**: If ports 3000 or 8080 are already in use, you can modify them in the respective package configurations.
 
-**Database connection issues**: 
+**Database connection issues**:
+
 - Ensure PostgreSQL is running: `brew services start postgresql` (macOS) or `sudo systemctl start postgresql` (Linux)
 - Verify your database credentials in the `.env` file
 - Check if the database exists: `psql -l`
 
-**Bun installation issues**: 
+**Bun installation issues**:
+
 - On macOS: `curl -fsSL https://bun.sh/install | bash`
 - On Windows: `powershell -c "irm bun.sh/install.ps1 | iex"`
 - On Linux: `curl -fsSL https://bun.sh/install | bash`
@@ -318,22 +327,22 @@ go test -cover ./...
 
 | Variable          | Description                       | Default     | Required |
 | ----------------- | --------------------------------- | ----------- | -------- |
-| `DB_HOST`         | PostgreSQL host                   | `localhost` | ✅        |
-| `DB_USER`         | Database username                 | -           | ✅        |
-| `DB_PASSWORD`     | Database password                 | -           | ✅        |
-| `DB_NAME`         | Database name                     | `akkuea`    | ✅        |
-| `DB_PORT`         | Database port                     | `5432`      | ✅        |
-| `JWT_SECRET`      | JWT signing secret                | -           | ✅        |
-| `PORT`            | API server port                   | `8080`      | ❌        |
-| `STELLAR_NETWORK` | Stellar network (testnet/mainnet) | `testnet`   | ❌        |
-| `AI_API_KEY`      | AI service API key                | -           | ❌        |
+| `DB_HOST`         | PostgreSQL host                   | `localhost` | ✅       |
+| `DB_USER`         | Database username                 | -           | ✅       |
+| `DB_PASSWORD`     | Database password                 | -           | ✅       |
+| `DB_NAME`         | Database name                     | `akkuea`    | ✅       |
+| `DB_PORT`         | Database port                     | `5432`      | ✅       |
+| `JWT_SECRET`      | JWT signing secret                | -           | ✅       |
+| `PORT`            | API server port                   | `8080`      | ❌       |
+| `STELLAR_NETWORK` | Stellar network (testnet/mainnet) | `testnet`   | ❌       |
+| `AI_API_KEY`      | AI service API key                | -           | ❌       |
 
 ### Frontend (.env.local in packages/nextjs)
 
 | Variable                      | Description     | Default                 | Required |
 | ----------------------------- | --------------- | ----------------------- | -------- |
-| `NEXT_PUBLIC_API_URL`         | Backend API URL | `http://localhost:8080` | ✅        |
-| `NEXT_PUBLIC_STELLAR_NETWORK` | Stellar network | `testnet`               | ❌        |
+| `NEXT_PUBLIC_API_URL`         | Backend API URL | `http://localhost:8080` | ✅       |
+| `NEXT_PUBLIC_STELLAR_NETWORK` | Stellar network | `testnet`               | ❌       |
 
 ---
 
@@ -380,6 +389,7 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 - **Commits**: Conventional commits format
 
 Run linting before committing:
+
 ```bash
 # Frontend
 cd packages/nextjs

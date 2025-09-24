@@ -9,20 +9,24 @@ This directory contains manual testing scripts for the authentication endpoints 
 ## Test Coverage
 
 ### ✅ POST /auth/register
+
 - Valid registration with all required fields
 - Invalid registration with missing fields
 
-### ✅ POST /auth/login  
+### ✅ POST /auth/login
+
 - Valid login with correct credentials
 - Invalid login with wrong credentials
 
 ### ✅ Protected Routes
+
 - Access without token (401 Unauthorized)
 - Access with invalid token (401 Unauthorized)
 
 ## Running Tests
 
 1. Start the Go server:
+
    ```bash
    cd packages/gin
    go run main.go
@@ -56,8 +60,9 @@ To test protected routes with a valid token:
 ## Role-Based Access Testing
 
 To test different roles, modify the registration data in the script:
+
 - `"role": "Educator"`
-- `"role": "Student"`  
+- `"role": "Student"`
 - `"role": "Designer"`
 
 Each role should be able to access protected routes with a valid JWT token.
