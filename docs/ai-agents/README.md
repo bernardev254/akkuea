@@ -151,16 +151,16 @@ Issue 335
 
 
 #### Training Pipeline
-```mermaid
-flowchart LR
-    A[Base Model] --> B[Domain Data Collection]
-    B --> C[Cultural Sensitivity Training]
-    C --> D[Educational Context Fine-tuning]
-    D --> E[Community Validation]
-    E --> F[Deployment]
-    F --> G[Continuous Learning]
-    G --> D
-```
+    ```mermaid
+    flowchart LR
+        A[Base Model] --> B[Domain Data Collection]
+        B --> C[Cultural Sensitivity Training]
+        C --> D[Educational Context Fine-tuning]
+        D --> E[Community Validation]
+        E --> F[Deployment]
+        F --> G[Continuous Learning]
+        G --> D
+    ```
 
 ---
 
