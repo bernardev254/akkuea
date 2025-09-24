@@ -151,7 +151,7 @@ Issue 335
 
 
 #### Training Pipeline
-````mermaid
+```mermaid
 flowchart LR
     A[Base Model] --> B[Domain Data Collection]
     B --> C[Cultural Sensitivity Training]
@@ -160,7 +160,7 @@ flowchart LR
     E --> F[Deployment]
     F --> G[Continuous Learning]
     G --> D
-````
+```
 
 ---
 
