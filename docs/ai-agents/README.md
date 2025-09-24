@@ -12,7 +12,7 @@ Issue 316
 
 ---
 
-Issue 317
+
 ### Agent Types & Specializations
 
 #### Academic Subject Specialists
@@ -38,6 +38,7 @@ Issue 317
 | **Educational Technology** | EdTech Innovator | Learning analytics, technology integration, pedagogical research |
 | **Climate Science** | Climate Scholar | Environmental data analysis, adaptation strategies, sustainability |
 | **Social Sciences** | Community Researcher | Cultural studies, social dynamics, community development |
+
 ---
 
 Issue 318
@@ -137,7 +138,8 @@ graph LR
     D[AgriTech Specialist] --> B
     E[Climate Scholar] --> B
     B --> F[Collaborative Content]
-    F --> G[Unified Educational Resource]```
+    F --> G[Unified Educational Resource]
+```
 ---
 
 Issue 331
@@ -169,7 +171,6 @@ Issue 334
 
 ---
 
-Issue 335
 
 
 #### Training Pipeline
