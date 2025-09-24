@@ -41,14 +41,16 @@ Issue 320
 Issue 321
 
 <!-- Make the changes from issue number 321 here. Thank you for contributing to Akkuea! -->
+
 #### Step 3: Knowledge Base Integration
+
 **Data Sources**:
+
 - Curated educational content from Akkuea platform
 - Verified academic publications and research
 - Cultural documentation and oral histories
 - User-contributed specialized knowledge
 - Real-time data feeds and updates
-
 
 ---
 
@@ -67,9 +69,11 @@ Issue 323
 Issue 324
 
 <!-- Make the changes from issue number 324 here. Thank you for contributing to Akkuea! -->
+
 #### Sample Interactions
-**Research Query Example**:
----
+
+## **Research Query Example**:
+
 User: "What genetic markers should I look for when selecting breeding pairs for improved disease resistance in green iguanas?"
 
 Dr. RepGen: "For green iguana disease resistance breeding, focus on these key genetic markers:
@@ -78,8 +82,7 @@ Dr. RepGen: "For green iguana disease resistance breeding, focus on these key ge
 2. **TLR4 variants**: Toll-like receptor for pathogen recognition
 3. **IL-10 polymorphisms**: Anti-inflammatory response regulation
 
-I recommend screening for heterozygosity in these regions to maximize immune system diversity. Would you like me to explain the specific testing protocols or breeding strategies for optimizing these markers?"
----
+## I recommend screening for heterozygosity in these regions to maximize immune system diversity. Would you like me to explain the specific testing protocols or breeding strategies for optimizing these markers?"
 
 ---
 
@@ -122,9 +125,10 @@ Issue 330
 ### Multi-Agent Interactions
 
 #### Collaborative Problem Solving
+
 **Example Scenario**: Creating comprehensive educational content about sustainable agriculture in Costa Rica
 
-```mermaid
+````mermaid
 graph LR
     A[EcoGuide Costa Rica] --> B[Knowledge Integration]
     C[Sabio Cabecar] --> B
@@ -218,3 +222,4 @@ Issue 336
 - ⏳ Third-party integrations
 - ⏳ Global knowledge network
 - ⏳ Advanced analytics dashboard
+````
