@@ -3,11 +3,13 @@
 ---
 
 Issue 309
+
 <!-- Make the changes from issue number 309 here. Thank you for contributing to Akkuea! -->
 
 ---
 
 Issue 310
+
 <!-- Make the changes from issue number 310 here. Thank you for contributing to Akkuea! -->
 
 ---
@@ -55,15 +57,17 @@ Issue 310
 ---
 
 Issue 312
+
 <!-- Make the changes from issue number 312 here. Thank you for contributing to Akkuea! -->
 
 ---
 
 Issue 313
+
 <!-- Make the changes from issue number 313 here. Thank you for contributing to Akkuea! -->
 
 ---
 
 Issue 314
-<!-- Make the changes from issue number 314 here. Thank you for contributing to Akkuea! -->
 
+<!-- Make the changes from issue number 314 here. Thank you for contributing to Akkuea! -->

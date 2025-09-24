@@ -21,11 +21,11 @@ export default function SettingsPage() {
   const router = useRouter();
 
   // const { resolvedTheme } = useTheme()
-   
+
   useEffect(() => {
     setMounted(true);
-    if(!address){
-      router.push('/')
+    if (!address) {
+      router.push('/');
     }
   }, [address, router]);
 

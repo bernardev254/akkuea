@@ -220,6 +220,48 @@ export default function HeaderLanding() {
           </Link>
         </div>
 
+        {/* Theme Toggle */}
+        <div className="flex items-center gap-4">
+          {mounted && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      if (theme === 'light') setTheme('dark');
+                      else if (theme === 'dark') setTheme('system');
+                      else setTheme('light');
+                    }}
+                    className="p-2 hover:bg-muted/50 rounded-full transition-colors"
+                  >
+                    {theme === 'system' ? (
+                      <Monitor className="h-5 w-5 text-muted" />
+                    ) : resolvedTheme === 'dark' ? (
+                      <Moon className="h-5 w-5 text-primary" />
+                    ) : (
+                      <Sun className="h-5 w-5 text-achievement" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>
+                    {theme === 'light'
+                      ? 'Switch to dark mode'
+                      : theme === 'dark'
+                        ? 'Switch to system theme'
+                        : 'Switch to light mode'}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          <button className="md:hidden" onClick={() => setIsHamburgerOpen(!isHamburgerOpen)}>
+            {isHamburgerOpen ? <XIcon /> : <Menu />}
+          </button>
+        </div>
+
         {/* Expandable content with navigation cards */}
         <div className="card-nav-content" aria-hidden={!isExpanded}>
           {navItems.map((item, idx) => (
@@ -250,6 +292,5 @@ export default function HeaderLanding() {
           ))}
         </div>
       </nav>
-    </div>
   );
 }
