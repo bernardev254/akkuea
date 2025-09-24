@@ -13,7 +13,8 @@ import { useGlobalAuthenticationStore } from '@/components/auth/store/data';
 import { Button } from '@/components/ui/button';
 import { usePostsStore } from '@/store/postsStore';
 import { useRouter } from 'next/navigation';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings, Sun, Moon, Monitor } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +35,12 @@ const Navbar = () => {
   const address = useGlobalAuthenticationStore((state) => state.address);
   const { searchPosts, clearSearch } = usePostsStore();
   const router = useRouter();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -99,7 +106,7 @@ const Navbar = () => {
     <nav className="fixed top-0 right-0 left-0 border-b border-border bg-background text-foreground z-50">
       <div className="h-14 flex items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center">
+        <Link href={address ? "/home" : "/"} className="flex items-center">
           <AkkueaLogo className="h-8 w-auto" />
         </Link>
 
@@ -141,6 +148,41 @@ const Navbar = () => {
 
         {/* Navigation Icons */}
         <div className="flex items-center gap-4">
+          {/* Theme Toggle */}
+          {mounted && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      if (theme === 'light') setTheme('dark');
+                      else if (theme === 'dark') setTheme('system');
+                      else setTheme('light');
+                    }}
+                    className="p-2 hover:bg-muted/50 rounded-full transition-colors"
+                  >
+                    {theme === 'system' ? (
+                      <Monitor className="h-5 w-5 text-muted" />
+                    ) : resolvedTheme === 'dark' ? (
+                      <Moon className="h-5 w-5 text-primary" />
+                    ) : (
+                      <Sun className="h-5 w-5 text-achievement" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>
+                    {theme === 'light' ? 'Switch to dark mode' : 
+                     theme === 'dark' ? 'Switch to system theme' : 
+                     'Switch to light mode'}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -150,7 +192,7 @@ const Navbar = () => {
                 >
                   <MessageCircle className="h-5 w-5 text-primary" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {unreadCount}
                     </span>
                   )}
@@ -210,14 +252,14 @@ const Navbar = () => {
           {address ? (
             <Button
               onClick={handleDisconnect}
-              className="bg-primary hover:bg-primary/80 text-white font-medium px-4 py-2 rounded-full transition-colors duration-200 text-sm shadow-sm hover:shadow-md"
+              className="bg-primary hover:bg-primary/80 text-primary-foreground font-medium px-4 py-2 rounded-full transition-colors duration-200 text-sm shadow-sm hover:shadow-md"
             >
               Disconnect
             </Button>
           ) : (
             <Button
               onClick={handleConnect}
-              className="bg-primary hover:bg-primary/80 text-white font-medium px-4 py-2 rounded-full transition-colors duration-200 text-sm shadow-sm hover:shadow-md"
+              className="bg-primary hover:bg-primary/80 text-primary-foreground font-medium px-4 py-2 rounded-full transition-colors duration-200 text-sm shadow-sm hover:shadow-md"
             >
               Connect
             </Button>

@@ -1,7 +1,7 @@
 #![no_std]
 
 use soroban_sdk::{
-    contract, contractimpl, Address, Env, Vec, String,
+    contract, contractimpl, Address, Env, Vec, String, BytesN,
 };
 
 mod types;
@@ -10,14 +10,19 @@ mod errors;
 mod events;
 mod token;
 mod price_feeds;
+mod subscriptions;
+mod analytics;
+mod utils;
 mod test;
 
 use types::{Tip, EducatorStats, TipHistory};
-use storage::{get_educator_stats, set_educator_stats, get_tip_history, set_tip_history, update_top_educators};
+use storage::{get_educator_stats, set_educator_stats, get_tip_history, set_tip_history, update_top_educators, add_tip_to_all_tips};
 use errors::TippingError;
 use events::{emit_tip_event, emit_educator_stats_updated};
 use token::{TokenManager, WhitelistedToken};
 use price_feeds::{PriceFeed, PriceData, ConversionRate};
+use subscriptions::{SubscriptionManager, Subscription, TipGoal, ConditionalTip};
+use analytics::{AnalyticsManager, AnalyticsRecord, TimeBasedReport, TippingTrend, EducatorAnalytics};
 
 #[contract]
 pub struct TippingRewardContract;
@@ -47,7 +52,6 @@ impl TippingRewardContract {
         }
 
         // Optional token validation - only validate if token is whitelisted
-        // This preserves backwards compatibility with existing tests
         let usd_value = if TokenManager::is_token_whitelisted(env, &token) {
             // If token is whitelisted, validate amount limits
             TokenManager::validate_tip_amount(env, &token, amount)?;
@@ -58,10 +62,6 @@ impl TippingRewardContract {
             amount
         };
 
-        // Transfer tokens from sender to recipient
-        // let token_client = TokenClient::new(env, &token);
-        // token_client.transfer(&from, &to, &amount);
-
         // Create tip record
         let tip = Tip {
             from,
@@ -71,6 +71,9 @@ impl TippingRewardContract {
             message,
             timestamp: env.ledger().timestamp(),
         };
+
+        // Add tip to analytics storage
+        add_tip_to_all_tips(env, &tip);
 
         // Update educator stats (keeping existing "last tip only" behavior for compatibility)
         let mut stats = get_educator_stats(env, &to).unwrap_or(EducatorStats {
@@ -160,6 +163,9 @@ impl TippingRewardContract {
             timestamp: env.ledger().timestamp(),
         };
 
+        // Add tip to analytics storage
+        add_tip_to_all_tips(env, &tip);
+
         // Update educator stats with accumulative behavior
         let mut stats = get_educator_stats(env, &to).unwrap_or(EducatorStats {
             total_tips: 0,
@@ -196,6 +202,8 @@ impl TippingRewardContract {
         Ok(())
     }
 
+    // QUERY FUNCTIONS
+    
     /// Get educator statistics
     pub fn get_educator_stats(env: &Env, educator: Address) -> Option<EducatorStats> {
         get_educator_stats(env, &educator)
@@ -211,20 +219,17 @@ impl TippingRewardContract {
         let top_educators = storage::get_top_educators(env);
         let mut result = Vec::new(env);
         
-        // Convert to Vec for easier handling
         let mut educators_vec = Vec::new(env);
         for (address, stats) in top_educators.iter() {
             educators_vec.push_back((address, stats));
         }
 
-        // Take only the requested number of educators
         let actual_limit = if limit < educators_vec.len() as u32 {
             limit
         } else {
             educators_vec.len() as u32
         };
         
-        // Add educators to result
         for i in 0..actual_limit {
             if let Some((address, stats)) = educators_vec.get(i) {
                 result.push_back((address.clone(), stats.clone()));
@@ -232,6 +237,165 @@ impl TippingRewardContract {
         }
 
         result
+    }
+
+    // SUBSCRIPTION FUNCTIONS
+
+    /// Create a recurring tip subscription
+    pub fn create_subscription(
+        env: &Env,
+        subscriber: Address,
+        educator: Address,
+        amount: i128,
+        token: Address,
+        period: u64,
+    ) -> Result<BytesN<32>, TippingError> {
+        SubscriptionManager::create_subscription(env, subscriber, educator, amount, token, period)
+    }
+
+    /// Execute a subscription payment
+    pub fn execute_subscription_payment(
+        env: &Env,
+        subscription_id: BytesN<32>,
+    ) -> Result<(), TippingError> {
+        SubscriptionManager::execute_subscription_payment(env, subscription_id)
+    }
+
+    /// Cancel a subscription
+    pub fn cancel_subscription(
+        env: &Env,
+        subscriber: Address,
+        subscription_id: BytesN<32>,
+    ) -> Result<(), TippingError> {
+        SubscriptionManager::cancel_subscription(env, subscriber, subscription_id)
+    }
+
+    /// Get subscription information
+    pub fn get_subscription_info(
+        env: &Env,
+        subscription_id: BytesN<32>,
+    ) -> Option<Subscription> {
+        SubscriptionManager::get_subscription_info(env, subscription_id)
+    }
+
+    /// Get all subscriptions for a subscriber
+    pub fn get_subscriber_subscriptions(
+        env: &Env,
+        subscriber: Address,
+    ) -> Vec<Subscription> {
+        SubscriptionManager::get_subscriber_subscriptions(env, subscriber)
+    }
+
+    // TIP GOAL FUNCTIONS
+
+    /// Create a new tip goal
+    pub fn create_tip_goal(
+        env: &Env,
+        educator: Address,
+        title: String,
+        description: String,
+        target_amount: i128,
+        deadline: u64,
+    ) -> Result<BytesN<32>, TippingError> {
+        SubscriptionManager::create_tip_goal(env, educator, title, description, target_amount, deadline)
+    }
+
+    /// Contribute to a tip goal
+    pub fn contribute_to_goal(
+        env: &Env,
+        contributor: Address,
+        goal_id: BytesN<32>,
+        amount: i128,
+        token: Address,
+    ) -> Result<(), TippingError> {
+        SubscriptionManager::contribute_to_goal(env, contributor, goal_id, amount, token)
+    }
+
+    /// Get tip goal status
+    pub fn get_goal_status(env: &Env, goal_id: BytesN<32>) -> Option<TipGoal> {
+        SubscriptionManager::get_goal_status(env, goal_id)
+    }
+
+    // CONDITIONAL TIPPING FUNCTIONS
+
+    /// Create a conditional tip based on metrics
+    pub fn create_conditional_tip(
+        env: &Env,
+        from: Address,
+        to: Address,
+        amount: i128,
+        token: Address,
+        condition_type: String,
+        condition_value: i128,
+    ) -> Result<BytesN<32>, TippingError> {
+        SubscriptionManager::create_conditional_tip(env, from, to, amount, token, condition_type, condition_value)
+    }
+
+    /// Execute conditional tip based on current metrics
+    pub fn execute_conditional_tip(
+        env: &Env,
+        tip_id: BytesN<32>,
+        current_metric_value: i128,
+    ) -> Result<(), TippingError> {
+        SubscriptionManager::execute_conditional_tip(env, tip_id, current_metric_value)
+    }
+
+    /// Get conditional tip information
+    pub fn get_conditional_tip_info(env: &Env, tip_id: BytesN<32>) -> Option<ConditionalTip> {
+        SubscriptionManager::get_conditional_tip_info(env, tip_id)
+    }
+
+    // ANALYTICS FUNCTIONS
+
+    /// Record analytics data for a specific period
+    pub fn record_analytics(
+        env: &Env,
+        period_start: u64,
+        period_end: u64,
+    ) -> Result<(), TippingError> {
+        AnalyticsManager::record_analytics(env, period_start, period_end)
+    }
+
+    /// Generate time-based tipping report
+    pub fn generate_time_report(
+        env: &Env,
+        period_type: String,
+        start_time: u64,
+        end_time: u64,
+    ) -> Result<TimeBasedReport, TippingError> {
+        AnalyticsManager::generate_time_report(env, period_type, start_time, end_time)
+    }
+
+    /// Analyze tipping trends for an educator
+    pub fn analyze_trends(
+        env: &Env,
+        educator: Address,
+        period_days: u32,
+    ) -> Result<TippingTrend, TippingError> {
+        AnalyticsManager::analyze_trends(env, educator, period_days)
+    }
+
+    /// Get comprehensive educator analytics
+    pub fn get_educator_analytics(
+        env: &Env,
+        educator: Address,
+    ) -> Result<EducatorAnalytics, TippingError> {
+        AnalyticsManager::get_educator_analytics(env, educator)
+    }
+
+    /// Get analytics record for a specific timestamp
+    pub fn get_analytics_record(env: &Env, timestamp: u64) -> Option<AnalyticsRecord> {
+        AnalyticsManager::get_analytics_record(env, timestamp)
+    }
+
+    /// Get analytics history for trend analysis
+    pub fn get_analytics_history(
+        env: &Env,
+        start_time: u64,
+        end_time: u64,
+        interval_seconds: u64,
+    ) -> Vec<AnalyticsRecord> {
+        AnalyticsManager::get_analytics_history(env, start_time, end_time, interval_seconds)
     }
 
     // TOKEN MANAGEMENT FUNCTIONS

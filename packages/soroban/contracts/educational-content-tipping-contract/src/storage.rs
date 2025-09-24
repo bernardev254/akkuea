@@ -1,7 +1,9 @@
-use soroban_sdk::{Address, Env, Symbol, Vec};
-use crate::types::{EducatorStats, TipHistory};
+use soroban_sdk::{Address, Env, Symbol, Vec, BytesN};
+use crate::types::{EducatorStats, TipHistory, Tip};
 use crate::token::WhitelistedToken;
 use crate::price_feeds::{PriceData, ConversionRate};
+use crate::subscriptions::{Subscription, TipGoal, ConditionalTip};
+use crate::analytics::AnalyticsRecord;
 
 // Storage keys for existing functionality
 fn get_admin_key(env: &Env) -> Symbol {
@@ -42,7 +44,47 @@ fn get_oracle_list_key(env: &Env) -> Symbol {
     Symbol::new(env, "ORACLES")
 }
 
-// Admin management (existing)
+// Storage keys for subscriptions
+fn get_subscription_key(env: &Env, subscription_id: &BytesN<32>) -> Symbol {
+    Symbol::new(env, "SUB")
+}
+
+fn get_subscriber_subscriptions_key(env: &Env, subscriber: &Address) -> Symbol {
+    Symbol::new(env, "SUB_USER")
+}
+
+fn get_educator_subscriptions_key(env: &Env, educator: &Address) -> Symbol {
+    Symbol::new(env, "SUB_EDU")
+}
+
+// NEW: Storage keys for tip goals
+fn get_tip_goal_key(env: &Env, goal_id: &BytesN<32>) -> Symbol {
+    Symbol::new(env, "GOAL")
+}
+
+fn get_educator_goals_key(env: &Env, educator: &Address) -> Symbol {
+    Symbol::new(env, "GOAL_EDU")
+}
+
+// NEW: Storage keys for conditional tips
+fn get_conditional_tip_key(env: &Env, tip_id: &BytesN<32>) -> Symbol {
+    Symbol::new(env, "COND_TIP")
+}
+
+fn get_educator_conditional_tips_key(env: &Env, educator: &Address) -> Symbol {
+    Symbol::new(env, "COND_EDU")
+}
+
+// NEW: Storage keys for analytics
+fn get_analytics_record_key(env: &Env, timestamp: &u64) -> Symbol {
+    Symbol::new(env, "ANALYTICS")
+}
+
+fn get_all_tips_key(env: &Env) -> Symbol {
+    Symbol::new(env, "ALL_TIPS")
+}
+
+// Admin management
 pub fn get_admin(env: &Env) -> Option<Address> {
     env.storage().instance().get(&get_admin_key(env))
 }
@@ -51,7 +93,7 @@ pub fn set_admin(env: &Env, admin: &Address) {
     env.storage().instance().set(&get_admin_key(env), admin);
 }
 
-// Educator stats management (existing)
+// Educator stats management
 pub fn get_educator_stats(env: &Env, educator: &Address) -> Option<EducatorStats> {
     env.storage().instance().get(&get_educator_stats_key(env, educator))
 }
@@ -60,7 +102,7 @@ pub fn set_educator_stats(env: &Env, educator: &Address, stats: &EducatorStats) 
     env.storage().instance().set(&get_educator_stats_key(env, educator), stats);
 }
 
-// Tip history management (existing)
+// Tip history management
 pub fn get_tip_history(env: &Env, educator: &Address) -> Option<TipHistory> {
     env.storage().instance().get(&get_tip_history_key(env, educator))
 }
@@ -83,7 +125,7 @@ pub fn update_top_educators(env: &Env, educator: &Address, stats: &EducatorStats
     
     // Find if educator already exists and remove it
     for i in 0..top_educators.len() {
-        let (addr, _) = top_educators.get(i).unwrap(); // FIXED: corrected syntax error
+        let (addr, _) = top_educators.get(i).unwrap();
         if addr == *educator {
             top_educators.remove(i);
             break;
@@ -107,7 +149,7 @@ pub fn update_top_educators(env: &Env, educator: &Address, stats: &EducatorStats
     set_top_educators(env, &top_educators);
 }
 
-// Token whitelist management (NEW)
+// Token whitelist management
 pub fn get_whitelisted_token(env: &Env, token: &Address) -> Option<WhitelistedToken> {
     env.storage().persistent().get(&get_token_whitelist_key(env, token))
 }
@@ -124,7 +166,7 @@ pub fn set_token_list(env: &Env, token_list: &Vec<Address>) {
     env.storage().persistent().set(&get_token_list_key(env), token_list);
 }
 
-// Price data management (NEW)
+// Price data management
 pub fn get_price_data(env: &Env, token: &Address) -> Option<PriceData> {
     env.storage().persistent().get(&get_price_data_key(env, token))
 }
@@ -133,7 +175,7 @@ pub fn set_price_data(env: &Env, token: &Address, price_data: &PriceData) {
     env.storage().persistent().set(&get_price_data_key(env, token), price_data);
 }
 
-// Conversion rate caching (NEW)
+// Conversion rate caching
 pub fn get_conversion_rate(env: &Env, from_token: &Address, to_token: &Address) -> Option<ConversionRate> {
     env.storage().temporary().get(&get_conversion_rate_key(env, from_token, to_token))
 }
@@ -142,7 +184,7 @@ pub fn set_conversion_rate(env: &Env, from_token: &Address, to_token: &Address, 
     env.storage().temporary().set(&get_conversion_rate_key(env, from_token, to_token), rate);
 }
 
-// Oracle management (NEW)
+// Oracle management
 pub fn get_authorized_oracles(env: &Env) -> Vec<Address> {
     env.storage().persistent().get(&get_oracle_list_key(env)).unwrap_or(Vec::new(env))
 }
@@ -186,4 +228,119 @@ pub fn remove_authorized_oracle(env: &Env, oracle: &Address) {
     }
     
     set_authorized_oracles(env, &oracles);
+}
+
+// Subscription management
+pub fn get_subscription(env: &Env, subscription_id: &BytesN<32>) -> Option<Subscription> {
+    env.storage().persistent().get(&get_subscription_key(env, subscription_id))
+}
+
+pub fn set_subscription(env: &Env, subscription_id: &BytesN<32>, subscription: &Subscription) {
+    env.storage().persistent().set(&get_subscription_key(env, subscription_id), subscription);
+}
+
+pub fn get_subscriber_subscriptions(env: &Env, subscriber: &Address) -> Vec<BytesN<32>> {
+    env.storage().persistent().get(&get_subscriber_subscriptions_key(env, subscriber)).unwrap_or(Vec::new(env))
+}
+
+pub fn set_subscriber_subscriptions(env: &Env, subscriber: &Address, subscriptions: &Vec<BytesN<32>>) {
+    env.storage().persistent().set(&get_subscriber_subscriptions_key(env, subscriber), subscriptions);
+}
+
+pub fn get_educator_subscriptions(env: &Env, educator: &Address) -> Vec<BytesN<32>> {
+    env.storage().persistent().get(&get_educator_subscriptions_key(env, educator)).unwrap_or(Vec::new(env))
+}
+
+pub fn set_educator_subscriptions(env: &Env, educator: &Address, subscriptions: &Vec<BytesN<32>>) {
+    env.storage().persistent().set(&get_educator_subscriptions_key(env, educator), subscriptions);
+}
+
+// Tip goal management
+pub fn get_tip_goal(env: &Env, goal_id: &BytesN<32>) -> Option<TipGoal> {
+    env.storage().persistent().get(&get_tip_goal_key(env, goal_id))
+}
+
+pub fn set_tip_goal(env: &Env, goal_id: &BytesN<32>, goal: &TipGoal) {
+    env.storage().persistent().set(&get_tip_goal_key(env, goal_id), goal);
+}
+
+pub fn get_educator_goals(env: &Env, educator: &Address) -> Vec<BytesN<32>> {
+    env.storage().persistent().get(&get_educator_goals_key(env, educator)).unwrap_or(Vec::new(env))
+}
+
+pub fn set_educator_goals(env: &Env, educator: &Address, goals: &Vec<BytesN<32>>) {
+    env.storage().persistent().set(&get_educator_goals_key(env, educator), goals);
+}
+
+// Conditional tip management
+pub fn get_conditional_tip(env: &Env, tip_id: &BytesN<32>) -> Option<ConditionalTip> {
+    env.storage().persistent().get(&get_conditional_tip_key(env, tip_id))
+}
+
+pub fn set_conditional_tip(env: &Env, tip_id: &BytesN<32>, conditional_tip: &ConditionalTip) {
+    env.storage().persistent().set(&get_conditional_tip_key(env, tip_id), conditional_tip);
+}
+
+pub fn get_educator_conditional_tips(env: &Env, educator: &Address) -> Vec<BytesN<32>> {
+    env.storage().persistent().get(&get_educator_conditional_tips_key(env, educator)).unwrap_or(Vec::new(env))
+}
+
+pub fn set_educator_conditional_tips(env: &Env, educator: &Address, tips: &Vec<BytesN<32>>) {
+    env.storage().persistent().set(&get_educator_conditional_tips_key(env, educator), tips);
+}
+
+// Analytics management
+pub fn get_analytics_record(env: &Env, timestamp: &u64) -> Option<AnalyticsRecord> {
+    env.storage().persistent().get(&get_analytics_record_key(env, timestamp))
+}
+
+pub fn set_analytics_record(env: &Env, timestamp: &u64, record: &AnalyticsRecord) {
+    env.storage().persistent().set(&get_analytics_record_key(env, timestamp), record);
+}
+
+// All tips storage for analytics
+pub fn get_all_tips(env: &Env) -> Vec<Tip> {
+    env.storage().persistent().get(&get_all_tips_key(env)).unwrap_or(Vec::new(env))
+}
+
+pub fn set_all_tips(env: &Env, tips: &Vec<Tip>) {
+    env.storage().persistent().set(&get_all_tips_key(env), tips);
+}
+
+pub fn add_tip_to_all_tips(env: &Env, tip: &Tip) {
+    let mut all_tips = get_all_tips(env);
+    all_tips.push_back(tip.clone());
+    set_all_tips(env, &all_tips);
+}
+
+// Get tips in a specific time period
+pub fn get_all_tips_in_period(env: &Env, start_time: u64, end_time: u64) -> Vec<Tip> {
+    let all_tips = get_all_tips(env);
+    let mut result = Vec::new(env);
+
+    for i in 0..all_tips.len() {
+        if let Some(tip) = all_tips.get(i) {
+            if tip.timestamp >= start_time && tip.timestamp <= end_time {
+                result.push_back(tip);
+            }
+        }
+    }
+
+    result
+}
+
+// Get tips for a specific educator in a time period
+pub fn get_educator_tips_in_period(env: &Env, educator: &Address, start_time: u64, end_time: u64) -> Vec<Tip> {
+    let all_tips = get_all_tips(env);
+    let mut result = Vec::new(env);
+
+    for i in 0..all_tips.len() {
+        if let Some(tip) = all_tips.get(i) {
+            if tip.to == *educator && tip.timestamp >= start_time && tip.timestamp <= end_time {
+                result.push_back(tip);
+            }
+        }
+    }
+
+    result
 }
