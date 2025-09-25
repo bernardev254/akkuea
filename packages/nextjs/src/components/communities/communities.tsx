@@ -34,7 +34,6 @@ import { Pagination, PaginationInfo } from '@/components/pagination';
 import { usePagination } from '@/hooks/usePagination';
 import { useMemo } from 'react';
 
-
 // Mock data
 const allCommunities = [
   {
