@@ -8,12 +8,14 @@ use stellar_macros::default_impl;
 use stellar_tokens::non_fungible::{Base, NonFungibleToken};
 
 mod metadata;
+mod marketplace;
 mod mock_educator_verification_nft;
 mod nft;
 mod social;
 mod utils;
 
 pub use metadata::*;
+pub use marketplace::*;
 pub use nft::*;
 pub use social::*;
 pub use utils::*;
@@ -436,6 +438,105 @@ impl EducationalNFTContract {
     pub fn get_user_groups(e: &Env, user: Address) -> Vec<social::CollaborativeGroup> {
         social::get_user_groups(e, &user)
     }
+
+    // ========================================
+    // MARKETPLACE FEATURES
+    // ========================================
+
+    /// List an NFT for sale or auction
+    pub fn list_nft(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+        price: i128,
+        auction_end: u64,
+        royalty_rate: u32,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        marketplace::list_nft(e, &caller, token_id, price, auction_end, royalty_rate)
+    }
+
+    /// Buy an NFT from the marketplace
+    pub fn buy_nft(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+        payment_amount: i128,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        marketplace::buy_nft(e, &caller, token_id, payment_amount)
+    }
+
+    /// Place a bid on an auction
+    pub fn place_bid(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+        bid_amount: i128,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        marketplace::place_bid(e, &caller, token_id, bid_amount)
+    }
+
+    /// Settle an auction and transfer NFT to highest bidder
+    pub fn settle_auction(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        marketplace::settle_auction(e, &caller, token_id)
+    }
+
+    /// Cancel a listing
+    pub fn cancel_listing(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        marketplace::cancel_listing(e, &caller, token_id)
+    }
+
+    /// Get listing details for a specific NFT
+    pub fn get_listing(e: &Env, token_id: u64) -> Option<marketplace::Listing> {
+        marketplace::get_listing(e, token_id)
+    }
+
+    /// Get all bids for a specific NFT
+    pub fn get_bids(e: &Env, token_id: u64) -> Vec<marketplace::Bid> {
+        marketplace::get_bids(e, token_id)
+    }
+
+    /// Get highest bid for a specific NFT
+    pub fn get_highest_bid(e: &Env, token_id: u64) -> Option<marketplace::Bid> {
+        marketplace::get_highest_bid(e, token_id)
+    }
+
+    /// Get sales history for a specific NFT
+    pub fn get_sales_history(e: &Env, token_id: u64) -> Vec<marketplace::Sale> {
+        marketplace::get_sales_history(e, token_id)
+    }
+
+    /// Get price history for a specific NFT
+    pub fn get_price_history(e: &Env, token_id: u64) -> Option<marketplace::PriceHistory> {
+        marketplace::get_price_history(e, token_id)
+    }
+
+    /// Calculate average price for a specific NFT
+    pub fn get_average_price(e: &Env, token_id: u64) -> Option<i128> {
+        marketplace::calculate_average_price(e, token_id)
+    }
+
+    /// Get all active listings (placeholder for production indexing)
+    pub fn get_active_listings(e: &Env) -> Vec<marketplace::Listing> {
+        marketplace::get_active_listings(e)
+    }
+
+    /// Get listings by seller (placeholder for production indexing)
+    pub fn get_listings_by_seller(e: &Env, seller: Address) -> Vec<marketplace::Listing> {
+        marketplace::get_listings_by_seller(e, &seller)
+    }
 }
 
 #[default_impl]
@@ -453,3 +554,6 @@ mod tests;
 
 #[cfg(test)]
 mod social_tests;
+
+#[cfg(test)]
+mod marketplace_tests;

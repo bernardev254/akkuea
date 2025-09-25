@@ -18,6 +18,10 @@ pub const METADATA_UPDATED_EVENT: Symbol = symbol_short!("meta_upd");
 pub const SOCIAL_SHARE_EVENT: Symbol = symbol_short!("soc_share");
 pub const SOCIAL_COLLAB_EVENT: Symbol = symbol_short!("soc_colb");
 pub const SOCIAL_SHOWCASE_EVENT: Symbol = symbol_short!("soc_show");
+pub const MARKETPLACE_LISTING_EVENT: Symbol = symbol_short!("mkt_list");
+pub const MARKETPLACE_SALE_EVENT: Symbol = symbol_short!("mkt_sale");
+pub const MARKETPLACE_BID_EVENT: Symbol = symbol_short!("mkt_bid");
+pub const MARKETPLACE_ROYALTY_EVENT: Symbol = symbol_short!("mkt_royal");
 
 /// Event data structures for Educational NFT operations
 ///
@@ -337,6 +341,24 @@ pub enum NFTError {
     InvalidVisibility = 25,
     /// Showcase not found
     ShowcaseNotFound = 26,
+    /// Listing not found
+    ListingNotFound = 27,
+    /// Invalid price
+    InvalidPrice = 28,
+    /// Auction not active
+    AuctionNotActive = 29,
+    /// Bid too low
+    BidTooLow = 30,
+    /// Auction ended
+    AuctionEnded = 31,
+    /// Not auction
+    NotAuction = 32,
+    /// Auction still active
+    AuctionStillActive = 33,
+    /// Invalid royalty rate
+    InvalidRoyaltyRate = 34,
+    /// Insufficient payment
+    InsufficientPayment = 35,
 }
 
 impl NFTError {
@@ -369,6 +391,15 @@ impl NFTError {
             NFTError::NotGroupMember => "NotGroupMember",
             NFTError::InvalidVisibility => "InvalidVisibility",
             NFTError::ShowcaseNotFound => "ShowcaseNotFound",
+            NFTError::ListingNotFound => "ListingNotFound",
+            NFTError::InvalidPrice => "InvalidPrice",
+            NFTError::AuctionNotActive => "AuctionNotActive",
+            NFTError::BidTooLow => "BidTooLow",
+            NFTError::AuctionEnded => "AuctionEnded",
+            NFTError::NotAuction => "NotAuction",
+            NFTError::AuctionStillActive => "AuctionStillActive",
+            NFTError::InvalidRoyaltyRate => "InvalidRoyaltyRate",
+            NFTError::InsufficientPayment => "InsufficientPayment",
         }
     }
 }
