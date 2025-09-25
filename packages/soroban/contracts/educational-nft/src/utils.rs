@@ -18,7 +18,6 @@ pub const METADATA_UPDATED_EVENT: Symbol = symbol_short!("meta_upd");
 pub const SOCIAL_SHARE_EVENT: Symbol = symbol_short!("soc_share");
 pub const SOCIAL_COLLAB_EVENT: Symbol = symbol_short!("soc_colb");
 pub const SOCIAL_SHOWCASE_EVENT: Symbol = symbol_short!("soc_show");
-
 /// Event data structures for Educational NFT operations
 ///
 /// These structures define the data that gets emitted with each event type:
