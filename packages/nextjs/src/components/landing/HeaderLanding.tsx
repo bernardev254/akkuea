@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { gsap } from 'gsap';
+import { useTheme } from 'next-themes';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import './HeaderLanding.css';
 import { useLayoutEffect, useCallback } from 'react';
 import { ArrowUpRight } from 'lucide-react';
@@ -64,6 +67,10 @@ export default function HeaderLanding() {
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const pathname = usePathname();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const calculateHeight = () => {
     const navEl = navRef.current;
@@ -222,6 +229,48 @@ export default function HeaderLanding() {
           <Link href="/get-started" className="card-nav-cta-button">
             Get Started
           </Link>
+        </div>
+
+        {/* Theme Toggle */}
+        <div className="flex items-center gap-4">
+          {mounted && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      if (theme === 'light') setTheme('dark');
+                      else if (theme === 'dark') setTheme('system');
+                      else setTheme('light');
+                    }}
+                    className="p-2 hover:bg-muted/50 rounded-full transition-colors"
+                  >
+                    {theme === 'system' ? (
+                      <Monitor className="h-5 w-5 text-muted" />
+                    ) : resolvedTheme === 'dark' ? (
+                      <Moon className="h-5 w-5 text-primary" />
+                    ) : (
+                      <Sun className="h-5 w-5 text-achievement" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>
+                    {theme === 'light'
+                      ? 'Switch to dark mode'
+                      : theme === 'dark'
+                        ? 'Switch to system theme'
+                        : 'Switch to light mode'}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          <button className="md:hidden" onClick={() => setIsHamburgerOpen(!isHamburgerOpen)}>
+            {isHamburgerOpen ? <XIcon /> : <Menu />}
+          </button>
         </div>
 
         {/* Expandable content with navigation cards */}

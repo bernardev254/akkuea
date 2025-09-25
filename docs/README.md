@@ -8,6 +8,7 @@ _Empowering education through the strategic use of emerging technology_
 
 Welcome to the comprehensive documentation for Akkuea, the educational social platform that honors Costa Rica's indigenous heritage while building innovative learning experiences. This documentation is designed to be accessible, well-structured, and culturally sensitive.
 
+
 ---
 
 ## 📚 Documentation Structure
@@ -71,6 +72,7 @@ Issue 301
 <!-- Make the changes from issue number 301 here. Thank you for contributing to Akkuea! -->
 
 ---
+
 
 ## 📊 Documentation Statistics
 
