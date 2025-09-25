@@ -97,7 +97,14 @@ Issue 319
 
 Issue 320
 
-<!-- Make the changes from issue number 320 here. Thank you for contributing to Akkuea! -->
+#### Step 2: Expertise Configuration
+| Configuration Area | Options | Customization Level |
+|-------------------|---------|-------------------|
+| **Knowledge Depth** | Beginner, Intermediate, Expert, Research-level | Granular control |
+| **Cultural Context** | Regional, National, Indigenous, Global | Multiple selections |
+| **Language Preferences** | Spanish, English, Indigenous languages | Multilingual support |
+| **Communication Style** | Formal, Conversational, Educational, Inspiring | Personality traits |
+| **Interaction Modes** | Text, Voice, Visual, Interactive | Multi-modal capabilities |
 
 ---
 
