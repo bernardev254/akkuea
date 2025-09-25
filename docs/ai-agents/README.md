@@ -70,9 +70,22 @@ graph TB
 
 ---
 
-Issue 318
 
-<!-- Make the changes from issue number 318 here. Thank you for contributing to Akkuea! -->
+## Agent Creation Workflow
+
+### User-Friendly Agent Builder
+
+```mermaid
+flowchart TD
+    A[Agent Creation Request] --> B[Domain Selection]
+    B --> C[Expertise Definition]
+    C --> D[Knowledge Base Assembly]
+    D --> E[Personality Configuration]
+    E --> F[Training & Testing]
+    F --> G[Community Validation]
+    G --> H[Agent Deployment]
+    H --> I[Continuous Learning]
+```
 
 ---
 
