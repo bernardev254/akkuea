@@ -1,18 +1,14 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
 interface SkeletonProps {
   width?: string;
   height?: string;
-  rounded?: "sm" | "md" | "lg" | "xl" | "2xl" | "full";
+  rounded?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 }
 
-const Skeleton: React.FC<SkeletonProps> = ({
-  width = "100%",
-  height = "20px",
-  rounded = "md",
-}) => {
+const Skeleton: React.FC<SkeletonProps> = ({ width = '100%', height = '20px', rounded = 'md' }) => {
   return (
     <div
       className={`bg-muted animate-pulse rounded-${rounded}`}
