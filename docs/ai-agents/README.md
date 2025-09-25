@@ -125,9 +125,14 @@ Issue 327
 
 ---
 
-Issue 328
+### Ethical Guidelines & Safety Measures
 
-<!-- Make the changes from issue number 328 here. Thank you for contributing to Akkuea! -->
+#### AI Ethics Framework
+- **Transparency**: Clear indication of AI-generated content
+- **Bias Prevention**: Regular bias auditing and correction
+- **Cultural Respect**: Indigenous knowledge protection protocols
+- **Educational Integrity**: Fact-checking and source attribution
+- **Privacy Protection**: User data anonymization and security
 
 ---
 
