@@ -1,10 +1,13 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Monitor, Moon, Sun, XIcon, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useLayoutEffect, useRef, useState, useCallback } from 'react';
+import { useLayoutEffect, useRef, useState, useCallback, useEffect } from 'react';
 import { gsap } from 'gsap';
+import { useTheme } from 'next-themes';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import './HeaderLanding.css';
 
 interface NavLink {
@@ -23,35 +26,35 @@ interface NavItem {
 // All cards now white like the first one
 const navItems: NavItem[] = [
   {
-    label: "About",
-    bgColor: "hsl(var(--card))",
-    textColor: "hsl(var(--card-foreground))",
+    label: 'About',
+    bgColor: 'hsl(var(--card))',
+    textColor: 'hsl(var(--card-foreground))',
     links: [
-      { label: "Company", href: "/about/company", ariaLabel: "About Company" },
-      { label: "Team", href: "/about/team", ariaLabel: "About Team" },
-      { label: "Mission", href: "/about/mission", ariaLabel: "Our Mission" }
-    ]
+      { label: 'Company', href: '/about/company', ariaLabel: 'About Company' },
+      { label: 'Team', href: '/about/team', ariaLabel: 'About Team' },
+      { label: 'Mission', href: '/about/mission', ariaLabel: 'Our Mission' },
+    ],
   },
   {
-    label: "Benefits", 
-    bgColor: "hsl(var(--card))",
-    textColor: "hsl(var(--card-foreground))",
+    label: 'Benefits',
+    bgColor: 'hsl(var(--card))',
+    textColor: 'hsl(var(--card-foreground))',
     links: [
-      { label: "Features", href: "/benefits/features", ariaLabel: "Platform Features" },
-      { label: "Pricing", href: "/benefits/pricing", ariaLabel: "Pricing Plans" },
-      { label: "ROI Calculator", href: "/benefits/roi", ariaLabel: "ROI Calculator" }
-    ]
+      { label: 'Features', href: '/benefits/features', ariaLabel: 'Platform Features' },
+      { label: 'Pricing', href: '/benefits/pricing', ariaLabel: 'Pricing Plans' },
+      { label: 'ROI Calculator', href: '/benefits/roi', ariaLabel: 'ROI Calculator' },
+    ],
   },
   {
-    label: "Community",
-    bgColor: "hsl(var(--card))",
-    textColor: "hsl(var(--card-foreground))",
+    label: 'Community',
+    bgColor: 'hsl(var(--card))',
+    textColor: 'hsl(var(--card-foreground))',
     links: [
-      { label: "Discord", href: "/community/discord", ariaLabel: "Join Discord" },
-      { label: "Forum", href: "/community/forum", ariaLabel: "Community Forum" },
-      { label: "Events", href: "/community/events", ariaLabel: "Community Events" }
-    ]
-  }
+      { label: 'Discord', href: '/community/discord', ariaLabel: 'Join Discord' },
+      { label: 'Forum', href: '/community/forum', ariaLabel: 'Community Forum' },
+      { label: 'Events', href: '/community/events', ariaLabel: 'Community Events' },
+    ],
+  },
 ];
 
 export default function HeaderLanding() {
@@ -61,6 +64,10 @@ export default function HeaderLanding() {
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const pathname = usePathname();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const calculateHeight = () => {
     const navEl = navRef.current;
@@ -109,16 +116,20 @@ export default function HeaderLanding() {
     tl.to(navEl, {
       height: calculateHeight,
       duration: 0.4,
-      ease: 'power3.out'
+      ease: 'power3.out',
     });
 
-    tl.to(cardsRef.current, { 
-      y: 0, 
-      opacity: 1, 
-      duration: 0.4, 
-      ease: 'power3.out', 
-      stagger: 0.08 
-    }, '-=0.1');
+    tl.to(
+      cardsRef.current,
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.4,
+        ease: 'power3.out',
+        stagger: 0.08,
+      },
+      '-=0.1'
+    );
 
     return tl;
   }, []);
@@ -181,16 +192,16 @@ export default function HeaderLanding() {
 
   return (
     <div className="card-nav-container">
-      <nav 
-        ref={navRef} 
-        className={cn("card-nav", isExpanded && "open")}
+      <nav
+        ref={navRef}
+        className={cn('card-nav', isExpanded && 'open')}
         role="navigation"
         aria-label="Main navigation"
       >
         {/* Top bar with logo, hamburger, and CTA */}
         <div className="card-nav-top">
           <div
-            className={cn("hamburger-menu", isHamburgerOpen && "open")}
+            className={cn('hamburger-menu', isHamburgerOpen && 'open')}
             onClick={toggleMenu}
             role="button"
             aria-label={isExpanded ? 'Close menu' : 'Open menu'}
@@ -212,10 +223,7 @@ export default function HeaderLanding() {
             </Link>
           </div>
 
-          <Link
-            href="/get-started"
-            className="card-nav-cta-button"
-          >
+          <Link href="/get-started" className="card-nav-cta-button">
             Get Started
           </Link>
         </div>
@@ -277,10 +285,7 @@ export default function HeaderLanding() {
                   <Link
                     key={`${link.label}-${i}`}
                     href={link.href}
-                    className={cn(
-                      "nav-card-link",
-                      pathname === link.href && "active"
-                    )}
+                    className={cn('nav-card-link', pathname === link.href && 'active')}
                     aria-label={link.ariaLabel}
                   >
                     <ArrowUpRight className="nav-card-link-icon" aria-hidden="true" />
@@ -292,5 +297,6 @@ export default function HeaderLanding() {
           ))}
         </div>
       </nav>
+    </div>
   );
 }
