@@ -13,6 +13,7 @@ mod marketplace;
 mod mock_educator_verification_nft;
 mod nft;
 mod social;
+mod batch;
 mod utils;
 
 pub use governance::*;
@@ -20,6 +21,7 @@ pub use metadata::*;
 pub use marketplace::*;
 pub use nft::*;
 pub use social::*;
+pub use batch::*;
 pub use utils::*;
 
 pub use mock_educator_verification_nft::MockEducatorVerificationNft;
@@ -441,6 +443,38 @@ impl EducationalNFTContract {
         social::get_user_groups(e, &user)
     }
 
+    // ========================================
+    // BATCH FEATURES
+    // ========================================
+
+    pub fn batch_mint_nfts(
+        e: &Env,
+        caller: Address,
+        owners: Vec<Address>,
+        collection_id: u64,
+        fractions: u32,
+        metadata_hashes: Vec<Bytes>,
+    ) -> Result<Vec<u32>, NFTError> {
+        batch::batch_mint_nfts(e, caller, owners, collection_id, fractions, metadata_hashes)
+    }
+
+    pub fn batch_transfer_nfts(
+        e: &Env,
+        caller: Address,
+        token_ids: Vec<u64>,
+        recipients: Vec<Address>,
+    ) -> Result<(), NFTError> {
+        caller.require_auth();
+        batch::batch_transfer_nfts(e, &caller, token_ids, recipients)
+    }
+
+    pub fn batch_query_ownership(
+        e: &Env,
+        token_ids: Vec<u64>,
+    ) -> Result<Vec<(u64, EducationalNFT)>, NFTError> {
+        batch::batch_query_ownership(e, token_ids)
+    }
+     
     // ========================================
     // MARKETPLACE FEATURES
     // ========================================

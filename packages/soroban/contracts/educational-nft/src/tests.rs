@@ -1,7 +1,7 @@
 extern crate std;
 
 use crate::{EducationalNFTContract, EducationalNFTContractClient, MockEducatorVerificationNft};
-use soroban_sdk::{testutils::Address as _, Address, Bytes, Env, String};
+use soroban_sdk::{testutils::Address as _, Address, Bytes, Env, String, vec, log};
 
 fn setup_test_environment() -> (
     Env,
@@ -958,4 +958,176 @@ fn test_get_nonexistent_metadata_version() {
 
     // Try to get version that doesn't exist
     client.get_metadata(&(token_id as u64), &Some(999u32));
+}
+
+#[test]
+fn test_batch_mint_nfts_success() {
+    let (env, owner, educator, _user, client) = setup_test_environment();
+    let second_educator = Address::generate(&env);
+    let collection_id = 1u64;
+    let fractions = 100u32;
+    let owners = vec![&env, educator.clone(), second_educator.clone()];
+    let metadata_hashes = vec![&env, create_test_metadata(&env), create_test_metadata(&env)];
+    let token_ids = client.batch_mint_nfts(&educator, &owners, &collection_id, &fractions, &metadata_hashes);
+    log!(&env, "token_ids: {}", token_ids);
+    log!(&env, "owners: {}", owners);
+    assert_eq!(token_ids.len(), 2);
+
+    let first_token = token_ids.get(0).unwrap();
+    let nft_info = client.try_get_nft_info(&first_token).unwrap().unwrap();
+
+    assert_eq!(nft_info.clone().token_id, first_token as u64);
+    assert_eq!(nft_info.clone().owner, educator);
+    assert_eq!(nft_info.collection_id, collection_id);
+    assert_eq!(nft_info.fractions, fractions);
+    assert_eq!(nft_info.metadata_hash, metadata_hashes.get(0).unwrap());
+
+    let second_token = token_ids.get(1).unwrap();
+    let second_nft_info = client.try_get_nft_info(&second_token).unwrap().unwrap();
+
+    assert_eq!(second_nft_info.clone().token_id, second_token as u64);
+    assert_eq!(second_nft_info.clone().owner, second_educator);
+    assert_eq!(nft_info.collection_id, collection_id);
+    assert_eq!(nft_info.fractions, fractions);
+    assert_eq!(nft_info.metadata_hash, metadata_hashes.get(1).unwrap());
+}
+
+#[test]
+fn test_batch_transfer_nft_success() {
+    let (env, _owner, educator, user, client) = setup_test_environment();
+    let collection_ids = vec![&env, 1u64, 2u64, 3u64];
+    let fractions = 0u32; // Non-fractional NFTs
+    let metadata_hash = create_test_metadata(&env);
+    let user2 = Address::generate(&env);
+
+    // Mint three NFTs
+    let token_id1 = client.mint_nft(&educator, &collection_ids.get(0).unwrap(), &fractions, &metadata_hash);
+    let token_id2 = client.mint_nft(&educator, &collection_ids.get(1).unwrap(), &fractions, &metadata_hash);
+    let token_id3 = client.mint_nft(&educator, &collection_ids.get(2).unwrap(), &fractions, &metadata_hash);
+
+    // Verify NFT was minted successfully
+    let nft_info = client.get_nft_info(&token_id1);
+    assert_eq!(nft_info.owner, educator);
+    assert_eq!(client.owner_of(&token_id1), educator);
+
+     // Verify NFT was minted successfully
+    let nft_info = client.get_nft_info(&token_id1);
+    assert_eq!(nft_info.owner, educator);
+    assert_eq!(client.owner_of(&token_id1), educator);
+
+    assert_eq!(client.balance(&educator), 3u32);
+
+    // Batch transfer NFTs to users
+    let token_ids = vec![&env, token_id1 as u64, token_id2 as u64];
+    let recipients = vec![&env, user.clone(), user2.clone()];
+
+    client.batch_transfer_nfts(&educator, &token_ids, &recipients);
+
+    assert_eq!(
+        client.balance(&educator),
+        1u32,
+        "Educator should have 1 NFTs after batch transfer"
+    );
+
+    let updated_nft_info = client.get_nft_info(&token_id1);
+    assert_eq!(
+        updated_nft_info.owner, user,
+        "NFT owner should be updated to user"
+    );
+
+    assert_eq!(
+        client.balance(&user),
+        1u32,
+        "User should have 1 NFT after transfer"
+    );
+    assert_eq!(
+        client.owner_of(&token_id1),
+        user,
+        "owner_of should return the user address"
+    );
+
+    let updated_nft_info_2 = client.get_nft_info(&token_id2);
+    assert_eq!(
+        updated_nft_info_2.owner, user2,
+        "NFT owner should be updated to user"
+    );
+
+    assert_eq!(
+        client.balance(&user2),
+        1u32,
+        "User should have 1 NFT after transfer"
+    );
+    assert_eq!(
+        client.owner_of(&token_id2),
+        user2,
+        "owner_of should return the user address"
+    );
+}
+
+
+#[test]
+#[should_panic(expected = "Error(Contract, #7)")]
+fn test_batch_transfer_nft_not_owner() {
+    let (env, _owner, educator, user, client) = setup_test_environment();
+    let user2 = Address::generate(&env);
+
+    let collection_id = 1u64;
+    let fractions = 0u32; // Non-fractional NFT
+    let metadata_hash = create_test_metadata(&env);
+    let token_ids = vec![&env, 1u64, 2u64, 3u64];
+    let recipients = vec![&env, user.clone(), user2.clone()];
+
+    // Mint NFT as educator
+    let token_id = client.mint_nft(&educator, &collection_id, &fractions, &metadata_hash);
+
+    // Try to transfer NFT as user (not owner) - this should panic with NotOwner error
+    client.batch_transfer_nfts(&educator, &token_ids, &recipients);
+}
+
+
+#[test]
+fn test_batch_query_ownership() {
+    let (env, _owner, educator, user, client) = setup_test_environment();
+    let collection_ids = vec![&env, 1u64, 2u64, 3u64];
+    let fractions = 0u32; // Non-fractional NFTs
+    let metadata_hash = create_test_metadata(&env);
+    let user2 = Address::generate(&env);
+
+    // Mint three NFTs
+    let token_id1 = client.mint_nft(&educator, &collection_ids.get(0).unwrap(), &fractions, &metadata_hash);
+    let token_id2 = client.mint_nft(&educator, &collection_ids.get(1).unwrap(), &fractions, &metadata_hash);
+    let token_id3 = client.mint_nft(&educator, &collection_ids.get(2).unwrap(), &fractions, &metadata_hash);
+
+    // Verify NFT was minted successfully
+    let nft_info = client.get_nft_info(&token_id1);
+    assert_eq!(nft_info.owner, educator);
+    assert_eq!(client.owner_of(&token_id1), educator);
+
+     // Verify NFT was minted successfully
+    let nft_info = client.get_nft_info(&token_id1);
+    assert_eq!(nft_info.owner, educator);
+    assert_eq!(client.owner_of(&token_id1), educator);
+
+    assert_eq!(client.balance(&educator), 3u32);
+
+    // Batch transfer NFTs to users
+    let token_ids = vec![&env, token_id1 as u64, token_id2 as u64];
+    let recipients = vec![&env, user.clone(), user2.clone()];
+
+    client.batch_transfer_nfts(&educator, &token_ids, &recipients);
+    let result = client.batch_query_ownership(&token_ids);
+
+    let first = result.get(0).unwrap().1;
+    assert_eq!(first.collection_id, 1u64);
+    assert_eq!(first.fractions, 0u32);
+    assert_eq!(first.metadata_hash, metadata_hash);
+    assert_eq!(first.owner, user);
+    assert_eq!(first.token_id, 0u64);
+
+    let second = result.get(1).unwrap().1;
+    assert_eq!(second.collection_id, 2u64);
+    assert_eq!(second.fractions, 0u32);
+    assert_eq!(second.metadata_hash, metadata_hash);
+    assert_eq!(second.owner, user2);
+    assert_eq!(second.token_id, 1u64);
 }
