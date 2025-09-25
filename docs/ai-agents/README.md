@@ -224,7 +224,7 @@ Issue 331
 
 Issue 332
 
-### Community Agent Ecosystem
+### Community Agent Ecosystem.
 
 #### User-Created Agent Network
 - **Public Agent Directory**: Searchable catalog of available agents
