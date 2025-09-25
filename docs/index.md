@@ -8,12 +8,9 @@
 
 ---
 
-
 ## About Akkuea
 
 Akkuea is a revolutionary social networking platform designed to transform educational resource sharing. Our mission is to create a vibrant ecosystem where educators, students, and specialists connect, share knowledge, and build AI-powered educational tools.
-
-
 
 ---
 
