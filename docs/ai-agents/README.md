@@ -221,13 +221,15 @@ Issue 332
 
 ---
 
-Issue 333
-
-<!-- Make the changes from issue number 333 here. Thank you for contributing to Akkuea! -->
+#### Contribution Recognition
+| Contribution Type | Recognition | Reward Mechanism |
+|------------------|-------------|-----------------|
+| **Agent Creation** | Creator badge, platform recognition | Premium features access |
+| **Knowledge Contribution** | Expert contributor status | Marketplace benefits |
+| **Community Validation** | Validator recognition | Special privileges |
+| **Cultural Consultation** | Cultural expert badge | Consultation opportunities |
 
 ---
-
-
 
 ## Technical Implementation
 
