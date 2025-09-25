@@ -23,7 +23,7 @@ export function NavItem({ href, children, className = '', onClick }: NavItemProp
       onClick={onClick}
       className={`
         inline-flex items-center justify-center
-        text-muted-foreground hover:text-foreground
+        text-white dark:text-black hover:text-gray-300 dark:hover:text-gray-600
         transition-colors duration-200
         focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
         active:text-primary

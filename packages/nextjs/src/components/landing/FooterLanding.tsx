@@ -49,7 +49,7 @@ const socialLinks = [
 
 export function FooterLanding() {
   return (
-    <footer className="w-full bg-white">
+    <footer className="w-full bg-gray-900 dark:bg-white">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Desktop & Tablet Layout (md+) */}
         <div className="hidden md:block">
@@ -152,11 +152,11 @@ export function FooterLanding() {
         {/* Bottom Row - Divider and Legal Text (all layouts) */}
         <div>
           {/* Horizontal Divider */}
-          <div className="w-full h-px bg-border mb-6" />
+          <div className="w-full h-px bg-gray-700 dark:bg-gray-200 mb-6" />
 
           {/* Copyright Text */}
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white dark:text-black">
               © 2025 Akkuea. All rights reserved.
             </p>
           </div>
