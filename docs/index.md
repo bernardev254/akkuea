@@ -2,9 +2,9 @@
 
 ---
 
-Issue 309
 
-<!-- Make the changes from issue number 309 here. Thank you for contributing to Akkuea! -->
+## 🦅 Welcome to Akkuea
+*Akkuea* means "Hawk" in Cabecar, proudly reflecting Costa Rica's rich indigenous heritage and our commitment to educational empowerment through emerging technology.
 
 ---
 
