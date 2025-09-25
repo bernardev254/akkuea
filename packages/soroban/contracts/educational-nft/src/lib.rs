@@ -10,10 +10,12 @@ use stellar_tokens::non_fungible::{Base, NonFungibleToken};
 mod metadata;
 mod mock_educator_verification_nft;
 mod nft;
+mod social;
 mod utils;
 
 pub use metadata::*;
 pub use nft::*;
+pub use social::*;
 pub use utils::*;
 
 pub use mock_educator_verification_nft::MockEducatorVerificationNft;
@@ -328,6 +330,112 @@ impl EducationalNFTContract {
 
         Ok(nft::get_tokens_by_content_type(e, &parsed_content_type))
     }
+
+    // ========================================
+    // SOCIAL FEATURES
+    // ========================================
+
+    /// Share an NFT publicly or within a group
+    pub fn share_nft(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+        visibility: String,
+        group_id: Option<u64>,
+        description: String,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        social::share_nft(e, &caller, token_id, visibility, group_id, description)
+    }
+
+    /// Join or create a collaborative learning group with an NFT
+    pub fn join_collaborative_group(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+        group_id: Option<u64>,
+        group_name: Option<String>,
+    ) -> Result<u64, utils::NFTError> {
+        caller.require_auth();
+        social::join_collaborative_group(e, &caller, token_id, group_id, group_name)
+    }
+
+    /// Showcase a user's educational journey through their NFT collection
+    pub fn showcase_collection(
+        e: &Env,
+        caller: Address,
+        collection_id: u64,
+        title: String,
+        description: String,
+        visibility: String,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        social::showcase_collection(e, &caller, collection_id, title, description, visibility)
+    }
+
+    /// Add an NFT to an existing educational journey showcase
+    pub fn add_nft_to_showcase(
+        e: &Env,
+        caller: Address,
+        collection_id: u64,
+        token_id: u64,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        social::add_nft_to_showcase(e, &caller, collection_id, token_id)
+    }
+
+    /// Get social actions for a user and token
+    pub fn get_social_actions(e: &Env, user: Address, token_id: u64) -> Vec<social::SocialAction> {
+        social::get_social_actions(e, &user, token_id)
+    }
+
+    /// Get NFT sharing configuration
+    pub fn get_nft_share_info(e: &Env, token_id: u64) -> Option<social::NFTShare> {
+        social::get_nft_share(e, token_id)
+    }
+
+    /// Get collaborative group information
+    pub fn get_collaborative_group_info(e: &Env, group_id: u64) -> Option<social::CollaborativeGroup> {
+        social::get_collaborative_group(e, group_id)
+    }
+
+    /// Get educational journey showcase
+    pub fn get_educational_journey(e: &Env, user: Address, collection_id: u64) -> Option<social::EducationalJourney> {
+        social::get_educational_journey(e, &user, collection_id)
+    }
+
+    /// Get user's reputation boost information
+    pub fn get_reputation_boost(e: &Env, user: Address) -> Option<social::ReputationBoost> {
+        social::get_reputation_boost(e, &user)
+    }
+
+    /// Update user reputation boost (restricted to authorized contracts)
+    pub fn update_reputation_boost(
+        e: &Env,
+        caller: Address,
+        user: Address,
+        reputation_score: u32,
+        boost_level: u32,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        // TODO: Add authorization check to ensure only reputation contract can call this
+        social::update_reputation_boost(e, &user, reputation_score, boost_level)
+    }
+
+    /// Verify if user has sufficient reputation for boosted visibility
+    pub fn verify_reputation_boost(e: &Env, user: Address, min_reputation: u32) -> bool {
+        social::verify_reputation_boost(e, &user, min_reputation)
+    }
+
+    /// Get public NFT shares for discovery
+    pub fn get_public_shares(e: &Env) -> Vec<social::NFTShare> {
+        social::get_public_nft_shares(e)
+    }
+
+    /// Get user's collaborative groups
+    pub fn get_user_groups(e: &Env, user: Address) -> Vec<social::CollaborativeGroup> {
+        social::get_user_groups(e, &user)
+    }
 }
 
 #[default_impl]
@@ -342,3 +450,6 @@ impl Ownable for EducationalNFTContract {}
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod social_tests;
