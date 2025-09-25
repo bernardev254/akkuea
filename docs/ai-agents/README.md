@@ -8,9 +8,34 @@ Issue 315
 
 ---
 
-Issue 316
 
-<!-- Make the changes from issue number 316 here. Thank you for contributing to Akkuea! -->
+## Agent Architecture
+
+### Core Components
+
+```mermaid
+graph TB
+    A[AI Agent Core] --> B[Knowledge Base]
+    A --> C[Interaction Engine]
+    A --> D[Content Generator]
+    A --> E[Learning Adapter]
+    
+    B --> B1[Domain Expertise]
+    B --> B2[Cultural Context]
+    B --> B3[Educational Standards]
+    
+    C --> C1[Natural Language Processing]
+    C --> C2[Voice Interface]
+    C --> C3[Visual Communication]
+    
+    D --> D1[Text Generation]
+    D --> D2[Media Creation]
+    D --> D3[Assessment Tools]
+    
+    E --> E1[Personalization Engine]
+    E --> E2[Progress Tracking]
+    E --> E3[Adaptive Content]
+```
 
 ---
 
