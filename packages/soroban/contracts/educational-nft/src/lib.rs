@@ -7,6 +7,7 @@ use stellar_access::ownable::{self as ownable, Ownable};
 use stellar_macros::default_impl;
 use stellar_tokens::non_fungible::{Base, NonFungibleToken};
 
+mod governance;
 mod metadata;
 mod marketplace;
 mod mock_educator_verification_nft;
@@ -14,6 +15,7 @@ mod nft;
 mod social;
 mod utils;
 
+pub use governance::*;
 pub use metadata::*;
 pub use marketplace::*;
 pub use nft::*;
@@ -537,6 +539,98 @@ impl EducationalNFTContract {
     pub fn get_listings_by_seller(e: &Env, seller: Address) -> Vec<marketplace::Listing> {
         marketplace::get_listings_by_seller(e, &seller)
     }
+
+    // ========================================
+    // GOVERNANCE FEATURES
+    // ========================================
+
+    /// Initialize governance system (only callable by owner)
+    pub fn initialize_governance(e: &Env, caller: Address) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        // TODO: Check if caller is owner
+        governance::initialize_governance(e);
+        Ok(())
+    }
+
+    /// Create a new governance proposal
+    pub fn create_proposal(
+        e: &Env,
+        caller: Address,
+        proposal_type: governance::ProposalType,
+        title: String,
+        description: String,
+        vote_end: u64,
+    ) -> Result<u64, utils::NFTError> {
+        caller.require_auth();
+        governance::create_proposal(e, &caller, proposal_type, title, description, vote_end)
+    }
+
+    /// Vote on a governance proposal
+    pub fn vote_on_proposal(
+        e: &Env,
+        caller: Address,
+        proposal_id: u64,
+        vote: bool,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        governance::vote_on_proposal(e, &caller, proposal_id, vote)
+    }
+
+    /// Finalize a proposal after voting period ends
+    pub fn finalize_proposal(
+        e: &Env,
+        caller: Address,
+        proposal_id: u64,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        governance::finalize_proposal(e, &caller, proposal_id)
+    }
+
+    /// Get proposal details
+    pub fn get_proposal(e: &Env, proposal_id: u64) -> Option<governance::Proposal> {
+        governance::get_proposal(e, proposal_id)
+    }
+
+    /// Get vote details for a specific voter and proposal
+    pub fn get_vote(e: &Env, proposal_id: u64, voter: Address) -> Option<governance::Vote> {
+        governance::get_vote(e, proposal_id, &voter)
+    }
+
+    /// Get voter eligibility information
+    pub fn get_voter_eligibility(e: &Env, voter: Address) -> governance::VoterEligibility {
+        governance::get_voter_eligibility(e, &voter)
+    }
+
+    /// Get current governance configuration
+    pub fn get_governance_config(e: &Env) -> governance::GovernanceConfig {
+        governance::get_governance_config(e)
+    }
+
+    /// Update governance configuration (restricted access)
+    pub fn update_governance_config(
+        e: &Env,
+        caller: Address,
+        config: governance::GovernanceConfig,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        // TODO: Check if caller has permission to update config
+        governance::update_governance_config(e, &caller, config)
+    }
+
+    /// Get active proposals (placeholder for production indexing)
+    pub fn get_active_proposals(e: &Env) -> Vec<governance::Proposal> {
+        governance::get_active_proposals(e)
+    }
+
+    /// Get proposals by creator (placeholder for production indexing)
+    pub fn get_proposals_by_creator(e: &Env, creator: Address) -> Vec<governance::Proposal> {
+        governance::get_proposals_by_creator(e, &creator)
+    }
+
+    /// Get all votes for a proposal (placeholder for production indexing)
+    pub fn get_proposal_votes(e: &Env, proposal_id: u64) -> Vec<governance::Vote> {
+        governance::get_proposal_votes(e, proposal_id)
+    }
 }
 
 #[default_impl]
@@ -557,3 +651,6 @@ mod social_tests;
 
 #[cfg(test)]
 mod marketplace_tests;
+
+#[cfg(test)]
+mod governance_tests;

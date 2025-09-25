@@ -22,6 +22,10 @@ pub const MARKETPLACE_LISTING_EVENT: Symbol = symbol_short!("mkt_list");
 pub const MARKETPLACE_SALE_EVENT: Symbol = symbol_short!("mkt_sale");
 pub const MARKETPLACE_BID_EVENT: Symbol = symbol_short!("mkt_bid");
 pub const MARKETPLACE_ROYALTY_EVENT: Symbol = symbol_short!("mkt_royal");
+pub const GOVERNANCE_PROPOSAL_EVENT: Symbol = symbol_short!("gov_prop");
+pub const GOVERNANCE_VOTE_EVENT: Symbol = symbol_short!("gov_vote");
+pub const GOVERNANCE_FINALIZE_EVENT: Symbol = symbol_short!("gov_final");
+pub const GOVERNANCE_EXECUTE_EVENT: Symbol = symbol_short!("gov_exec");
 
 /// Event data structures for Educational NFT operations
 ///
@@ -359,6 +363,26 @@ pub enum NFTError {
     InvalidRoyaltyRate = 34,
     /// Insufficient payment
     InsufficientPayment = 35,
+    /// Proposal not found
+    ProposalNotFound = 36,
+    /// Voting period ended
+    VotingPeriodEnded = 37,
+    /// Already voted
+    AlreadyVoted = 38,
+    /// Insufficient reputation to propose
+    InsufficientReputation = 39,
+    /// Invalid proposal duration
+    InvalidProposalDuration = 40,
+    /// Proposal not ready for finalization
+    ProposalNotReady = 41,
+    /// Insufficient quorum
+    InsufficientQuorum = 42,
+    /// Proposal execution failed
+    ProposalExecutionFailed = 43,
+    /// Invalid voting power
+    InvalidVotingPower = 44,
+    /// Proposal already finalized
+    ProposalAlreadyFinalized = 45,
 }
 
 impl NFTError {
@@ -400,6 +424,16 @@ impl NFTError {
             NFTError::AuctionStillActive => "AuctionStillActive",
             NFTError::InvalidRoyaltyRate => "InvalidRoyaltyRate",
             NFTError::InsufficientPayment => "InsufficientPayment",
+            NFTError::ProposalNotFound => "ProposalNotFound",
+            NFTError::VotingPeriodEnded => "VotingPeriodEnded",
+            NFTError::AlreadyVoted => "AlreadyVoted",
+            NFTError::InsufficientReputation => "InsufficientReputation",
+            NFTError::InvalidProposalDuration => "InvalidProposalDuration",
+            NFTError::ProposalNotReady => "ProposalNotReady",
+            NFTError::InsufficientQuorum => "InsufficientQuorum",
+            NFTError::ProposalExecutionFailed => "ProposalExecutionFailed",
+            NFTError::InvalidVotingPower => "InvalidVotingPower",
+            NFTError::ProposalAlreadyFinalized => "ProposalAlreadyFinalized",
         }
     }
 }
