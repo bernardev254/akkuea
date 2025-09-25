@@ -1,5 +1,9 @@
 use soroban_sdk::{Address, Env, Symbol, Vec, BytesN};
-use crate::types::{EducatorStats, TipHistory, Tip};
+use crate::types::{
+    EducatorStats, TipHistory, Tip,
+    SecurityConfig, MultiSigOperation, TimeLockedWithdrawal, FraudAlert,
+    Proposal, Vote, GovernanceConfig, FeeConfig
+};
 use crate::token::WhitelistedToken;
 use crate::price_feeds::{PriceData, ConversionRate};
 use crate::subscriptions::{Subscription, TipGoal, ConditionalTip};
@@ -343,4 +347,150 @@ pub fn get_educator_tips_in_period(env: &Env, educator: &Address, start_time: u6
     }
 
     result
+}
+
+// ==== SECURITY STORAGE KEYS AND FUNCTIONS ====
+
+// Security storage keys
+fn get_security_config_key(env: &Env) -> Symbol {
+    Symbol::new(env, "SEC_CONFIG")
+}
+
+fn get_multi_sig_operation_key(env: &Env, operation_id: &BytesN<32>) -> Symbol {
+    Symbol::new(env, "MULTISIG_OP")
+}
+
+fn get_time_locked_withdrawal_key(env: &Env, withdrawal_id: &BytesN<32>) -> Symbol {
+    Symbol::new(env, "TIME_LOCK")
+}
+
+fn get_fraud_alert_key(env: &Env, alert_id: &BytesN<32>) -> Symbol {
+    Symbol::new(env, "FRAUD_ALERT")
+}
+
+// Security configuration management
+pub fn get_security_config(env: &Env) -> Option<SecurityConfig> {
+    env.storage().persistent().get(&get_security_config_key(env))
+}
+
+pub fn set_security_config(env: &Env, config: &SecurityConfig) {
+    env.storage().persistent().set(&get_security_config_key(env), config);
+}
+
+// Multi-signature operation management
+pub fn get_multi_sig_operation(env: &Env, operation_id: &BytesN<32>) -> Option<MultiSigOperation> {
+    env.storage().persistent().get(&get_multi_sig_operation_key(env, operation_id))
+}
+
+pub fn set_multi_sig_operation(env: &Env, operation_id: &BytesN<32>, operation: &MultiSigOperation) {
+    env.storage().persistent().set(&get_multi_sig_operation_key(env, operation_id), operation);
+}
+
+// Time-locked withdrawal management
+pub fn get_time_locked_withdrawal(env: &Env, withdrawal_id: &BytesN<32>) -> Option<TimeLockedWithdrawal> {
+    env.storage().persistent().get(&get_time_locked_withdrawal_key(env, withdrawal_id))
+}
+
+pub fn set_time_locked_withdrawal(env: &Env, withdrawal_id: &BytesN<32>, withdrawal: &TimeLockedWithdrawal) {
+    env.storage().persistent().set(&get_time_locked_withdrawal_key(env, withdrawal_id), withdrawal);
+}
+
+pub fn remove_time_locked_withdrawal(env: &Env, withdrawal_id: &BytesN<32>) {
+    env.storage().persistent().remove(&get_time_locked_withdrawal_key(env, withdrawal_id));
+}
+
+// Fraud alert management
+pub fn get_fraud_alert(env: &Env, alert_id: &BytesN<32>) -> Option<FraudAlert> {
+    env.storage().persistent().get(&get_fraud_alert_key(env, alert_id))
+}
+
+pub fn set_fraud_alert(env: &Env, alert_id: &BytesN<32>, alert: &FraudAlert) {
+    env.storage().persistent().set(&get_fraud_alert_key(env, alert_id), alert);
+}
+
+pub fn get_all_fraud_alerts(env: &Env) -> Vec<FraudAlert> {
+    // This is a simplified implementation - in production, you'd maintain an index
+    Vec::new(env)
+}
+
+// ==== GOVERNANCE STORAGE KEYS AND FUNCTIONS ====
+
+// Governance storage keys
+fn get_governance_config_key(env: &Env) -> Symbol {
+    Symbol::new(env, "GOV_CONFIG")
+}
+
+fn get_fee_config_key(env: &Env) -> Symbol {
+    Symbol::new(env, "FEE_CONFIG")
+}
+
+fn get_proposal_key(env: &Env, proposal_id: &BytesN<32>) -> Symbol {
+    Symbol::new(env, "PROPOSAL")
+}
+
+fn get_vote_key(env: &Env, proposal_id: &BytesN<32>, voter: &Address) -> Symbol {
+    Symbol::new(env, "VOTE")
+}
+
+fn get_voter_history_key(env: &Env, voter: &Address) -> Symbol {
+    Symbol::new(env, "VOTE_HIST")
+}
+
+fn get_active_proposals_key(env: &Env) -> Symbol {
+    Symbol::new(env, "ACTIVE_PROP")
+}
+
+// Governance configuration management
+pub fn get_governance_config(env: &Env) -> Option<GovernanceConfig> {
+    env.storage().persistent().get(&get_governance_config_key(env))
+}
+
+pub fn set_governance_config(env: &Env, config: &GovernanceConfig) {
+    env.storage().persistent().set(&get_governance_config_key(env), config);
+}
+
+// Fee configuration management
+pub fn get_fee_config(env: &Env) -> Option<FeeConfig> {
+    env.storage().persistent().get(&get_fee_config_key(env))
+}
+
+pub fn set_fee_config(env: &Env, config: &FeeConfig) {
+    env.storage().persistent().set(&get_fee_config_key(env), config);
+}
+
+// Proposal management
+pub fn get_proposal(env: &Env, proposal_id: &BytesN<32>) -> Option<Proposal> {
+    env.storage().persistent().get(&get_proposal_key(env, proposal_id))
+}
+
+pub fn set_proposal(env: &Env, proposal_id: &BytesN<32>, proposal: &Proposal) {
+    env.storage().persistent().set(&get_proposal_key(env, proposal_id), proposal);
+}
+
+// Vote management
+pub fn get_vote(env: &Env, proposal_id: &BytesN<32>, voter: &Address) -> Option<Vote> {
+    env.storage().persistent().get(&get_vote_key(env, proposal_id, voter))
+}
+
+pub fn set_vote(env: &Env, proposal_id: &BytesN<32>, voter: &Address, vote: &Vote) {
+    env.storage().persistent().set(&get_vote_key(env, proposal_id, voter), vote);
+
+    // Add to voter history
+    let mut history = get_voter_history(env, voter);
+    history.push_back(vote.clone());
+    set_voter_history(env, voter, &history);
+}
+
+// Voter history management
+pub fn get_voter_history(env: &Env, voter: &Address) -> Vec<Vote> {
+    env.storage().persistent().get(&get_voter_history_key(env, voter)).unwrap_or(Vec::new(env))
+}
+
+pub fn set_voter_history(env: &Env, voter: &Address, history: &Vec<Vote>) {
+    env.storage().persistent().set(&get_voter_history_key(env, voter), history);
+}
+
+// Active proposals management (simplified - in production would use more efficient indexing)
+pub fn get_all_active_proposals(env: &Env) -> Vec<Proposal> {
+    env.storage().persistent().get(&get_active_proposals_key(env)).unwrap_or(Vec::new(env))
 }
