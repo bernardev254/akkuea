@@ -44,17 +44,19 @@ const HeroSection = () => {
                 width={500}
                 height={500}
                 className="w-full h-full object-contain"
+                sizes="(max-width: 1024px) 90vw, 40vw"
               />
             </div>
 
             <div className="relative  h-60">
-              <Image
-                src={'/herosection1.png'}
-                alt="Image"
-                width={500}
-                height={500}
-                className="w-full h-full object-contain"
-              />
+               <Image 
+                  src={"/herosection1.png"} 
+                  alt="Image" 
+                  width={500} 
+                  height={500} 
+                  className="w-full h-full object-contain"
+                  sizes="(max-width: 1024px) 90vw, 40vw"
+                />
             </div>
           </div>
         </div>

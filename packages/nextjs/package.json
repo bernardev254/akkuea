@@ -13,7 +13,8 @@
     "test:run": "vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "images:webp": "node scripts/convert-assets-to-webp.js"
   },
   "dependencies": {
     "@creit.tech/stellar-wallets-kit": "^1.9.5",
@@ -56,9 +57,10 @@
     "react-intersection-observer": "^9.16.0",
     "react-query": "^3.39.3",
     "react-rating": "^2.0.5",
-    "redis": "^4.6.13",
-    "sonner": "^2.0.1",
-    "tailwind-merge": "^3.0.1",
+    "redis": "^4.7.1",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.3.1",
+    "sharp": "^0.34.4",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.25.76",
     "zustand": "^4.5.7"
@@ -83,6 +85,7 @@
     "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.9.2",
+    "glob": "^11.0.3",
     "vitest": "^3.2.4"
   }
 }
