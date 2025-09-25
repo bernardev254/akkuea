@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { gsap } from 'gsap';
 import { useTheme } from 'next-themes';
@@ -10,6 +10,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import './HeaderLanding.css';
 import { useLayoutEffect, useCallback } from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import { Menu, XIcon, Monitor, Moon, Sun } from 'lucide-react';
+
 
 interface NavLink {
   label: string;
@@ -69,6 +71,7 @@ export default function HeaderLanding() {
   const pathname = usePathname();
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+
 
   useEffect(() => setMounted(true), []);
 
