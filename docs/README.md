@@ -4,47 +4,36 @@ _Empowering education through the strategic use of emerging technology_
 
 ---
 
-# <<<<<<< HEAD
-
-Issue 294
-
-<!-- Make the changes from issue number 294 here. Thank you for contributing to Akkuea! -->
-
-> > > > > > > eliminate-duplicate-code
-
 ## 🦅 About This Documentation
 
 Welcome to the comprehensive documentation for Akkuea, the educational social platform that honors Costa Rica's indigenous heritage while building innovative learning experiences. This documentation is designed to be accessible, well-structured, and culturally sensitive.
 
+
 ---
 
-Issue 295
 
-<!-- Make the changes from issue number 295 here. Thank you for contributing to Akkuea! -->
+
 
 ## 📚 Documentation Structure
 
 ### Core Documentation
 
 #### [📋 Documentation Index](index.md)
-
 Complete navigation hub for all documentation sections with quick access links and overview information.
 
 #### [🏗️ Platform Features](features/README.md)
-
 Comprehensive overview of Akkuea's social networking capabilities, content interaction systems, and community features.
 
 #### [📖 Educational Resources](educational-resources/README.md)
-
 Detailed documentation of the content creation, sharing, and discovery systems that power educational collaboration.
 
 #### [🛒 Marketplace](marketplace/README.md)
-
 Complete guide to the designer-educator marketplace, including project workflows, payment systems, and quality assurance.
 
 #### [🤖 AI Agents](ai-agents/README.md)
-
 Documentation for native AI agent creation, training, and management systems that enable specialized educational assistance.
+
+
 
 ---
 
@@ -84,11 +73,7 @@ Issue 301
 
 ---
 
-<<<<<<< HEAD
 
-=======
-
-> > > > > > > eliminate-duplicate-code
 
 ## 📊 Documentation Statistics
 
