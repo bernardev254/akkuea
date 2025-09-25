@@ -473,9 +473,10 @@ impl EducationalNFTContract {
         token_ids: Vec<u64>,
     ) -> Result<Vec<(u64, EducationalNFT)>, NFTError> {
         batch::batch_query_ownership(e, token_ids)
+    }
      
-      // ========================================
-     // MARKETPLACE FEATURES
+    // ========================================
+    // MARKETPLACE FEATURES
     // ========================================
 
     /// List an NFT for sale or auction
