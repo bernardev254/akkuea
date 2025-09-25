@@ -81,7 +81,6 @@ export default function Component() {
             </div>
           </article>
 
-
           {/* Achievement Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-background">

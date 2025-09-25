@@ -35,6 +35,7 @@ const Benefits = () => {
             width={472}
             height={410}
             className="w-full max-w-sm md:max-w-md"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 384px, 448px"
           />
         </div>
 
@@ -58,7 +59,9 @@ const Benefits = () => {
                   {item.index}
                 </div>
                 <div className="flex flex-col gap-1">
-                  <div className="text-[#0A0A0A] dark:text-foreground text-lg font-semibold">{item.title}</div>
+                  <div className="text-[#0A0A0A] dark:text-foreground text-lg font-semibold">
+                    {item.title}
+                  </div>
                   <div className="text-[#737373] dark:text-muted text-sm">{item.description}</div>
                 </div>
               </div>

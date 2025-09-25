@@ -5,8 +5,6 @@ import React from 'react';
 const HeroSection = () => {
   return (
     <div className="min-h-screen relative overflow-hidden">
-      
-
       <div className="container mx-auto px-4 py-5 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           {/* Main Heading */}
@@ -28,7 +26,6 @@ const HeroSection = () => {
             learners are empowered, and education becomes a collective journey.
           </p>
 
-    
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 ">
             <button className="px-8 py-2 bg-[#5EEAD4] text-white font-semibold rounded hover:from-cyan-500 hover:to-teal-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
               Explore Akkuea
@@ -40,7 +37,6 @@ const HeroSection = () => {
 
           {/* Illustrations */}
           <div className="flex flex-col lg:flex-row items-center gap-5 justify-center">
- 
             <div className="relative   h-60">
               <Image
                 src={'/herosection2.png'}
@@ -48,18 +44,23 @@ const HeroSection = () => {
                 width={500}
                 height={500}
                 className="w-full h-full object-contain"
+                sizes="(max-width: 1024px) 90vw, 40vw"
               />
             </div>
 
-          
             <div className="relative  h-60">
-               <Image src={"/herosection1.png"} alt='Image' width={500} height={500} className='w-full h-full object-contain'/>
+              <Image
+                src={'/herosection1.png'}
+                alt="Image"
+                width={500}
+                height={500}
+                className="w-full h-full object-contain"
+                sizes="(max-width: 1024px) 90vw, 40vw"
+              />
             </div>
           </div>
         </div>
       </div>
-
-     
     </div>
   );
 };
