@@ -64,9 +64,11 @@ Complete contributor guide including code of conduct, development workflows, cul
 
 ---
 
-Issue 299
+### Design System
 
-<!-- Make the changes from issue number 299 here. Thank you for contributing to Akkuea! -->
+#### [🎨 Visual Identity](design/visual-identity.md)
+Brand guidelines, color systems, typography standards, and cultural design principles that maintain Akkuea's authentic visual language.
+
 
 ---
 
