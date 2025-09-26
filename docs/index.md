@@ -74,6 +74,9 @@ Issue 313
 
 ---
 
-Issue 314
+## Getting Started
 
-<!-- Make the changes from issue number 314 here. Thank you for contributing to Akkuea! -->
+1. **New Users**: Start with [Getting Started Guide](guides/getting-started.md)  
+2. **Developers**: Begin with [Setup Guide](development/setup.md)  
+3. **Content Creators**: Explore [Content Creation Guide](guides/content-creation.md)  
+4. **Marketplace Users**: Check [Marketplace Guide](guides/marketplace-guide.md)  
