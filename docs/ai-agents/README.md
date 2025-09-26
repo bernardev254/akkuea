@@ -119,20 +119,20 @@ Issue 320
 
 ---
 
-Issue 322
 
 ### Advanced Agent Features
 
 #### Adaptive Learning Capabilities
 ```mermaid
-    graph LR
-        A[User Interaction] --> B[Behavior Analysis]
-        B --> C[Learning Pattern Recognition]
-        C --> D[Content Adaptation]
-        D --> E[Personalized Response]
-        E --> F[Feedback Collection]
-        F --> A
+graph LR
+    A[User Interaction] --> B[Behavior Analysis]
+    B --> C[Learning Pattern Recognition]
+    C --> D[Content Adaptation]
+    D --> E[Personalized Response]
+    E --> F[Feedback Collection]
+    F --> A
 ```
+
 
 #### Multi-Modal Communication
 | Mode | Description | Use Cases |
@@ -142,11 +142,45 @@ Issue 322
 | **Visual Communication** | Diagrams, charts, illustrations | Complex concept explanation |
 | **Interactive Demos** | Hands-on learning experiences | Skill practice, simulation exercises |
 
+
+
 ---
 
-Issue 323
 
-<!-- Make the changes from issue number 323 here. Thank you for contributing to Akkuea! -->
+## Specialized Agent Examples
+
+### Dr. RepGen: Genetic Improvement Specialist
+
+#### Agent Profile
+**Expertise**: Disease resistance in reptiles, genetic improvement protocols, breeding program optimization
+
+**Knowledge Base Components**:
+- Reptilian genetics and genomics
+- Disease pathology and resistance mechanisms  
+- Breeding program design and management
+- Conservation genetics principles
+- Statistical analysis for genetic research
+
+**Interaction Capabilities**:
+```mermaid
+mindmap
+  root)Dr. RepGen(
+    Research Support
+      Literature Review
+      Hypothesis Generation
+      Methodology Design
+      Data Analysis
+    Educational Content
+      Concept Explanation
+      Case Studies
+      Visual Demonstrations
+      Assessment Creation
+    Practical Guidance
+      Breeding Protocols
+      Health Monitoring
+      Record Keeping
+      Problem Solving
+```
 
 ---
 
