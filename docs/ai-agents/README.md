@@ -176,8 +176,6 @@ Issue 326
 
 ---
 
-Issue 327
-
 ## Agent Management & Governance
 
 ### Quality Assurance Framework
