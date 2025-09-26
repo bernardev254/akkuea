@@ -125,13 +125,13 @@ Issue 322
 
 #### Adaptive Learning Capabilities
 ```mermaid
-graph LR
-    A[User Interaction] --> B[Behavior Analysis]
-    B --> C[Learning Pattern Recognition]
-    C --> D[Content Adaptation]
-    D --> E[Personalized Response]
-    E --> F[Feedback Collection]
-    F --> A
+    graph LR
+        A[User Interaction] --> B[Behavior Analysis]
+        B --> C[Learning Pattern Recognition]
+        C --> D[Content Adaptation]
+        D --> E[Personalized Response]
+        E --> F[Feedback Collection]
+        F --> A
 ```
 
 #### Multi-Modal Communication
