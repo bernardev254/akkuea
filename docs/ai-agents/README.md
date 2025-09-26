@@ -132,7 +132,7 @@ graph LR
     D --> E[Personalized Response]
     E --> F[Feedback Collection]
     F --> A
-
+```
 
 #### Multi-Modal Communication
 | Mode | Description | Use Cases |
@@ -141,7 +141,7 @@ graph LR
 | **Voice Interaction** | Speech-to-speech communication | Language practice, accessibility support |
 | **Visual Communication** | Diagrams, charts, illustrations | Complex concept explanation |
 | **Interactive Demos** | Hands-on learning experiences | Skill practice, simulation exercises |
-```
+
 ---
 
 Issue 323
