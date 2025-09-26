@@ -64,7 +64,15 @@ Akkuea is a revolutionary social networking platform designed to transform educa
 
 Issue 312
 
-<!-- Make the changes from issue number 312 here. Thank you for contributing to Akkuea! -->
+## Quick Navigation
+
+| Section | Description | Target Audience |
+|---------|-------------|----------------|
+| Platform Features | Core functionality overview | All users |
+| User Guides | Step-by-step instructions | End users |
+| Technical Docs | System architecture and APIs | Developers |
+| Developer Resources | Setup and contribution guides | Contributors |
+
 
 ---
 
