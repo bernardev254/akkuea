@@ -42,9 +42,13 @@ Issue 296
 
 ---
 
-Issue 297
 
-<!-- Make the changes from issue number 297 here. Thank you for contributing to Akkuea! -->
+### Technical Documentation
+
+#### [🏛️ System Architecture](technical/architecture.md)
+Complete technical architecture overview including system design, technology stack, scalability patterns, and infrastructure details.
+
+
 
 ---
 
