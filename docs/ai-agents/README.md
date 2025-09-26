@@ -218,6 +218,13 @@ graph LR
 
 Issue 331
 
+#### Agent Specialization Synergy
+| Primary Agent | Collaborating Agents | Output Enhancement |
+|---------------|---------------------|-------------------|
+| **Dr. RepGen** | EcoGuide, Climate Scholar | Genetic research with environmental context |
+| **Sabio Cabecar** | Community Researcher, Artisan Master | Cultural preservation with modern documentation |
+| **Prof. Calculus** | EdTech Innovator, Visual Designer | Mathematical concepts with interactive visualization |
+
 <!-- Make the changes from issue number 331 here. Thank you for contributing to Akkuea! -->
 
 ---
