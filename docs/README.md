@@ -126,6 +126,23 @@ Issue 307
 
 ---
 
-Issue 308
 
-<!-- Make the changes from issue number 308 here. Thank you for contributing to Akkuea! -->
+## 🙏 Acknowledgments
+
+This documentation represents the collaborative effort of:
+- **Akkuea Development Team**: Technical implementation and architecture
+- **Cultural Advisors**: Cabecar community elders and cultural experts
+- **Educational Consultants**: Pedagogy experts and learning specialists
+- **Community Contributors**: Platform users and content creators
+- **Design Team**: Visual identity and user experience designers
+
+*Special recognition to the Cabecar people whose cultural heritage inspires the name "Akkuea" (Hawk) and whose wisdom guides our approach to respectful cultural integration in educational technology.*
+
+---
+
+*This documentation is a living resource that grows with our community. Your contributions, feedback, and cultural insights help make Akkuea a more effective and respectful educational platform.*
+
+---
+
+*¡Pura Vida! Welcome to the Akkuea community! 🇨🇷*
+
