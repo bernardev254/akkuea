@@ -52,9 +52,15 @@ Complete technical architecture overview including system design, technology sta
 
 ---
 
-Issue 298
 
-<!-- Make the changes from issue number 298 here. Thank you for contributing to Akkuea! -->
+### Developer Resources
+
+#### [⚙️ Development Setup](development/setup.md)
+Comprehensive development environment setup guide with tooling, configuration, and troubleshooting information.
+
+#### [🤝 Contributing Guidelines](development/contributing.md)
+Complete contributor guide including code of conduct, development workflows, cultural sensitivity guidelines, and community recognition programs.
+
 
 ---
 
