@@ -35,7 +35,7 @@ export default function CreatePostModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="fixed bottom-6 right-6 rounded-full bg-primary hover:bg-primary/80 text-white shadow-lg">
+        <Button className="fixed bottom-6 right-4 sm:right-8 md:right-16 lg:right-20 xl:right-24 rounded-full bg-primary hover:bg-primary/80 text-white shadow-lg z-50 transition-all duration-300">
           <PlusCircle className="w-6 h-6 mr-2" />
           Create Post
         </Button>
