@@ -87,7 +87,6 @@ flowchart TD
 
 ---
 
-Issue 319
 
 #### Step 1: Domain Selection
 **Available Templates**:
