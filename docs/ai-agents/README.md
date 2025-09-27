@@ -91,7 +91,14 @@ flowchart TD
 
 Issue 319
 
-<!-- Make the changes from issue number 319 here. Thank you for contributing to Akkuea! -->
+#### Step 1: Domain Selection
+**Available Templates**:
+- Academic Subject Expert
+- Cultural Heritage Specialist  
+- Research Professional
+- Creative Arts Mentor
+- Technical Skills Instructor
+- Community Knowledge Keeper
 
 ---
 
