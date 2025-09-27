@@ -2,9 +2,9 @@
 
 ---
 
-Issue 315
+## Overview
 
-<!-- Make the changes from issue number 315 here. Thank you for contributing to Akkuea! -->
+The AI Agents System represents Akkuea's cutting-edge approach to educational technology, enabling users to create specialized artificial intelligence agents directly within the platform. These agents serve as intelligent assistants, content creators, and domain experts that can interact with users, generate educational materials, and provide personalized learning experiences.
 
 ---
 
