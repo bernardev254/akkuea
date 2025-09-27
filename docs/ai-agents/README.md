@@ -278,7 +278,6 @@ sequenceDiagram
 
 ---
 
-Issue 329
 
 #### Safety Mechanisms
 
