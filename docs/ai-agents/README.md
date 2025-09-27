@@ -274,8 +274,19 @@ sequenceDiagram
 
 Issue 329
 
-<!-- Make the changes from issue number 329 here. Thank you for contributing to Akkuea! -->
+#### Safety Mechanisms
 
+```mermaid
+graph TD
+    A[User Query] --> B[Content Filter]
+    B --> C[Cultural Sensitivity Check]
+    C --> D[Factual Accuracy Validation]
+    D --> E[Age-Appropriate Content Filter]
+    E --> F[Response Generation]
+    F --> G[Final Review]
+    G --> H[User Response]
+```
+    
 ---
 
 ## Agent Collaboration Network
