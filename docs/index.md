@@ -76,9 +76,19 @@ Issue 312
 
 ---
 
-Issue 313
+## Key Highlights
 
-<!-- Make the changes from issue number 313 here. Thank you for contributing to Akkuea! -->
+### 🎯 Reward-Based Learning
+Users who contribute high-quality educational resources and engage meaningfully with the community are rewarded through our comprehensive incentive system.
+
+### 🛒 Educational Marketplace
+Connect with specialized designers to create custom educational content, from local cultural traditions to specialized academic topics.
+
+### 🤖 AI-Powered Education
+Create intelligent agents specialized in specific domains, enabling automated content generation and personalized learning experiences.
+
+### 🌍 Cultural Heritage Focus
+Celebrating Costa Rica's indigenous communities while building global educational connections.
 
 ---
 
