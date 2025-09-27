@@ -112,3 +112,16 @@ Issue 415
 ---
 
 Issue 417
+
+### Cultural Requirements
+- Community elder advisory board for cultural content
+- Regular cultural sensitivity training for moderators
+- Transparent cultural bonus criteria and application
+- Community feedback integration for continuous improvement
+
+*The Akkuea Reward System creates a sustainable ecosystem that recognizes valuable contributions while preserving and celebrating cultural heritage through education.*
+
+---
+
+*Next: [Engagement Metrics](engagement-metrics.md)*
+
