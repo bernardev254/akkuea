@@ -100,7 +100,6 @@ Issue 415
 
 ---
 
-Issue 416
 
 ## Implementation Guidelines
 
