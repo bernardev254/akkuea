@@ -229,9 +229,27 @@ Issue 325
 
 ---
 
-Issue 326
 
-<!-- Make the changes from issue number 326 here. Thank you for contributing to Akkuea! -->
+
+
+#### Sample Educational Content Generation
+**Traditional Ecological Knowledge Module**:
+---
+Generated Content: "Traditional Cabecar Farming Practices"
+
+Section 1: Seasonal Planting Cycles
+- Aligned with lunar calendars and natural indicators
+- Crop rotation principles based on soil health
+- Integration with forest ecosystems
+
+Section 2: Companion Planting Wisdom
+- Traditional polyculture systems
+- Natural pest management through biodiversity
+- Soil conservation techniques
+
+[Note: Content generated in collaboration with Cabecar community representatives and validated by cultural experts]
+
+
 
 ---
 
