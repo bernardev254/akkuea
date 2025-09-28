@@ -57,7 +57,33 @@ Issue 397
 
 ---
 
-Issue 398
+
+
+## Cultural Heritage Bonus System
+
+### Cultural Content Classification
+
+#### Cultural Significance Levels
+```mermaid
+graph TD
+    A[Cultural Content] --> B[Public Cultural Knowledge]
+    A --> C[Traditional Practices]
+    A --> D[Indigenous Knowledge]
+    A --> E[Sacred/Restricted Content]
+    
+    B --> B1[1.2x multiplier]
+    C --> C1[1.5x multiplier]
+    D --> D1[2.0x multiplier]
+    E --> E1[Special handling required]
+    
+    B1 --> B2[Community validation]
+    C1 --> C2[Elder consultation]
+    D1 --> D3[Community permission]
+    E1 --> E2[Restricted access protocols]
+```
+
+
+
 
 ---
 
