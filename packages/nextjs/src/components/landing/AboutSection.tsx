@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Blocks, Brain, Globe, Users } from 'lucide-react';
-import FeatureCard from '../ui/FeatureCard';
+import FeatureCard from './FeatureCard';
 
 const AboutSection = () => {
   const features = [
