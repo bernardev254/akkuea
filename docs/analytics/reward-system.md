@@ -4,7 +4,36 @@ Issue 391
 
 ---
 
-Issue 392
+## Reward Calculation Framework
+
+### Core Metrics Algorithm
+
+```mermaid
+flowchart TD
+    A[User Action] --> B[Base Points Calculation]
+    B --> C[Quality Multipliers]
+    C --> D[Cultural Bonus]
+    D --> E[Community Impact Factor]
+    E --> F[Time Decay Adjustment]
+    F --> G[Final Reward Points]
+    
+    B --> B1[Content Upload: 10 pts]
+    B --> B2[Content Download: 1 pt]
+    B --> B3[Positive Rating: 5 pts]
+    B --> B4[Comment/Discussion: 2 pts]
+    
+    C --> C1[Quality Score × 2]
+    C --> C2[Expert Endorsement × 5]
+    C --> C3[Completion Rate × 1.5]
+    
+    D --> D1[Cultural Heritage: 1.5×]
+    D --> D2[Indigenous Knowledge: 2×]
+    D --> D3[Local Traditions: 1.3×]
+    
+    E --> E1[Views Impact: log(views/100)]
+    E --> E2[Engagement Rate × 3]
+    E --> E3[Educational Outcomes × 4]
+```
 
 ---
 
