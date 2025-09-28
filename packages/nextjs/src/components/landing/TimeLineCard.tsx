@@ -17,14 +17,25 @@ export default function TimeLineCard({
   const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { threshold: 0.2 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
+ useEffect(() => {
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true);
+        observer.disconnect(); 
+      }
+    },
+    {
+      root: null,
+      rootMargin: "-30% 0px -30% 0px", 
+      threshold: 0,
+    }
+  );
+
+  if (ref.current) observer.observe(ref.current);
+  return () => observer.disconnect();
+}, []);
+
 
   return (
     <div
