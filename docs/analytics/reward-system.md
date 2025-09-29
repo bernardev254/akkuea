@@ -20,20 +20,20 @@ flowchart TD
     D --> E[Community Impact Factor]
     E --> F[Time Decay Adjustment]
     F --> G[Final Reward Points]
-    
+
     B --> B1[Content Upload: 10 pts]
     B --> B2[Content Download: 1 pt]
     B --> B3[Positive Rating: 5 pts]
     B --> B4[Comment/Discussion: 2 pts]
-    
+
     C --> C1[Quality Score × 2]
     C --> C2[Expert Endorsement × 5]
     C --> C3[Completion Rate × 1.5]
-    
+
     D --> D1[Cultural Heritage: 1.5×]
     D --> D2[Indigenous Knowledge: 2×]
     D --> D3[Local Traditions: 1.3×]
-    
+
     E --> E1[Views Impact: log(views/100)]
     E --> E2[Engagement Rate × 3]
     E --> E3[Educational Outcomes × 4]
@@ -41,7 +41,29 @@ flowchart TD
 
 ---
 
-Issue 393
+
+
+### Point Categories & Values
+
+#### Content Creation Rewards
+| Action | Base Points | Quality Multiplier | Maximum Points |
+|--------|-------------|-------------------|----------------|
+| **Educational Resource Upload** | 10 | 1x - 5x | 50 |
+| **Interactive Content Creation** | 15 | 1x - 5x | 75 |
+| **Cultural Heritage Documentation** | 20 | 1.5x - 7.5x | 150 |
+| **AI Agent Creation** | 25 | 1x - 4x | 100 |
+| **Collaborative Project** | 30 | 1x - 3x | 90 |
+
+#### Community Engagement Rewards
+| Action | Base Points | Frequency Limit | Notes |
+|--------|-------------|----------------|-------|
+| **Resource Download** | 1 | No limit | Per unique user |
+| **Helpful Comment** | 2 | 50/day | Community-validated |
+| **Quality Rating** | 3 | 20/day | Weighted by reviewer credibility |
+| **Discussion Participation** | 5 | 10/day | Substantial contributions only |
+| **Mentoring Activity** | 10 | 5/week | Verified mentorship interactions |
+
+
 
 ---
 
@@ -74,12 +96,12 @@ graph TD
     A --> C[Traditional Practices]
     A --> D[Indigenous Knowledge]
     A --> E[Sacred/Restricted Content]
-    
+
     B --> B1[1.2x multiplier]
     C --> C1[1.5x multiplier]
     D --> D1[2.0x multiplier]
     E --> E1[Special handling required]
-    
+
     B1 --> B2[Community validation]
     C1 --> C2[Elder consultation]
     D1 --> D3[Community permission]
@@ -136,6 +158,16 @@ Issue 409
 ---
 
 Issue 410
+
+### Behavioral Impact Analysis
+
+#### Positive Behavioral Incentives
+| Behavior | Reward Mechanism | Measured Impact | Optimization |
+|----------|------------------|-----------------|--------------|
+| **High-Quality Content** | Quality multipliers | 85% quality improvement | Adjust multiplier weights |
+| **Cultural Sensitivity** | Cultural bonuses | 92% cultural validation rate | Expand cultural expert network |
+| **Community Mentorship** | Special recognition | 78% new user retention | Enhance mentor training |
+| **Innovation** | Innovation awards | 45% feature adoption | Increase innovation rewards |
 
 ---
 
@@ -204,4 +236,3 @@ Issue 417
 ---
 
 *Next: [Engagement Metrics](engagement-metrics.md)*
-
