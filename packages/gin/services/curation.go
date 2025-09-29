@@ -118,7 +118,11 @@ func (s *CurationService) curateWithXAI(title, content, language, format string)
 	if err != nil {
 		return CurationResult{}, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			log.Printf("curation: failed to close response body: %v", cerr)
+		}
+	}()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return CurationResult{}, fmt.Errorf("xAI API status %d", resp.StatusCode)

@@ -193,9 +193,8 @@ func UpdateResource(c *gin.Context) {
 	}
 
 	// Reload updated resource
-	if err := db.First(&resource, id).Error; err == nil {
-		// continue
-	}
+	// Reload updated resource (ignore error; if it vanished concurrently we'll still return prior state)
+	_ = db.First(&resource, id).Error
 
 	common.JSONSuccess(c, http.StatusOK, gin.H{"resource": resource, "curation": result}, "Resource updated")
 }
