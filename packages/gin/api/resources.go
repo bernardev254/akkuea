@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"gin/common"
 	"gin/config"
 	"gin/middleware"
 	"gin/models"
@@ -54,22 +55,21 @@ func ListResources(c *gin.Context) {
 	// total count
 	var total int64
 	if err := tx.Count(&total).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to count resources"})
+		common.JSONError(c, http.StatusInternalServerError, "database_error", "Failed to count resources")
 		return
 	}
 	// page
 	if err := tx.Order("created_at DESC").Limit(limit).Offset(offset).Find(&resources).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to list resources"})
+		common.JSONError(c, http.StatusInternalServerError, "database_error", "Failed to list resources")
 		return
 	}
 
-	c.JSON(http.StatusOK, ResourcesResponse{
-		Data:    resources,
-		Count:   total,
-		Limit:   limit,
-		Offset:  offset,
-		Message: "Resources retrieved successfully",
-	})
+	common.JSONSuccess(c, http.StatusOK, ResourcesResponse{
+		Data:   resources,
+		Count:  total,
+		Limit:  limit,
+		Offset: offset,
+	}, "Resources retrieved successfully")
 }
 
 // GET /resources/:id
@@ -78,13 +78,10 @@ func GetResource(c *gin.Context) {
 	id := c.Param("id")
 	var resource models.Resource
 	if err := db.First(&resource, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, ErrorResponse{Error: "not_found", Message: "Resource not found"})
+		common.JSONError(c, http.StatusNotFound, "not_found", "Resource not found")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"data":    resource,
-		"message": "Resource retrieved successfully",
-	})
+	common.JSONSuccess(c, http.StatusOK, resource, "Resource retrieved successfully")
 }
 
 // DELETE /resources/:id (only creator can delete)
@@ -94,21 +91,21 @@ func DeleteResource(c *gin.Context) {
 
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "unauthorized", Message: "User not authenticated"})
+		common.JSONError(c, http.StatusUnauthorized, "unauthorized", "User not authenticated")
 		return
 	}
 
 	var resource models.Resource
 	if err := db.First(&resource, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, ErrorResponse{Error: "not_found", Message: "Resource not found"})
+		common.JSONError(c, http.StatusNotFound, "not_found", "Resource not found")
 		return
 	}
 	if resource.CreatorID != userID {
-		c.JSON(http.StatusForbidden, ErrorResponse{Error: "forbidden", Message: "You cannot delete this resource"})
+		common.JSONError(c, http.StatusForbidden, "forbidden", "You cannot delete this resource")
 		return
 	}
 	if err := db.Delete(&resource).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to delete resource"})
+		common.JSONError(c, http.StatusInternalServerError, "database_error", "Failed to delete resource")
 		return
 	}
 	c.Status(http.StatusNoContent)
@@ -120,13 +117,13 @@ func CreateResource(c *gin.Context) {
 
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "unauthorized", Message: "User not authenticated"})
+		common.JSONError(c, http.StatusUnauthorized, "unauthorized", "User not authenticated")
 		return
 	}
 
 	var req ResourceRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid_input", Message: "Invalid resource payload"})
+		common.JSONError(c, http.StatusBadRequest, "invalid_input", "Invalid resource payload")
 		return
 	}
 
@@ -143,15 +140,11 @@ func CreateResource(c *gin.Context) {
 	}
 
 	if err := db.Create(&resource).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to create resource"})
+		common.JSONError(c, http.StatusInternalServerError, "database_error", "Failed to create resource")
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"data":     resource,
-		"message":  "Resource created",
-		"curation": result,
-	})
+	common.JSONSuccess(c, http.StatusCreated, gin.H{"resource": resource, "curation": result}, "Resource created")
 }
 
 // PUT /resources/:id
@@ -160,26 +153,26 @@ func UpdateResource(c *gin.Context) {
 
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "unauthorized", Message: "User not authenticated"})
+		common.JSONError(c, http.StatusUnauthorized, "unauthorized", "User not authenticated")
 		return
 	}
 
 	id := c.Param("id")
 	var resource models.Resource
 	if err := db.First(&resource, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, ErrorResponse{Error: "not_found", Message: "Resource not found"})
+		common.JSONError(c, http.StatusNotFound, "not_found", "Resource not found")
 		return
 	}
 
 	// Optional: only creator can update
 	if resource.CreatorID != userID {
-		c.JSON(http.StatusForbidden, ErrorResponse{Error: "forbidden", Message: "You cannot update this resource"})
+		common.JSONError(c, http.StatusForbidden, "forbidden", "You cannot update this resource")
 		return
 	}
 
 	var req ResourceRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid_input", Message: "Invalid resource payload"})
+		common.JSONError(c, http.StatusBadRequest, "invalid_input", "Invalid resource payload")
 		return
 	}
 
@@ -195,7 +188,7 @@ func UpdateResource(c *gin.Context) {
 	}
 
 	if err := db.Model(&resource).Updates(updates).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "database_error", Message: "Failed to update resource"})
+		common.JSONError(c, http.StatusInternalServerError, "database_error", "Failed to update resource")
 		return
 	}
 
@@ -204,9 +197,5 @@ func UpdateResource(c *gin.Context) {
 		// continue
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data":     resource,
-		"message":  "Resource updated",
-		"curation": result,
-	})
+	common.JSONSuccess(c, http.StatusOK, gin.H{"resource": resource, "curation": result}, "Resource updated")
 }
