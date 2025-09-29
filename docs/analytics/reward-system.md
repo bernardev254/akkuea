@@ -193,7 +193,7 @@ pie title Reward System Funding Sources
     "Premium Subscriptions (20%)" : 20
     "Grants & Sponsorships (10%)" : 10
     "Community Contributions (5%)" : 5
-
+```
 ---
 
 
