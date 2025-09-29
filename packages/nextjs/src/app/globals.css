@@ -23,6 +23,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 224 18% 33%;
 
+    --about-text: 0, 0%, 4%;
+    --about-text-word: 0 0% 45%; /* #737373 */
+    --about-card-border: 220 14% 96%; /* #F3F4F6 */ 
+    --about-card-shadow: 0px 1px 2px -1px #0000001A, 0px 1px 3px 0px #0000001A;
     --contribution-bg: 145 63% 49%;
     --contribution-text: 145 63% 49%;
     --contribution-border: 145 63% 49%;
@@ -65,6 +69,7 @@
     --popover: 210 19% 18%;
     --popover-foreground: 188 4% 92%;
 
+    --about-text: 0, 0%, 4%;
     --contribution-bg: 145 50% 35%;
     --contribution-text: 145 60% 55%;
     --contribution-border: 145 50% 35%;
