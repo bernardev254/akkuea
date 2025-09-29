@@ -2,15 +2,15 @@
 
 ---
 
-Issue 309
 
-<!-- Make the changes from issue number 309 here. Thank you for contributing to Akkuea! -->
+## 🦅 Welcome to Akkuea
+*Akkuea* means "Hawk" in Cabecar, proudly reflecting Costa Rica's rich indigenous heritage and our commitment to educational empowerment through emerging technology.
 
 ---
 
-Issue 310
+## About Akkuea
 
-<!-- Make the changes from issue number 310 here. Thank you for contributing to Akkuea! -->
+Akkuea is a revolutionary social networking platform designed to transform educational resource sharing. Our mission is to create a vibrant ecosystem where educators, students, and specialists connect, share knowledge, and build AI-powered educational tools.
 
 ---
 
@@ -64,16 +64,37 @@ Issue 310
 
 Issue 312
 
-<!-- Make the changes from issue number 312 here. Thank you for contributing to Akkuea! -->
+## Quick Navigation
+
+| Section | Description | Target Audience |
+|---------|-------------|----------------|
+| Platform Features | Core functionality overview | All users |
+| User Guides | Step-by-step instructions | End users |
+| Technical Docs | System architecture and APIs | Developers |
+| Developer Resources | Setup and contribution guides | Contributors |
+
 
 ---
 
-Issue 313
+## Key Highlights
 
-<!-- Make the changes from issue number 313 here. Thank you for contributing to Akkuea! -->
+### 🎯 Reward-Based Learning
+Users who contribute high-quality educational resources and engage meaningfully with the community are rewarded through our comprehensive incentive system.
+
+### 🛒 Educational Marketplace
+Connect with specialized designers to create custom educational content, from local cultural traditions to specialized academic topics.
+
+### 🤖 AI-Powered Education
+Create intelligent agents specialized in specific domains, enabling automated content generation and personalized learning experiences.
+
+### 🌍 Cultural Heritage Focus
+Celebrating Costa Rica's indigenous communities while building global educational connections.
 
 ---
 
-Issue 314
+## Getting Started
 
-<!-- Make the changes from issue number 314 here. Thank you for contributing to Akkuea! -->
+1. **New Users**: Start with [Getting Started Guide](guides/getting-started.md)  
+2. **Developers**: Begin with [Setup Guide](development/setup.md)  
+3. **Content Creators**: Explore [Content Creation Guide](guides/content-creation.md)  
+4. **Marketplace Users**: Check [Marketplace Guide](guides/marketplace-guide.md)  
