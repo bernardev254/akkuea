@@ -11,20 +11,41 @@ pub enum TippingError {
     InvalidRecipient,
     ContractNotInitialized,
     StorageError,
-    
+
     // New multi-token errors
     TokenNotWhitelisted,
     AmountTooSmall,
     AmountTooLarge,
     TokenAlreadyExists,
-    
+
     // Price feed errors
     PriceDataNotFound,
     PriceDataStale,
     LowPriceConfidence,
     OracleNotAuthorized,
     ConversionFailed,
-    
+
+    // Security errors
+    SecurityNotConfigured,
+    MultiSigThresholdNotMet,
+    OperationExpired,
+    WithdrawalLocked,
+    WithdrawalCancelled,
+    FraudAlert,
+    InvalidSeverity,
+
+    // Governance errors
+    GovernanceNotInitialized,
+    ProposalNotFound,
+    VotingPeriodEnded,
+    VotingPeriodActive,
+    InsufficientVotingPower,
+    AlreadyVoted,
+    QuorumNotMet,
+    ProposalNotApproved,
+    ExecutionDelayNotMet,
+    FeeChangeExceedsLimit,
+
     // Additional errors
     InvalidInput,
     TransferFailed,

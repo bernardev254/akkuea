@@ -1,4 +1,5 @@
 // tailwind.config.ts
+import { text } from 'stream/consumers';
 import type { Config } from 'tailwindcss';
 
 export default {
@@ -11,7 +12,10 @@ export default {
   theme: {
   	extend: {
   		colors: {
-  			primary: 'hsl(var(--primary))',
+  			primary: {
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
+  			},
   			secondary: 'hsl(var(--secondary))',
   			achievement: 'hsl(var(--achievement))',
   			destructive: 'hsl(var(--destructive))',
@@ -32,6 +36,12 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
+			about: {
+				text: 'hsl(var(--about-text))',
+				cardBorder: 'hsl(var(--about-card-border))',
+				textWord: 'hsl(var(--about-text-word))',
+				cardShadow: 'var(--about-card-shadow)'
+			},
   			contribution: {
   				bg: 'hsl(var(--contribution-bg))',
   				text: 'hsl(var(--contribution-text))',
@@ -67,6 +77,9 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		boxShadow: {
+  			'about-cardShadow': 'var(--about-card-shadow)'
   		}
   	}
   },

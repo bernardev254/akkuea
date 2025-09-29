@@ -48,6 +48,15 @@ func main() {
 
 		// Current user endpoint
 		protected.GET("/auth/me", api.GetCurrentUser)
+		
+		// Temporary protected route for testing (Task #165)
+		protected.GET("/protected", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"message": "Protected route accessed successfully",
+				"user_id": c.GetString("user_id"),
+				"role":    c.GetString("user_role"),
+			})
+		})
 	}
 
 	// Get port from config (env), default to 8080

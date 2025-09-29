@@ -7,13 +7,21 @@ use stellar_access::ownable::{self as ownable, Ownable};
 use stellar_macros::default_impl;
 use stellar_tokens::non_fungible::{Base, NonFungibleToken};
 
+mod governance;
 mod metadata;
+mod marketplace;
 mod mock_educator_verification_nft;
 mod nft;
+mod social;
+mod batch;
 mod utils;
 
+pub use governance::*;
 pub use metadata::*;
+pub use marketplace::*;
 pub use nft::*;
+pub use social::*;
+pub use batch::*;
 pub use utils::*;
 
 pub use mock_educator_verification_nft::MockEducatorVerificationNft;
@@ -328,6 +336,335 @@ impl EducationalNFTContract {
 
         Ok(nft::get_tokens_by_content_type(e, &parsed_content_type))
     }
+
+    // ========================================
+    // SOCIAL FEATURES
+    // ========================================
+
+    /// Share an NFT publicly or within a group
+    pub fn share_nft(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+        visibility: String,
+        group_id: Option<u64>,
+        description: String,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        social::share_nft(e, &caller, token_id, visibility, group_id, description)
+    }
+
+    /// Join or create a collaborative learning group with an NFT
+    pub fn join_collaborative_group(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+        group_id: Option<u64>,
+        group_name: Option<String>,
+    ) -> Result<u64, utils::NFTError> {
+        caller.require_auth();
+        social::join_collaborative_group(e, &caller, token_id, group_id, group_name)
+    }
+
+    /// Showcase a user's educational journey through their NFT collection
+    pub fn showcase_collection(
+        e: &Env,
+        caller: Address,
+        collection_id: u64,
+        title: String,
+        description: String,
+        visibility: String,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        social::showcase_collection(e, &caller, collection_id, title, description, visibility)
+    }
+
+    /// Add an NFT to an existing educational journey showcase
+    pub fn add_nft_to_showcase(
+        e: &Env,
+        caller: Address,
+        collection_id: u64,
+        token_id: u64,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        social::add_nft_to_showcase(e, &caller, collection_id, token_id)
+    }
+
+    /// Get social actions for a user and token
+    pub fn get_social_actions(e: &Env, user: Address, token_id: u64) -> Vec<social::SocialAction> {
+        social::get_social_actions(e, &user, token_id)
+    }
+
+    /// Get NFT sharing configuration
+    pub fn get_nft_share_info(e: &Env, token_id: u64) -> Option<social::NFTShare> {
+        social::get_nft_share(e, token_id)
+    }
+
+    /// Get collaborative group information
+    pub fn get_collaborative_group_info(e: &Env, group_id: u64) -> Option<social::CollaborativeGroup> {
+        social::get_collaborative_group(e, group_id)
+    }
+
+    /// Get educational journey showcase
+    pub fn get_educational_journey(e: &Env, user: Address, collection_id: u64) -> Option<social::EducationalJourney> {
+        social::get_educational_journey(e, &user, collection_id)
+    }
+
+    /// Get user's reputation boost information
+    pub fn get_reputation_boost(e: &Env, user: Address) -> Option<social::ReputationBoost> {
+        social::get_reputation_boost(e, &user)
+    }
+
+    /// Update user reputation boost (restricted to authorized contracts)
+    pub fn update_reputation_boost(
+        e: &Env,
+        caller: Address,
+        user: Address,
+        reputation_score: u32,
+        boost_level: u32,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        // TODO: Add authorization check to ensure only reputation contract can call this
+        social::update_reputation_boost(e, &user, reputation_score, boost_level)
+    }
+
+    /// Verify if user has sufficient reputation for boosted visibility
+    pub fn verify_reputation_boost(e: &Env, user: Address, min_reputation: u32) -> bool {
+        social::verify_reputation_boost(e, &user, min_reputation)
+    }
+
+    /// Get public NFT shares for discovery
+    pub fn get_public_shares(e: &Env) -> Vec<social::NFTShare> {
+        social::get_public_nft_shares(e)
+    }
+
+    /// Get user's collaborative groups
+    pub fn get_user_groups(e: &Env, user: Address) -> Vec<social::CollaborativeGroup> {
+        social::get_user_groups(e, &user)
+    }
+
+    // ========================================
+    // BATCH FEATURES
+    // ========================================
+
+    pub fn batch_mint_nfts(
+        e: &Env,
+        caller: Address,
+        owners: Vec<Address>,
+        collection_id: u64,
+        fractions: u32,
+        metadata_hashes: Vec<Bytes>,
+    ) -> Result<Vec<u32>, NFTError> {
+        batch::batch_mint_nfts(e, caller, owners, collection_id, fractions, metadata_hashes)
+    }
+
+    pub fn batch_transfer_nfts(
+        e: &Env,
+        caller: Address,
+        token_ids: Vec<u64>,
+        recipients: Vec<Address>,
+    ) -> Result<(), NFTError> {
+        caller.require_auth();
+        batch::batch_transfer_nfts(e, &caller, token_ids, recipients)
+    }
+
+    pub fn batch_query_ownership(
+        e: &Env,
+        token_ids: Vec<u64>,
+    ) -> Result<Vec<(u64, EducationalNFT)>, NFTError> {
+        batch::batch_query_ownership(e, token_ids)
+    }
+     
+    // ========================================
+    // MARKETPLACE FEATURES
+    // ========================================
+
+    /// List an NFT for sale or auction
+    pub fn list_nft(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+        price: i128,
+        auction_end: u64,
+        royalty_rate: u32,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        marketplace::list_nft(e, &caller, token_id, price, auction_end, royalty_rate)
+    }
+
+    /// Buy an NFT from the marketplace
+    pub fn buy_nft(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+        payment_amount: i128,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        marketplace::buy_nft(e, &caller, token_id, payment_amount)
+    }
+
+    /// Place a bid on an auction
+    pub fn place_bid(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+        bid_amount: i128,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        marketplace::place_bid(e, &caller, token_id, bid_amount)
+    }
+
+    /// Settle an auction and transfer NFT to highest bidder
+    pub fn settle_auction(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        marketplace::settle_auction(e, &caller, token_id)
+    }
+
+    /// Cancel a listing
+    pub fn cancel_listing(
+        e: &Env,
+        caller: Address,
+        token_id: u64,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        marketplace::cancel_listing(e, &caller, token_id)
+    }
+
+    /// Get listing details for a specific NFT
+    pub fn get_listing(e: &Env, token_id: u64) -> Option<marketplace::Listing> {
+        marketplace::get_listing(e, token_id)
+    }
+
+    /// Get all bids for a specific NFT
+    pub fn get_bids(e: &Env, token_id: u64) -> Vec<marketplace::Bid> {
+        marketplace::get_bids(e, token_id)
+    }
+
+    /// Get highest bid for a specific NFT
+    pub fn get_highest_bid(e: &Env, token_id: u64) -> Option<marketplace::Bid> {
+        marketplace::get_highest_bid(e, token_id)
+    }
+
+    /// Get sales history for a specific NFT
+    pub fn get_sales_history(e: &Env, token_id: u64) -> Vec<marketplace::Sale> {
+        marketplace::get_sales_history(e, token_id)
+    }
+
+    /// Get price history for a specific NFT
+    pub fn get_price_history(e: &Env, token_id: u64) -> Option<marketplace::PriceHistory> {
+        marketplace::get_price_history(e, token_id)
+    }
+
+    /// Calculate average price for a specific NFT
+    pub fn get_average_price(e: &Env, token_id: u64) -> Option<i128> {
+        marketplace::calculate_average_price(e, token_id)
+    }
+
+    /// Get all active listings (placeholder for production indexing)
+    pub fn get_active_listings(e: &Env) -> Vec<marketplace::Listing> {
+        marketplace::get_active_listings(e)
+    }
+
+    /// Get listings by seller (placeholder for production indexing)
+    pub fn get_listings_by_seller(e: &Env, seller: Address) -> Vec<marketplace::Listing> {
+        marketplace::get_listings_by_seller(e, &seller)
+    }
+
+    // ========================================
+    // GOVERNANCE FEATURES
+    // ========================================
+
+    /// Initialize governance system (only callable by owner)
+    pub fn initialize_governance(e: &Env, caller: Address) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        // TODO: Check if caller is owner
+        governance::initialize_governance(e);
+        Ok(())
+    }
+
+    /// Create a new governance proposal
+    pub fn create_proposal(
+        e: &Env,
+        caller: Address,
+        proposal_type: governance::ProposalType,
+        title: String,
+        description: String,
+        vote_end: u64,
+    ) -> Result<u64, utils::NFTError> {
+        caller.require_auth();
+        governance::create_proposal(e, &caller, proposal_type, title, description, vote_end)
+    }
+
+    /// Vote on a governance proposal
+    pub fn vote_on_proposal(
+        e: &Env,
+        caller: Address,
+        proposal_id: u64,
+        vote: bool,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        governance::vote_on_proposal(e, &caller, proposal_id, vote)
+    }
+
+    /// Finalize a proposal after voting period ends
+    pub fn finalize_proposal(
+        e: &Env,
+        caller: Address,
+        proposal_id: u64,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        governance::finalize_proposal(e, &caller, proposal_id)
+    }
+
+    /// Get proposal details
+    pub fn get_proposal(e: &Env, proposal_id: u64) -> Option<governance::Proposal> {
+        governance::get_proposal(e, proposal_id)
+    }
+
+    /// Get vote details for a specific voter and proposal
+    pub fn get_vote(e: &Env, proposal_id: u64, voter: Address) -> Option<governance::Vote> {
+        governance::get_vote(e, proposal_id, &voter)
+    }
+
+    /// Get voter eligibility information
+    pub fn get_voter_eligibility(e: &Env, voter: Address) -> governance::VoterEligibility {
+        governance::get_voter_eligibility(e, &voter)
+    }
+
+    /// Get current governance configuration
+    pub fn get_governance_config(e: &Env) -> governance::GovernanceConfig {
+        governance::get_governance_config(e)
+    }
+
+    /// Update governance configuration (restricted access)
+    pub fn update_governance_config(
+        e: &Env,
+        caller: Address,
+        config: governance::GovernanceConfig,
+    ) -> Result<(), utils::NFTError> {
+        caller.require_auth();
+        // TODO: Check if caller has permission to update config
+        governance::update_governance_config(e, &caller, config)
+    }
+
+    /// Get active proposals (placeholder for production indexing)
+    pub fn get_active_proposals(e: &Env) -> Vec<governance::Proposal> {
+        governance::get_active_proposals(e)
+    }
+
+    /// Get proposals by creator (placeholder for production indexing)
+    pub fn get_proposals_by_creator(e: &Env, creator: Address) -> Vec<governance::Proposal> {
+        governance::get_proposals_by_creator(e, &creator)
+    }
+
+    /// Get all votes for a proposal (placeholder for production indexing)
+    pub fn get_proposal_votes(e: &Env, proposal_id: u64) -> Vec<governance::Vote> {
+        governance::get_proposal_votes(e, proposal_id)
+    }
 }
 
 #[default_impl]
@@ -342,3 +679,12 @@ impl Ownable for EducationalNFTContract {}
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod social_tests;
+
+#[cfg(test)]
+mod marketplace_tests;
+
+#[cfg(test)]
+mod governance_tests;
