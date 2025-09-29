@@ -177,6 +177,14 @@ Issue 411
 
 Issue 412
 
+##### Detection Systems
+| Gaming Attempt | Detection Method | Penalty | Prevention |
+|----------------|------------------|---------|------------|
+| **Vote Manipulation** | Pattern analysis | Point deduction + suspension | Rate limiting |
+| **Content Spam** | Quality filters | Content removal + points loss | Quality thresholds |
+| **Fake Engagement** | Behavioral analysis | Account restriction | Community validation |
+| **Cultural Misappropriation** | Expert review | Severe penalties | Cultural expert oversight |
+
 ---
 
 Issue 413
