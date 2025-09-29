@@ -36,9 +36,13 @@ Documentation for native AI agent creation, training, and management systems tha
 
 ---
 
-Issue 296
+### User Guides
 
-<!-- Make the changes from issue number 296 here. Thank you for contributing to Akkuea! -->
+#### [🚀 Getting Started](guides/getting-started.md)
+Step-by-step onboarding guide for new users, covering account setup, platform orientation, and first-day activities.
+
+#### [📋 User Workflows](guides/user-workflows.md)
+Detailed workflows for common tasks including content creation, learning processes, marketplace interactions, and AI agent development.
 
 ---
 
