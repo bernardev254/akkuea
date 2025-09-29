@@ -41,7 +41,29 @@ flowchart TD
 
 ---
 
-Issue 393
+
+
+### Point Categories & Values
+
+#### Content Creation Rewards
+| Action | Base Points | Quality Multiplier | Maximum Points |
+|--------|-------------|-------------------|----------------|
+| **Educational Resource Upload** | 10 | 1x - 5x | 50 |
+| **Interactive Content Creation** | 15 | 1x - 5x | 75 |
+| **Cultural Heritage Documentation** | 20 | 1.5x - 7.5x | 150 |
+| **AI Agent Creation** | 25 | 1x - 4x | 100 |
+| **Collaborative Project** | 30 | 1x - 3x | 90 |
+
+#### Community Engagement Rewards
+| Action | Base Points | Frequency Limit | Notes |
+|--------|-------------|----------------|-------|
+| **Resource Download** | 1 | No limit | Per unique user |
+| **Helpful Comment** | 2 | 50/day | Community-validated |
+| **Quality Rating** | 3 | 20/day | Weighted by reviewer credibility |
+| **Discussion Participation** | 5 | 10/day | Substantial contributions only |
+| **Mentoring Activity** | 10 | 5/week | Verified mentorship interactions |
+
+
 
 ---
 
