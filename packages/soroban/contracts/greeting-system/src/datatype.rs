@@ -1,4 +1,4 @@
-use soroban_sdk::{contracttype, Address};
+use soroban_sdk::{contracttype, Address, String};
 
 /// Premium tier levels based on contribution amounts
 #[contracttype]
@@ -113,4 +113,14 @@ impl TierLevel {
             },
         }
     }
+}
+
+/// User profile data structure
+#[contracttype]
+#[derive(Debug, Clone)]
+pub struct UserProfile {
+    pub user: Address,          
+    pub name: String,      
+    pub preferences: String, 
+    pub registered_at: u64,    
 }

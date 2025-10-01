@@ -27,4 +27,16 @@ pub enum Error {
     
     /// User already has a tier assigned
     TierAlreadyExists = 8,
+
+    /// User is already registered
+    UserAlreadyRegistered = 9,
+
+    /// User profile not found
+    UserNotFound = 10,
+
+    /// Invalid user name
+    InvalidName = 11,
+
+    /// Invalid user preferences
+    InvalidPreferences = 12,
 }
