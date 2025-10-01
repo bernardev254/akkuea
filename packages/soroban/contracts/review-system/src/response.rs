@@ -66,10 +66,11 @@ impl ReviewSystemContract {
         env: &Env,
         parent_response: u64,
     ) -> Result<(), ResponseError> {
-        let mut depth = 1u32;
+        let mut depth = 0u32;
         let mut current_parent = parent_response;
 
-        while current_parent != 0 && depth < MAX_THREAD_DEPTH {
+        // Calculate the current depth of the parent response
+        while current_parent != 0 {
             let parent: Response = env
                 .storage()
                 .persistent()
@@ -80,7 +81,9 @@ impl ReviewSystemContract {
             depth += 1;
         }
 
-        if depth >= MAX_THREAD_DEPTH {
+        // Check if adding a new response would exceed the maximum depth
+        // The new response would have depth = depth + 1
+        if depth + 1 > MAX_THREAD_DEPTH {
             return Err(ResponseError::InvalidParentResponse);
         }
 
