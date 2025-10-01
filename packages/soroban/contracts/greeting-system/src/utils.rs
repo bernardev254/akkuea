@@ -1,74 +1,76 @@
-use soroban_sdk::{Env, String};
+use soroban_sdk::{Address, Env};
 
-// Maximum comment length in characters
-const MAX_COMMENT_LENGTH: u32 = 500;
+use crate::Error;
 
-// Validate a comment text
-pub fn validate_comment(text: &String) {
-    // Check if comment is empty
-    if text.len() == 0 {
-        panic!("Comment cannot be empty");
+/// Validate contribution amount
+/// Ensures the contribution is positive and non-zero
+pub fn validate_contribution(contribution: i128) -> Result<(), Error> {
+    if contribution <= 0 {
+        return Err(Error::InvalidContribution);
     }
-
-    // Check maximum length
-    if text.len() > MAX_COMMENT_LENGTH {
-        panic!("Comment too long (max 500 characters)");
+    
+    if contribution == 0 {
+        return Err(Error::ZeroContribution);
     }
-
-    // Perform moderation check
-    if !moderate_comment(text) {
-        panic!("Comment contains inappropriate content");
-    }
+    
+    Ok(())
 }
 
-// Moderate a comment for inappropriate content
-// Checks against a blacklist of inappropriate words
-pub fn moderate_comment(text: &String) -> bool {
-    // Basic profanity blacklist (simplified for demonstration)
-    // In production, this would be more comprehensive or use an external service
-    let blacklist = [
-        "spam",
-        "scam",
-        "hack",
-        "fuck",
-    ];
-
-    // Check each blacklisted word
-    for word in blacklist.iter() {
-        if contains_word(text, word) {
-            return false;
-        }
-    }
-
-    true
+/// Verify that the user is authorized (must be a valid Stellar account)
+/// In production, this should verify against account flags or additional criteria
+pub fn verify_user_authorization(_env: &Env, user: &Address) -> Result<(), Error> {
+    // Require authentication from the user
+    user.require_auth();
+    
+    // Additional verification could be added here:
+    // - Check if account is on a whitelist
+    // - Verify account age
+    // - Check account trustlines
+    // - Validate account flags
+    
+    Ok(())
 }
 
-/// Helper function to check if a string contains a word
-/// Uses a simple substring matching approach suitable for Soroban
-/// In production, you would want to implement proper byte-level substring matching
-fn contains_word(text: &String, word: &str) -> bool {
-    let text_len = text.len();
-    let word_len = word.len() as u32;
-
-    if text_len < word_len {
-        return false;
-    }
-
-    // Create a temporary environment for string operations
-    let env = Env::default();
-    let word_string = String::from_str(&env, word);
-
-    // For exact match (most common case for short blacklist words)
-    if text == &word_string {
-        return true;
-    }
-
-    // Due to Soroban's limited string API, we implement a basic check
-    // This checks if the word appears as the entire text or as a standalone word
-    // In production, you would implement proper substring matching with word boundaries
-
-    // For now, we return false for partial matches to avoid false positives
-    // This means "spam" won't match "spammer", which is acceptable for basic filtering
-    false
+/// Get current timestamp from the Soroban ledger
+pub fn get_current_timestamp(env: &Env) -> u64 {
+    env.ledger().timestamp()
 }
 
+/// Convert XLM to Stroops (1 XLM = 10,000,000 Stroops)
+pub fn xlm_to_stroops(xlm: i128) -> i128 {
+    xlm * 10_000_000
+}
+
+/// Convert Stroops to XLM (1 XLM = 10,000,000 Stroops)
+pub fn stroops_to_xlm(stroops: i128) -> i128 {
+    stroops / 10_000_000
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_validate_contribution_positive() {
+        assert!(validate_contribution(100).is_ok());
+        assert!(validate_contribution(1000000).is_ok());
+    }
+
+    #[test]
+    fn test_validate_contribution_zero() {
+        assert_eq!(validate_contribution(0), Err(Error::InvalidContribution));
+    }
+
+    #[test]
+    fn test_validate_contribution_negative() {
+        assert_eq!(validate_contribution(-100), Err(Error::InvalidContribution));
+    }
+
+    #[test]
+    fn test_xlm_stroops_conversion() {
+        assert_eq!(xlm_to_stroops(1), 10_000_000);
+        assert_eq!(xlm_to_stroops(100), 1_000_000_000);
+        assert_eq!(stroops_to_xlm(10_000_000), 1);
+        assert_eq!(stroops_to_xlm(1_000_000_000), 100);
+    }
+}
