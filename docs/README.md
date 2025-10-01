@@ -76,9 +76,10 @@ Brand guidelines, color systems, typography standards, and cultural design princ
 
 ---
 
-Issue 300
+### Analytics & Insights
 
-<!-- Make the changes from issue number 300 here. Thank you for contributing to Akkuea! -->
+#### [🏆 Reward System](analytics/reward-system.md)
+Detailed documentation of the contribution reward system, including point calculations, cultural bonuses, user progression, and sustainability mechanisms.
 
 ---
 
