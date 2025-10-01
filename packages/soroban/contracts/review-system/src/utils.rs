@@ -1,5 +1,5 @@
 use soroban_sdk::{
-    contracttype, Address, Env, Bytes, BytesN, Map, Symbol, Vec,
+    contracttype, Address, Env, Bytes, BytesN, Map, Symbol, Vec, IntoVal,
 };
 
 use crate::DataKey;
@@ -25,14 +25,13 @@ impl StorageKeys {
     pub fn review_key(env: &Env, review_id: u64) -> Bytes {
         // Compose a namespaced key: ("review_ver", review_id)
         let mut v: Vec<u8> = Vec::new(env);
-        v.push_back(b"review_ver".to_vec().into_val(env));
+        v.push_back(b"review_ver".as_slice().to_vec().into_val(env)); 
         v.push_back(review_id.into_val(env));
         // convert vector-of-values into Bytes by serializing; easier approach: encode as fixed bytes:
         // We'll create bytes by prefix + review_id little endian
         let mut b = Vec::<u8>::new(env);
         b.extend(&Symbol::short("review_ver").to_xdr(env).unwrap());
-        b.extend(&review_id.to_le_bytes().to_vec().into_val(env));
-        // But building raw Bytes on Soroban is cumbersome. For clarity and reliability: use tuple key via env.storage().get/set with (Symbol, review_id)
+        b.extend(&review_id.to_le_bytes().as_slice().to_vec().into_val(env)); 
         // So this function returns an empty Bytes; keys will be used directly via tuple in other helpers.
         Bytes::new(env) // unused
     }
@@ -52,7 +51,7 @@ pub fn read_review_verification(env: &Env, review_id: u64) -> Option<ReviewVerif
     env.storage().get(&(key_sym, review_id))
 }
 
-/// Fallback local purchase registry helpers (simple demo).
+/// Fallback local purchase registry helpers.
 /// In a real setup you probably won't keep local purchases here,
 /// but the contract exposes these for unit tests or on-chain fallback.
 
@@ -73,5 +72,4 @@ pub fn has_local_purchase(env: &Env, buyer: &Address, content_id: u64) -> bool {
 
 /// Helper to build a ReviewVerification key (not strictly necessary, exported for clarity)
 pub fn get_review_key(_env: &Env, review_id: u64) -> (Symbol, u64) {
-    (Symbol::new(_env, "review_ver"), review_id)
-}
+    (Symbol::new(_env, "review_ver"), review_id)}
