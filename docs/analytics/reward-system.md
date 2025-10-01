@@ -167,6 +167,15 @@ Issue 403
 
 Issue 405
 
+#### Conversion Rates
+| Reward Type | Point Cost | Real Value | Availability |
+|-------------|------------|------------|--------------|
+| **Platform Credits** | 10 points = $1 USD | Direct conversion | Unlimited |
+| **Marketplace Credits** | 15 points = $1 USD | Design commissions | Monthly limit |
+| **Premium Features** | 500 points | $25/month value | 1 month access |
+| **Conference Tickets** | 2000 points | $200-500 value | Limited quantity |
+| **Cultural Artifacts** | 1000-5000 points | $50-300 value | Community-created |
+
 ---
 
 
