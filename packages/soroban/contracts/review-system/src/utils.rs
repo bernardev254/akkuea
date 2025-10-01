@@ -27,7 +27,7 @@ impl StorageKeys {
         let mut v = Vec::new(env);
         v.push_back(Bytes::from_slice(env, b"review_ver").into_val(env));
         v.push_back(Bytes::from_slice(env, &review_id.to_le_bytes()).into_val(env));
-        // If you want to create a Bytes key:
+        // If you want to create  Bytes key:
         let mut b = Bytes::new(env);
         b.append(&Bytes::from_slice(env, b"review_ver"));
         b.append(&Bytes::from_slice(env, &review_id.to_le_bytes()));
