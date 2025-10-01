@@ -60,7 +60,7 @@ pub fn register_local_purchase(env: &Env, buyer: &Address, content_id: u64) {
     env.storage().set(&(key_sym, buyer.clone(), content_id), &true);
 }
 
-/// Checks whether there's a recorded local purchase
+/// Checks whether there's a recorded local purchase for buyer and content_id
 pub fn has_local_purchase(env: &Env, buyer: &Address, content_id: u64) -> bool {
     let key_sym = Symbol::new(env, "local_purchase");
     env.storage()
