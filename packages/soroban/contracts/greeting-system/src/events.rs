@@ -1,6 +1,6 @@
 use soroban_sdk::{symbol_short, Address, Env, String, Symbol};
 
-use crate::{Error, TierAssignmentEvent, TierLevel, TierUpgradeEvent};
+use crate::{Error, TierAssignmentEvent, TierLevel, TierUpgradeEvent, UserProfile};
 
 /// Event symbol for tier assignment
 pub const TIER_ASSIGNED: Symbol = symbol_short!("TIER_ASGN");
@@ -10,6 +10,9 @@ pub const TIER_UPGRADED: Symbol = symbol_short!("TIER_UPG");
 
 /// Event symbol for tier downgrade (if allowed in future)
 pub const TIER_DOWNGRADED: Symbol = symbol_short!("TIER_DWN");
+
+/// Event symbol for user registration
+pub const USER_REGISTERED: Symbol = symbol_short!("USR_REG");
 
 /// Emit a tier assignment event
 pub fn emit_tier_assigned(env: &Env, event: &TierAssignmentEvent) -> Result<(), Error> {
@@ -68,5 +71,19 @@ pub fn emit_tier_downgraded(
         ),
     );
     
+    Ok(())
+}
+
+/// Emit a user registration event
+pub fn emit_user_registered(env: &Env, profile: &UserProfile) -> Result<(), Error> {
+    env.events().publish(
+        (USER_REGISTERED, symbol_short!("reg")),
+        (
+            profile.user.clone(),
+            profile.name.clone(),
+            profile.preferences.clone(),
+            profile.registered_at,
+        ),
+    );
     Ok(())
 }
