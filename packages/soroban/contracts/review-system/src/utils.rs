@@ -8,7 +8,7 @@ use crate::DataKey;
 pub const VERIFICATION_SUCCESS_EVENT: Symbol = Symbol::short("VerificationSuccess");
 pub const VERIFICATION_FAILED_EVENT: Symbol = Symbol::short("VerificationFailed");
 
-/// A compact, contract-compatible struct stored in contract storage per review
+/// A compact, contract-compatible struct stored in contract storage per review now
 #[contracttype]
 #[derive(Clone)]
 pub struct ReviewVerification {
