@@ -20,10 +20,9 @@ fn distribute_tokens_via_tipping(
     let args = (from.clone(), to.clone(), amount, token.clone(), memo).into_val(env);
     // Method name in tipping contract
     let func = symbol_short!("send_tip");
-    let res: Result<(), ()> = env.invoke_contract(tipping_contract, &func, args);
-    if res.is_err() {
-        return Err(Error::ExternalCallFailed);
-    }
+    let _res = env
+        .try_invoke_contract::<(), Error>(tipping_contract, &func, args)
+        .map_err(|_| Error::ExternalCallFailed)?;
     Ok(())
 }
 

@@ -7,8 +7,8 @@ mod events;
 mod interface;
 mod rewards;
 mod storage;
-mod utils;
 mod user;
+mod utils;
 
 pub use datatype::*;
 pub use error::*;
@@ -150,7 +150,12 @@ impl GreetingSystem {
 #[contractimpl]
 impl crate::UserRegistryTrait for GreetingSystem {
     /// Registers a user with profile details
-    fn register_user(env: Env, user: Address, name: String, preferences: String) -> Result<(), Error> {
+    fn register_user(
+        env: Env,
+        user: Address,
+        name: String,
+        preferences: String,
+    ) -> Result<(), Error> {
         user::register(&env, &user, &name, &preferences)
     }
 

@@ -1,6 +1,6 @@
 use soroban_sdk::{contracttype, Address, Env};
 
-use crate::{Error, PremiumTier, UserProfile, GreetingReward};
+use crate::{Error, GreetingReward, PremiumTier, UserProfile};
 
 /// Storage keys for the premium tier system
 #[contracttype]

@@ -129,8 +129,8 @@ pub struct GreetingReward {
 #[contracttype]
 #[derive(Debug, Clone)]
 pub struct UserProfile {
-    pub user: Address,          
-    pub name: String,      
-    pub preferences: String, 
-    pub registered_at: u64,    
+    pub user: Address,
+    pub name: String,
+    pub preferences: String,
+    pub registered_at: u64,
 }

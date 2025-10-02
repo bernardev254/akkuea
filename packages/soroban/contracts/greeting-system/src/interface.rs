@@ -1,6 +1,6 @@
 use soroban_sdk::{Address, Env, String};
 
-use crate::{Error, PremiumFeatures, PremiumTier, TierLevel, UserProfile, GreetingReward};
+use crate::{Error, GreetingReward, PremiumFeatures, PremiumTier, TierLevel, UserProfile};
 
 /// Interface for premium tier management
 pub trait PremiumTierTrait {
@@ -94,7 +94,12 @@ pub trait GreetingRewardTrait {
 /// Interface for user registration and profiles
 pub trait UserRegistryTrait {
     /// Register a specific user address with name and preferences
-    fn register_user(env: Env, user: Address, name: String, preferences: String) -> Result<(), Error>;
+    fn register_user(
+        env: Env,
+        user: Address,
+        name: String,
+        preferences: String,
+    ) -> Result<(), Error>;
 
     /// Get a user profile by address
     fn get_user_profile(env: Env, user: Address) -> Result<UserProfile, Error>;

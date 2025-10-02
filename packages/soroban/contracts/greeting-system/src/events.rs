@@ -1,6 +1,6 @@
 use soroban_sdk::{symbol_short, Address, Env, String, Symbol};
 
-use crate::{Error, TierAssignmentEvent, TierLevel, TierUpgradeEvent, UserProfile, GreetingReward};
+use crate::{Error, GreetingReward, TierAssignmentEvent, TierLevel, TierUpgradeEvent, UserProfile};
 
 /// Event symbol for tier assignment
 pub const TIER_ASSIGNED: Symbol = symbol_short!("TIER_ASGN");
