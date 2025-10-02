@@ -41,6 +41,8 @@ func main() {
 
 		// Resource endpoints (educator-only)
 		protected.POST("/resources", middleware.RequireRole("Educator"), api.CreateResource)
+		protected.GET("/resources", api.ListResources)
+		protected.PUT("/resources/:id", middleware.RequireRole("Educator"), api.UpdateResource)
 
 		// Current user endpoint
 		protected.GET("/auth/me", api.GetCurrentUser)
