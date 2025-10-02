@@ -62,11 +62,13 @@ pub fn vote_moderation_impl(env: Env, voter: Address, review_id: u64, approve: b
         (review_id, voter, approve),
     );
 
-    // Simple resolution logic: if one side has 2 or more votes and a majority, resolve.
-    if (flag.votes_approve >= 2 && flag.votes_approve > flag.votes_reject) || (flag.votes_reject >= 2 && flag.votes_reject > flag.votes_approve) {
+    // Resolution logic: require at least 10 total vote weight and a clear majority
+    let total_votes = flag.votes_approve + flag.votes_reject;
+    if total_votes >= 10 && ((flag.votes_approve > flag.votes_reject && flag.votes_approve > total_votes / 2) ||
+                             (flag.votes_reject > flag.votes_approve && flag.votes_reject > total_votes / 2)) {
         flag.resolved = true;
         let outcome = flag.votes_approve > flag.votes_reject; // true if approved for removal
-        
+
         env.events().publish(
             (Symbol::new(&env, "moderation_resolved"),),
             (review_id, outcome),

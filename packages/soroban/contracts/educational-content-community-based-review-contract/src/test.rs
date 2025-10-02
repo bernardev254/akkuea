@@ -1,7 +1,7 @@
 use crate::{CommunityModeration, CommunityModerationClient};
 use soroban_sdk::{
     testutils::{Address as _, Events},
-    Address, Env, String, Symbol, vec as soroban_vec,
+    Address, Env, String, Symbol, TryIntoVal,
 };
 
 // Mock Reputation Contract
@@ -144,12 +144,12 @@ fn test_vote_moderation() {
     
     // Vote to approve removal
     client.vote_moderation(&voter, &review_id, &true);
-    
+
     // Verify vote was recorded (weight = 1 + 100/20 = 6)
     let flag = client.get_flag(&review_id).unwrap();
     assert_eq!(flag.votes_approve, 6);
     assert_eq!(flag.votes_reject, 0);
-    assert_eq!(flag.resolved, false); // Not resolved yet (needs 2+ votes with majority)
+    assert_eq!(flag.resolved, false); // Not resolved yet (needs 10+ total votes with majority)
 }
 
 #[test]
@@ -192,15 +192,15 @@ fn test_auto_resolution_on_approval() {
     let review_id = 1u64;
     
     client.flag_review(&flagger, &review_id, &String::from_str(&env, "Spam"));
-    
+
     // First vote (weight 6)
     client.vote_moderation(&voter1, &review_id, &true);
     let flag = client.get_flag(&review_id).unwrap();
     assert_eq!(flag.resolved, false); // Not resolved yet
-    
-    // Second vote (weight 6, total 12 > 2 threshold)
+
+    // Second vote (weight 6, total 12 >= 10 threshold)
     client.vote_moderation(&voter2, &review_id, &true);
-    
+
     let flag = client.get_flag(&review_id).unwrap();
     assert_eq!(flag.resolved, true);
     assert_eq!(flag.votes_approve, 12);
@@ -219,11 +219,11 @@ fn test_auto_resolution_on_rejection() {
     let review_id = 1u64;
     
     client.flag_review(&flagger, &review_id, &String::from_str(&env, "Spam"));
-    
-    // Two votes rejecting the flag
+
+    // Two votes rejecting the flag (total 12 >= 10 threshold)
     client.vote_moderation(&voter1, &review_id, &false);
     client.vote_moderation(&voter2, &review_id, &false);
-    
+
     let flag = client.get_flag(&review_id).unwrap();
     assert_eq!(flag.resolved, true);
     assert_eq!(flag.votes_approve, 0);
@@ -245,8 +245,8 @@ fn test_vote_on_resolved_flag_fails() {
     
     client.flag_review(&flagger, &review_id, &String::from_str(&env, "Spam"));
     client.vote_moderation(&voter1, &review_id, &true);
-    client.vote_moderation(&voter2, &review_id, &true); // Resolves
-    
+    client.vote_moderation(&voter2, &review_id, &true); // Resolves (12 votes >= 10 threshold)
+
     // Try to vote on resolved flag
     client.vote_moderation(&voter3, &review_id, &true);
 }
@@ -317,13 +317,13 @@ fn test_mixed_votes() {
     let review_id = 1u64;
     
     client.flag_review(&flagger, &review_id, &String::from_str(&env, "Questionable"));
-    
-    // 2 approve, 1 reject
+
+    // 2 approve, 1 reject (total 18 >= 10 threshold)
     client.vote_moderation(&voter1, &review_id, &true);  // 6 approve
     client.vote_moderation(&voter2, &review_id, &false); // 6 reject
     client.vote_moderation(&voter3, &review_id, &true);  // 12 approve total
-    
-    // Should resolve with approval winning (12 > 6)
+
+    // Should resolve with approval winning (12 > 6, total 18 >= 10)
     let flag = client.get_flag(&review_id).unwrap();
     assert_eq!(flag.resolved, true);
     assert_eq!(flag.votes_approve, 12);
@@ -349,7 +349,8 @@ fn test_event_emission_on_flag() {
     let topics = &event.1;
     assert_eq!(topics.len(), 1);
     // Compare as Symbol directly
-    let topic_symbol: Symbol = topics.get(0).unwrap().try_into_val(&env).unwrap();
+    let topic_val = topics.get(0).unwrap();
+    let topic_symbol: Symbol = topic_val.try_into_val(&env).unwrap();
     assert_eq!(topic_symbol, Symbol::new(&env, "review_flagged"));
 }
 
@@ -368,9 +369,10 @@ fn test_event_emission_on_vote() {
     
     let events = env.events().all();
     let last_event = events.last().unwrap();
-    
+
     let topics = &last_event.1;
-    let topic_symbol: Symbol = topics.get(0).unwrap().try_into_val(&env).unwrap();
+    let topic_val = topics.get(0).unwrap();
+    let topic_symbol: Symbol = topic_val.try_into_val(&env).unwrap();
     assert_eq!(topic_symbol, Symbol::new(&env, "moderation_voted"));
 }
 
@@ -394,7 +396,8 @@ fn test_event_emission_on_resolution() {
         .iter()
         .filter(|e| {
             let topics = &e.1;
-            let topic_symbol: Result<Symbol, _> = topics.get(0).unwrap().try_into_val(&env);
+            let topic_val = topics.get(0).unwrap();
+            let topic_symbol: Result<Symbol, _> = topic_val.try_into_val(&env);
             topic_symbol.map_or(false, |s| s == Symbol::new(&env, "moderation_resolved"))
         })
         .count();

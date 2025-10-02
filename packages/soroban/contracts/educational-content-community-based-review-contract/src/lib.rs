@@ -14,12 +14,12 @@ pub struct CommunityModeration;
 #[contractimpl]
 impl CommunityModeration {
     pub fn initialize(env: Env, admin: Address, reputation_contract: Address) {
-        if env.storage().instance().has(&ADMIN) {
+        if env.storage().persistent().has(&ADMIN) {
             panic!("Already initialized");
         }
         env.storage().persistent().set(&ADMIN, &admin);
         env.storage().persistent().extend_ttl(&ADMIN, INSTANCE_LIFETIME_THRESHOLD, INSTANCE_BUMP_AMOUNT);
-        
+
         env.storage().persistent().set(&REPUTATION_CONTRACT, &reputation_contract);
         env.storage().persistent().extend_ttl(&REPUTATION_CONTRACT, INSTANCE_LIFETIME_THRESHOLD, INSTANCE_BUMP_AMOUNT);
 
