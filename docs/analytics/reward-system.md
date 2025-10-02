@@ -145,6 +145,17 @@ Issue 401
 
 Issue 402
 
+### Level Benefits & Privileges
+
+| Level | Points Required | Benefits | Responsibilities |
+|-------|----------------|----------|------------------|
+| **Novice** | 0-100 | Basic access, learning features | Follow community guidelines |
+| **Contributor** | 101-500 | Upload content, basic marketplace | Quality content creation |
+| **Educator** | 501-1500 | Advanced tools, AI agent creation | Mentor newcomers |
+| **Expert** | 1501-3000 | Content moderation, expert badges | Community leadership |
+| **Master** | 3001-6000 | Platform governance, feature preview | Strategic guidance |
+| **Guardian** | 6000+ | Cultural stewardship, elder council | Cultural preservation leadership |
+
 ---
 
 Issue 403
