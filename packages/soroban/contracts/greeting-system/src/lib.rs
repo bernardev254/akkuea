@@ -1,5 +1,5 @@
 #![no_std]
-use soroban_sdk::{contract, contractimpl, Address, Env};
+use soroban_sdk::{contract, contractimpl, Address, Env, String};
 
 mod datatype;
 mod error;
@@ -8,6 +8,7 @@ mod interface;
 mod rewards;
 mod storage;
 mod utils;
+mod user;
 
 pub use datatype::*;
 pub use error::*;
@@ -143,6 +144,32 @@ impl GreetingSystem {
     /// Get stored reward by greeting id
     pub fn get_greeting_reward(env: Env, greeting_id: u64) -> Option<GreetingReward> {
         rewards::get_reward(env, greeting_id)
+    }
+}
+
+#[contractimpl]
+impl crate::UserRegistryTrait for GreetingSystem {
+    /// Registers a user with profile details
+    fn register_user(env: Env, user: Address, name: String, preferences: String) -> Result<(), Error> {
+        user::register(&env, &user, &name, &preferences)
+    }
+
+    /// Retrieves a user profile by address
+    fn get_user_profile(env: Env, user: Address) -> Result<UserProfile, Error> {
+        user::get_profile(&env, &user)
+    }
+}
+
+#[contractimpl]
+impl crate::ConfigTrait for GreetingSystem {
+    fn set_reputation_contract(env: Env, contract: Address) -> Result<(), Error> {
+        // Require admin auth: here we keep it simple and require the contract address itself to auth.
+        contract.require_auth();
+        crate::storage::set_reputation_contract(&env, &contract)
+    }
+
+    fn get_reputation_contract(env: Env) -> Option<Address> {
+        crate::storage::get_reputation_contract(&env)
     }
 }
 

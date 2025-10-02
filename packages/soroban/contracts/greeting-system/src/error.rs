@@ -28,15 +28,27 @@ pub enum Error {
     /// User already has a tier assigned
     TierAlreadyExists = 8,
 
+    /// User is already registered
+    UserAlreadyRegistered = 9,
+
+    /// User profile not found
+    UserNotFound = 10,
+
+    /// Invalid user name
+    InvalidName = 11,
+
+    /// Invalid user preferences
+    InvalidPreferences = 12,
+
     /// Greeting not eligible for rewards
-    NotEligible = 9,
+    NotEligible = 13,
 
     /// Reward already claimed for greeting
-    RewardAlreadyClaimed = 10,
+    RewardAlreadyClaimed = 14,
 
     /// Greeting not found
-    GreetingNotFound = 11,
+    GreetingNotFound = 15,
 
     /// Cross-contract call failed
-    ExternalCallFailed = 12,
+    ExternalCallFailed = 16,
 }

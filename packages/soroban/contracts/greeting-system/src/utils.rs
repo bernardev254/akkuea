@@ -1,4 +1,4 @@
-use soroban_sdk::{Address, Env};
+use soroban_sdk::{Address, Env, String};
 
 use crate::Error;
 
@@ -58,6 +58,22 @@ pub fn is_greeting_eligible(env: &Env, greeting_id: u64) -> bool {
 pub fn validate_token_amount(token_amount: i128) -> Result<(), Error> {
     if token_amount <= 0 {
         return Err(Error::InvalidContribution);
+    }
+    Ok(())
+}
+pub fn validate_name(name: &String) -> Result<(), Error> {
+    let len = name.len() as u32;
+    if len == 0 || len > 64 {
+        return Err(Error::InvalidName);
+    }
+    Ok(())
+}
+
+/// Validate user preferences input
+pub fn validate_preferences(preferences: &String) -> Result<(), Error> {
+    let len = preferences.len() as u32;
+    if len > 256 {
+        return Err(Error::InvalidPreferences);
     }
     Ok(())
 }

@@ -67,7 +67,19 @@ flowchart TD
 
 ---
 
-Issue 394
+
+
+#### Special Achievements
+| Achievement | Points | Criteria | Frequency |
+|-------------|--------|----------|-----------|
+| **First Upload Bonus** | 25 | First content upload | One-time |
+| **Cultural Steward** | 50 | 10+ cultural content pieces | Monthly |
+| **Community Builder** | 75 | 100+ helpful interactions | Quarterly |
+| **Innovation Leader** | 100 | Breakthrough feature/content | As earned |
+| **Cultural Ambassador** | 150 | Community recognition + elder endorsement | Annually |
+
+
+
 
 ---
 
@@ -115,11 +127,17 @@ graph TD
 
 Issue 399
 
----
+### Cultural Impact Measurement
 
-Issue 400
+#### Community Benefit Assessment
+| Indicator | Measurement | Weight | Target Value |
+|-----------|-------------|--------|--------------|
+| **Knowledge Preservation** | Content archival rate | 25% | 90%+ preserved |
+| **Educational Access** | Download/usage statistics | 25% | 1000+ learners reached |
+| **Cultural Continuity** | Intergenerational transmission | 20% | 3+ generations engaged |
+| **Community Recognition** | Elder/leader endorsements | 20% | 5+ community endorsements |
+| **Global Awareness** | International engagement | 10% | 10+ countries accessing |
 
----
 
 Issue 401
 

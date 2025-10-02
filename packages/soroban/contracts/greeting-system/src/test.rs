@@ -1,6 +1,6 @@
 #![cfg(test)]
 
-use soroban_sdk::{testutils::Address as _, Address, Env};
+use soroban_sdk::{testutils::Address as _, Address, Env, String};
 
 use crate::{xlm_to_stroops, GreetingSystem, GreetingSystemClient, TierLevel};
 
@@ -200,6 +200,7 @@ fn test_get_total_contribution() {
     assert_eq!(total, xlm_to_stroops(500));
 }
 
+
 #[test]
 fn test_get_premium_status_not_found() {
     let (_env, client, user) = create_test_env();
@@ -269,4 +270,54 @@ fn test_tier_features_elite() {
     assert!(features.priority_support);
     assert!(features.analytics_access);
     assert_eq!(features.api_rate_limit, 500);
+}
+
+#[test]
+fn test_register_user_and_get_profile() {
+    let (env, client, user) = create_test_env();
+    env.mock_all_auths();
+
+    let name = String::from_str(&env, "Alice");
+    let prefs = String::from_str(&env, "friend");
+
+    client.register_user(&user, &name, &prefs);
+
+    let profile = client.get_user_profile(&user);
+    assert_eq!(profile.user, user);
+    assert_eq!(profile.name, name);
+    assert_eq!(profile.preferences, prefs);
+}
+
+#[test]
+fn test_register_user_duplicate_fails() {
+    let (env, client, user) = create_test_env();
+    env.mock_all_auths();
+
+    let name = String::from_str(&env, "Bob");
+    let prefs = String::from_str(&env, "casual");
+
+    client.register_user(&user, &name, &prefs);
+    let err = client.try_register_user(&user, &name, &prefs);
+    assert!(err.is_err());
+}
+
+#[test]
+fn test_stress_register_many_users() {
+    let (env, client, _user) = create_test_env();
+    env.mock_all_auths();
+
+    let total = 1000u32;
+    for i in 0..total {
+        let u = Address::generate(&env);
+        let name = String::from_str(&env, "User");
+        
+        let prefs = String::from_str(&env, "p");
+        client.register_user(&u, &name, &prefs);
+
+       
+        if i % 200 == 0 {
+            let profile = client.get_user_profile(&u);
+            assert_eq!(profile.user, u);
+        }
+    }
 }

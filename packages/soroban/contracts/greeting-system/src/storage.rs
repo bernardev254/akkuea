@@ -1,6 +1,6 @@
 use soroban_sdk::{contracttype, Address, Env};
 
-use crate::{Error, GreetingReward, PremiumTier};
+use crate::{Error, PremiumTier, UserProfile, GreetingReward};
 
 /// Storage keys for the premium tier system
 #[contracttype]
@@ -9,6 +9,8 @@ pub enum StorageKey {
     PremiumTier(Address),
     GreetingReward(u64),
     RewardClaimed(u64),
+    UserProfile(Address),
+    ReputationContract,
 }
 
 /// Save a premium tier to storage
@@ -63,4 +65,38 @@ pub fn mark_reward_claimed(env: &Env, greeting_id: &u64) {
 pub fn is_reward_claimed(env: &Env, greeting_id: &u64) -> bool {
     let key = StorageKey::RewardClaimed(*greeting_id);
     env.storage().persistent().get(&key).unwrap_or(false)
+}
+/// Save user profile to storage
+pub fn save_user_profile(env: &Env, profile: &UserProfile) -> Result<(), Error> {
+    let key = StorageKey::UserProfile(profile.user.clone());
+    env.storage().persistent().set(&key, profile);
+    Ok(())
+}
+
+/// Load a user profile from storage
+pub fn load_user_profile(env: &Env, user: &Address) -> Result<UserProfile, Error> {
+    let key = StorageKey::UserProfile(user.clone());
+    env.storage()
+        .persistent()
+        .get(&key)
+        .ok_or(Error::UserNotFound)
+}
+
+/// Check if a user is registered
+pub fn has_user_profile(env: &Env, user: &Address) -> bool {
+    let key = StorageKey::UserProfile(user.clone());
+    env.storage().persistent().has(&key)
+}
+
+/// Set the external reputation contract address
+pub fn set_reputation_contract(env: &Env, contract: &Address) -> Result<(), Error> {
+    let key = StorageKey::ReputationContract;
+    env.storage().persistent().set(&key, contract);
+    Ok(())
+}
+
+/// Get the external reputation contract address, if set
+pub fn get_reputation_contract(env: &Env) -> Option<Address> {
+    let key = StorageKey::ReputationContract;
+    env.storage().persistent().get(&key)
 }

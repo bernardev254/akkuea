@@ -1,4 +1,4 @@
-use soroban_sdk::{contracttype, Address};
+use soroban_sdk::{contracttype, Address, String};
 
 /// Premium tier levels based on contribution amounts
 #[contracttype]
@@ -123,4 +123,14 @@ pub struct GreetingReward {
     pub creator: Address,   // Stellar address of the creator
     pub token_amount: i128, // Reward amount in tokens (Stroops)
     pub timestamp: u64,     // Reward issuance timestamp
+}
+
+/// User profile data structure
+#[contracttype]
+#[derive(Debug, Clone)]
+pub struct UserProfile {
+    pub user: Address,          
+    pub name: String,      
+    pub preferences: String, 
+    pub registered_at: u64,    
 }
