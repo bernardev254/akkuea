@@ -160,7 +160,15 @@ Issue 402
 
 Issue 403
 
----
+### Progression Incentives
+
+#### Monthly Challenges
+| Challenge Type | Points Reward | Criteria | Cultural Focus |
+|----------------|---------------|----------|----------------|
+| **Knowledge Keeper** | 50-200 | Document local traditions | Varies by region |
+| **Bridge Builder** | 75-150 | Cross-cultural content creation | International collaboration |
+| **Innovation Pioneer** | 100-300 | Create new educational tools | Technology + culture |
+| **Community Weaver** | 25-100 | Foster community connections | Social engagement |
 
 ## Reward Distribution Mechanisms 
  
