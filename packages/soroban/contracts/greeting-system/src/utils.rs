@@ -8,11 +8,11 @@ pub fn validate_contribution(contribution: i128) -> Result<(), Error> {
     if contribution <= 0 {
         return Err(Error::InvalidContribution);
     }
-    
+
     if contribution == 0 {
         return Err(Error::ZeroContribution);
     }
-    
+
     Ok(())
 }
 
@@ -21,13 +21,13 @@ pub fn validate_contribution(contribution: i128) -> Result<(), Error> {
 pub fn verify_user_authorization(_env: &Env, user: &Address) -> Result<(), Error> {
     // Require authentication from the user
     user.require_auth();
-    
+
     // Additional verification could be added here:
     // - Check if account is on a whitelist
     // - Verify account age
     // - Check account trustlines
     // - Validate account flags
-    
+
     Ok(())
 }
 
@@ -46,7 +46,21 @@ pub fn stroops_to_xlm(stroops: i128) -> i128 {
     stroops / 10_000_000
 }
 
-/// Validate user name input
+/// Basic engagement-based eligibility check: at least MIN_LIKES likes
+pub fn is_greeting_eligible(env: &Env, greeting_id: u64) -> bool {
+    let like_count_key = (soroban_sdk::symbol_short!("LIKE_CNT"), greeting_id);
+    let likes: u64 = env.storage().persistent().get(&like_count_key).unwrap_or(0);
+    const MIN_LIKES: u64 = 5;
+    likes >= MIN_LIKES
+}
+
+/// Validate non-zero positive token amount in Stroops
+pub fn validate_token_amount(token_amount: i128) -> Result<(), Error> {
+    if token_amount <= 0 {
+        return Err(Error::InvalidContribution);
+    }
+    Ok(())
+}
 pub fn validate_name(name: &String) -> Result<(), Error> {
     let len = name.len() as u32;
     if len == 0 || len > 64 {

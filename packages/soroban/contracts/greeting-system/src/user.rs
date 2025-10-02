@@ -6,7 +6,12 @@ use crate::{
     UserProfile,
 };
 
-pub fn register(env: &Env, user: &Address, name: &String, preferences: &String) -> Result<(), Error> {
+pub fn register(
+    env: &Env,
+    user: &Address,
+    name: &String,
+    preferences: &String,
+) -> Result<(), Error> {
     verify_user_authorization(env, user)?;
     validate_name(name)?;
     validate_preferences(preferences)?;
@@ -25,8 +30,8 @@ pub fn register(env: &Env, user: &Address, name: &String, preferences: &String) 
 
     save_user_profile(env, &profile)?;
 
-   
-    if let Some(rep_contract) = get_reputation_contract(env) { //  platform-user-reputation-contract.register(env, user, expertise)
+    if let Some(rep_contract) = get_reputation_contract(env) {
+        //  platform-user-reputation-contract.register(env, user, expertise)
         let expertise: Vec<Symbol> = Vec::new(env);
         let args = (user.clone(), expertise).into_val(env);
         let _res: () = env.invoke_contract(&rep_contract, &symbol_short!("register"), args);
@@ -36,9 +41,6 @@ pub fn register(env: &Env, user: &Address, name: &String, preferences: &String) 
     Ok(())
 }
 
-
 pub fn get_profile(env: &Env, user: &Address) -> Result<UserProfile, Error> {
     crate::load_user_profile(env, user)
 }
-
-

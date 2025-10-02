@@ -1,6 +1,6 @@
 use soroban_sdk::{Address, Env, String};
 
-use crate::{Error, PremiumFeatures, PremiumTier, TierLevel, UserProfile};
+use crate::{Error, GreetingReward, PremiumFeatures, PremiumTier, TierLevel, UserProfile};
 
 /// Interface for premium tier management
 pub trait PremiumTierTrait {
@@ -71,10 +71,35 @@ pub trait PremiumTierTrait {
     fn get_total_contribution(env: Env, user: Address) -> Result<i128, Error>;
 }
 
+/// Interface for greeting reward management
+pub trait GreetingRewardTrait {
+    /// Issues tokens for a popular greeting.
+    /// Returns the created `GreetingReward` record.
+    fn issue_greeting_reward(
+        env: Env,
+        greeting_id: u64,
+        token_amount: i128,
+        creator: Address,
+        token: Address,
+        tipping_contract: Address,
+    ) -> Result<GreetingReward, Error>;
+
+    /// Verifies if a greeting meets reward criteria.
+    fn check_reward_eligibility(env: Env, greeting_id: u64) -> Result<bool, Error>;
+
+    /// Get a previously issued reward by greeting id.
+    fn get_greeting_reward(env: Env, greeting_id: u64) -> Option<GreetingReward>;
+}
+
 /// Interface for user registration and profiles
 pub trait UserRegistryTrait {
     /// Register a specific user address with name and preferences
-    fn register_user(env: Env, user: Address, name: String, preferences: String) -> Result<(), Error>;
+    fn register_user(
+        env: Env,
+        user: Address,
+        name: String,
+        preferences: String,
+    ) -> Result<(), Error>;
 
     /// Get a user profile by address
     fn get_user_profile(env: Env, user: Address) -> Result<UserProfile, Error>;

@@ -1,6 +1,6 @@
 use soroban_sdk::{symbol_short, Address, Env, String, Symbol};
 
-use crate::{Error, TierAssignmentEvent, TierLevel, TierUpgradeEvent, UserProfile};
+use crate::{Error, GreetingReward, TierAssignmentEvent, TierLevel, TierUpgradeEvent, UserProfile};
 
 /// Event symbol for tier assignment
 pub const TIER_ASSIGNED: Symbol = symbol_short!("TIER_ASGN");
@@ -11,13 +11,15 @@ pub const TIER_UPGRADED: Symbol = symbol_short!("TIER_UPG");
 /// Event symbol for tier downgrade (if allowed in future)
 pub const TIER_DOWNGRADED: Symbol = symbol_short!("TIER_DWN");
 
+/// Event symbol for greeting reward issuance
+pub const GREETING_REWARD: Symbol = symbol_short!("GRT_RWD");
 /// Event symbol for user registration
 pub const USER_REGISTERED: Symbol = symbol_short!("USR_REG");
 
 /// Emit a tier assignment event
 pub fn emit_tier_assigned(env: &Env, event: &TierAssignmentEvent) -> Result<(), Error> {
     let tier_str = event.tier.to_str();
-    
+
     env.events().publish(
         (TIER_ASSIGNED, symbol_short!("assigned")),
         (
@@ -27,7 +29,7 @@ pub fn emit_tier_assigned(env: &Env, event: &TierAssignmentEvent) -> Result<(), 
             event.timestamp,
         ),
     );
-    
+
     Ok(())
 }
 
@@ -35,7 +37,7 @@ pub fn emit_tier_assigned(env: &Env, event: &TierAssignmentEvent) -> Result<(), 
 pub fn emit_tier_upgraded(env: &Env, event: &TierUpgradeEvent) -> Result<(), Error> {
     let old_tier_str = event.old_tier.to_str();
     let new_tier_str = event.new_tier.to_str();
-    
+
     env.events().publish(
         (TIER_UPGRADED, symbol_short!("upgraded")),
         (
@@ -46,7 +48,21 @@ pub fn emit_tier_upgraded(env: &Env, event: &TierUpgradeEvent) -> Result<(), Err
             event.timestamp,
         ),
     );
-    
+
+    Ok(())
+}
+
+/// Emit a greeting reward issuance event
+pub fn emit_greeting_reward(env: &Env, reward: &GreetingReward) -> Result<(), Error> {
+    env.events().publish(
+        (GREETING_REWARD, symbol_short!("issued")),
+        (
+            reward.greeting_id,
+            reward.creator.clone(),
+            reward.token_amount,
+            reward.timestamp,
+        ),
+    );
     Ok(())
 }
 
@@ -60,7 +76,7 @@ pub fn emit_tier_downgraded(
 ) -> Result<(), Error> {
     let old_tier_str = old_tier.to_str();
     let new_tier_str = new_tier.to_str();
-    
+
     env.events().publish(
         (TIER_DOWNGRADED, symbol_short!("downgrade")),
         (
@@ -70,7 +86,7 @@ pub fn emit_tier_downgraded(
             timestamp,
         ),
     );
-    
+
     Ok(())
 }
 
