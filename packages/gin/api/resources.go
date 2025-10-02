@@ -18,8 +18,8 @@ type ResourceCreateRequest struct {
     Content  string `json:"content" binding:"required,min=1"`
     Language string `json:"language" binding:"required,min=2,max=10"`
     Format   string `json:"format" binding:"required,min=2,max=50"`
-    Theme    string `json:"theme" binding:"required,min=2,max=100"`
-    Level    string `json:"level" binding:"required,min=1,max=50"`
+    Theme    string `json:"theme"`
+    Level    string `json:"level"`
 }
 
 // CreateResource handles educator-only creation of resources
@@ -57,6 +57,7 @@ func CreateResource(c *gin.Context) {
         Format:    req.Format,
         Theme:     req.Theme,
         Level:     req.Level,
+        Status:    "Pending",
         CreatorID: userID,
     }
 
@@ -73,7 +74,13 @@ func ListResources(c *gin.Context) {
     db := config.GetDB()
 
     var resources []models.Resource
-    if err := db.Preload("Creator").Find(&resources).Error; err != nil {
+    // Optional status filter
+    status := c.Query("status")
+    q := db.Preload("Creator")
+    if status != "" {
+        q = q.Where("status = ?", status)
+    }
+    if err := q.Find(&resources).Error; err != nil {
         common.JSONError(c, http.StatusInternalServerError, "database_error", "Failed to fetch resources")
         return
     }

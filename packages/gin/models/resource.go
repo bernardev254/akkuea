@@ -10,6 +10,7 @@ type Resource struct {
     Format    string `json:"format" gorm:"size:50"` // pdf, video, audio, text, etc.
     Theme     string `json:"theme" gorm:"size:100"`
     Level     string `json:"level" gorm:"size:50"`
+    Status    string `json:"status" gorm:"size:20;default:'Pending'"`
     CreatorID uint   `json:"creator_id" gorm:"not null;index"`
     
     // Foreign key relationship

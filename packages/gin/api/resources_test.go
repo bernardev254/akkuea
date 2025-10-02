@@ -12,7 +12,7 @@ import (
 	"gin/models"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/sqlite"
+	sqlite "github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -21,7 +21,7 @@ func setupTestRouter(t *testing.T) *gin.Engine {
 	t.Helper()
 	gin.SetMode(gin.TestMode)
 
-	// Use SQLite in-memory for tests to avoid Postgres dependency
+	// Use pure-Go SQLite in-memory for tests to avoid CGO/Postgres dependency
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		t.Fatalf("failed to open sqlite: %v", err)
