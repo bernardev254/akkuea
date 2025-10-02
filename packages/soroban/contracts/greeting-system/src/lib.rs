@@ -5,6 +5,7 @@ mod datatype;
 mod error;
 mod events;
 mod interface;
+mod rewards;
 mod storage;
 mod utils;
 
@@ -12,6 +13,7 @@ pub use datatype::*;
 pub use error::*;
 pub use events::*;
 pub use interface::*;
+pub use rewards::*;
 pub use storage::*;
 pub use utils::*;
 
@@ -21,11 +23,7 @@ pub struct GreetingSystem;
 #[contractimpl]
 impl GreetingSystem {
     /// Assign a premium tier to a user based on their contribution
-    pub fn assign_premium_tier(
-        env: Env,
-        user: Address,
-        contribution: i128,
-    ) -> Result<(), Error> {
+    pub fn assign_premium_tier(env: Env, user: Address, contribution: i128) -> Result<(), Error> {
         verify_user_authorization(&env, &user)?;
         validate_contribution(contribution)?;
 
@@ -116,6 +114,35 @@ impl GreetingSystem {
     pub fn get_total_contribution(env: Env, user: Address) -> Result<i128, Error> {
         let tier = load_premium_tier(&env, &user)?;
         Ok(tier.contribution)
+    }
+
+    /// Issues tokens for a popular greeting via tipping contract and records reward
+    pub fn issue_greeting_reward(
+        env: Env,
+        greeting_id: u64,
+        token_amount: i128,
+        creator: Address,
+        token: Address,
+        tipping_contract: Address,
+    ) -> Result<GreetingReward, Error> {
+        rewards::issue_greeting_reward(
+            env,
+            greeting_id,
+            token_amount,
+            creator,
+            token,
+            tipping_contract,
+        )
+    }
+
+    /// Verifies if a greeting meets reward criteria
+    pub fn check_reward_eligibility(env: Env, greeting_id: u64) -> Result<bool, Error> {
+        rewards::check_reward_eligibility(env, greeting_id)
+    }
+
+    /// Get stored reward by greeting id
+    pub fn get_greeting_reward(env: Env, greeting_id: u64) -> Option<GreetingReward> {
+        rewards::get_reward(env, greeting_id)
     }
 }
 

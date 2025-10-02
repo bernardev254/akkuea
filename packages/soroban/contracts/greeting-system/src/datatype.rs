@@ -4,20 +4,20 @@ use soroban_sdk::{contracttype, Address};
 #[contracttype]
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub enum TierLevel {
-    None,       // No premium tier
-    Basic,      // 100-499 XLM
-    Pro,        // 500-1999 XLM
-    Elite,      // 2000+ XLM
+    None,  // No premium tier
+    Basic, // 100-499 XLM
+    Pro,   // 500-1999 XLM
+    Elite, // 2000+ XLM
 }
 
 /// Premium tier data structure
 #[contracttype]
 #[derive(Debug, Clone)]
 pub struct PremiumTier {
-    pub user: Address,           // Stellar address of the user
-    pub tier: TierLevel,         // Tier level
-    pub contribution: i128,      // Contribution amount in Stroops (1 XLM = 10,000,000 Stroops)
-    pub assigned_at: u64,        // Tier assignment timestamp
+    pub user: Address,             // Stellar address of the user
+    pub tier: TierLevel,           // Tier level
+    pub contribution: i128,        // Contribution amount in Stroops (1 XLM = 10,000,000 Stroops)
+    pub assigned_at: u64,          // Tier assignment timestamp
     pub features: PremiumFeatures, // Available features for this tier
 }
 
@@ -25,11 +25,11 @@ pub struct PremiumTier {
 #[contracttype]
 #[derive(Debug, Clone)]
 pub struct PremiumFeatures {
-    pub max_greetings_per_day: u32,     // Maximum greetings allowed per day
-    pub custom_greeting_messages: bool,  // Can create custom greeting messages
-    pub priority_support: bool,          // Access to priority support
-    pub analytics_access: bool,          // Access to greeting analytics
-    pub api_rate_limit: u32,            // API calls per minute
+    pub max_greetings_per_day: u32, // Maximum greetings allowed per day
+    pub custom_greeting_messages: bool, // Can create custom greeting messages
+    pub priority_support: bool,     // Access to priority support
+    pub analytics_access: bool,     // Access to greeting analytics
+    pub api_rate_limit: u32,        // API calls per minute
 }
 
 /// Tier upgrade event data
@@ -68,7 +68,7 @@ impl TierLevel {
     /// 1 XLM = 10,000,000 Stroops
     pub fn from_contribution(contribution: i128) -> Self {
         const ONE_XLM: i128 = 10_000_000; // 1 XLM in Stroops
-        
+
         if contribution >= 2000 * ONE_XLM {
             TierLevel::Elite
         } else if contribution >= 500 * ONE_XLM {
@@ -113,4 +113,14 @@ impl TierLevel {
             },
         }
     }
+}
+
+/// Reward record for a greeting
+#[contracttype]
+#[derive(Debug, Clone)]
+pub struct GreetingReward {
+    pub greeting_id: u64,   // Associated greeting ID
+    pub creator: Address,   // Stellar address of the creator
+    pub token_amount: i128, // Reward amount in tokens (Stroops)
+    pub timestamp: u64,     // Reward issuance timestamp
 }

@@ -1,6 +1,6 @@
 use soroban_sdk::{Address, Env};
 
-use crate::{Error, PremiumFeatures, PremiumTier, TierLevel};
+use crate::{Error, GreetingReward, PremiumFeatures, PremiumTier, TierLevel};
 
 /// Interface for premium tier management
 pub trait PremiumTierTrait {
@@ -69,4 +69,24 @@ pub trait PremiumTierTrait {
     /// # Returns
     /// * `Result<i128, Error>` - The total contribution in Stroops
     fn get_total_contribution(env: Env, user: Address) -> Result<i128, Error>;
+}
+
+/// Interface for greeting reward management
+pub trait GreetingRewardTrait {
+    /// Issues tokens for a popular greeting.
+    /// Returns the created `GreetingReward` record.
+    fn issue_greeting_reward(
+        env: Env,
+        greeting_id: u64,
+        token_amount: i128,
+        creator: Address,
+        token: Address,
+        tipping_contract: Address,
+    ) -> Result<GreetingReward, Error>;
+
+    /// Verifies if a greeting meets reward criteria.
+    fn check_reward_eligibility(env: Env, greeting_id: u64) -> Result<bool, Error>;
+
+    /// Get a previously issued reward by greeting id.
+    fn get_greeting_reward(env: Env, greeting_id: u64) -> Option<GreetingReward>;
 }
