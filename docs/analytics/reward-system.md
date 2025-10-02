@@ -67,7 +67,19 @@ flowchart TD
 
 ---
 
-Issue 394
+
+
+#### Special Achievements
+| Achievement | Points | Criteria | Frequency |
+|-------------|--------|----------|-----------|
+| **First Upload Bonus** | 25 | First content upload | One-time |
+| **Cultural Steward** | 50 | 10+ cultural content pieces | Monthly |
+| **Community Builder** | 75 | 100+ helpful interactions | Quarterly |
+| **Innovation Leader** | 100 | Breakthrough feature/content | As earned |
+| **Cultural Ambassador** | 150 | Community recognition + elder endorsement | Annually |
+
+
+
 
 ---
 
