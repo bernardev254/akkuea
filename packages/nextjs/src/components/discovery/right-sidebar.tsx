@@ -125,8 +125,8 @@ export default function RightSidebar() {
 
   return (
     <aside
-      className={`fixed right-0 top-14 h-[calc(100vh-3.5rem)] bg-sidebar text-sidebar-foreground border-l border-sidebar-border shadow-lg transition-all duration-300 ease-in-out z-40 
-        ${isCollapsed ? 'w-16' : 'w-[280px] md:w-[280px] max-md:w-[90vw] max-md:max-w-[320px]'}
+      className={`sticky right-0 top-14 h-[calc(100vh-3.5rem)] bg-sidebar text-sidebar-foreground border-l border-sidebar-border shadow-lg transition-all duration-300 ease-in-out z-40 flex-shrink-0
+        ${isCollapsed ? 'w-16' : 'w-64'}
         transform md:translate-x-0
         ${isCollapsed ? 'translate-x-0 max-md:translate-x-full' : 'translate-x-0'}
       `}

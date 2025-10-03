@@ -5,12 +5,12 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={true} className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="grid grid-cols-[320px_1fr_256px] min-h-screen bg-background text-foreground">
+      <div className="flex flex-1 bg-background text-foreground">
         <LearningHubSidebar />
-        <main className="flex justify-center mt-14 px-4 py-8 pl-[4em]">
-          <div className="w-full max-w-5xl">{children}</div>
+        <main className="flex-1 mt-14 px-4 py-8 overflow-x-hidden">
+          <div className="w-full max-w-5xl mx-auto">{children}</div>
         </main>
         <RightSidebar />
       </div>
