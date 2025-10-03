@@ -61,7 +61,7 @@ export default function Roadmap() {
           observer.disconnect(); // Optional: stop observing after it's visible once
         }
       },
-      { threshold: 0.2 }, // Trigger when 20% of the section is visible
+      { threshold: 0.2 } // Trigger when 20% of the section is visible
     );
 
     if (sectionRef.current) {
@@ -78,10 +78,7 @@ export default function Roadmap() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="bg-[#F3F4F6] dark:bg-muted/20 py-16 px-4 overflow-hidden"
-    >
+    <section ref={sectionRef} className="bg-[#F3F4F6] dark:bg-background py-16 px-4 overflow-hidden">
       <div
         className={`max-w-4xl mx-auto text-center space-y-2 transition-all duration-1000 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -95,10 +92,11 @@ export default function Roadmap() {
         </p>
       </div>
       <div
-        className={`mt-10 xl:max-w-6xl mx-auto transition-all duration-1000 delay-300 ${
+        className={`mt-10  xl:max-w-6xl mx-auto transition-all duration-1000 delay-300 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}
       >
+
         <Chrono
           theme={{
             primary: '#5EEAD4',
@@ -106,9 +104,9 @@ export default function Roadmap() {
           }}
           mode="VERTICAL_ALTERNATING"
           disableToolbar={true}
-  slideItemDuration={3000} 
-  slideshow
-  slideShowType='slide_from_sides'
+          slideItemDuration={3000}
+          slideshow
+          slideShowType="slide_from_sides"
         >
           {roadmapTimeLineData.map((item, index) => (
             <TimeLineCard
