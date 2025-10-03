@@ -14,9 +14,8 @@ soroban-sdk = { workspace = true }
 [dev-dependencies]
 soroban-sdk = { workspace = true, features = ["testutils"] }
 
-# Optimization settings
 [profile.release]
-opt-level = 'z'  # Optimize for size
+opt-level = 'z'
 overflow-checks = true
 debug = 0
 strip = true
@@ -36,9 +35,7 @@ incremental = true
 codegen-units = 256
 rpath = false
 
-# Soroban snapshot configuration
-# Snapshots are WASM binary representations of contract state used in testing
 [package.metadata.soroban]
-generate-snapshots = false  # Only creates snapshots when explicitly requested
-snapshot-dir = "test_snapshots"  # Directory for test snapshots
-verbose-snapshots = false  # Reduces output noise during testing
+generate-snapshots = false
+snapshot-dir = "test_snapshots"
+verbose-snapshots = false
