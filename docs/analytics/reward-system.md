@@ -125,7 +125,13 @@ graph TD
 
 ---
 
-Issue 399
+#### Cultural Bonus Criteria
+| Category | Multiplier | Validation Required | Examples |
+|----------|------------|-------------------|----------|
+| **Public Cultural Knowledge** | 1.2x | Community acknowledgment | Historical facts, public ceremonies |
+| **Traditional Practices** | 1.5x | Cultural expert review | Craft techniques, farming methods |
+| **Indigenous Knowledge** | 2.0x | Elder/community approval | Traditional medicine, ecological wisdom |
+| **Sacred Content** | Variable | Special protocols | Ceremonial knowledge, spiritual practices |
 
 ### Cultural Impact Measurement
 
