@@ -1,25 +1,17 @@
 'use client';
 
 import './HeaderLanding.css';
+import './HeaderLanding.css';
 
 import { gsap } from 'gsap';
-import { ArrowUpRight } from 'lucide-react';
-import { Menu, Monitor, Moon, Sun,XIcon } from 'lucide-react';
+import { ArrowUpRight, Monitor, Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
-import { gsap } from 'gsap';
-import { ArrowUpRight, Monitor, Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import './HeaderLanding.css';
-import { useLayoutEffect, useCallback } from 'react';
-import { ArrowUpRight } from 'lucide-react';
-import { Menu, XIcon, Monitor, Moon, Sun } from 'lucide-react';
 
 
 interface NavLink {
