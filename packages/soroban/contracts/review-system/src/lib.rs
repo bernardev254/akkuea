@@ -1,7 +1,7 @@
 #![no_std]
 
 use soroban_sdk::{
-    contract, contractimpl, contracterror, contracttype, Address, Env, String, Symbol, Vec,
+    contract, contractimpl, contracterror, contracttype, Address, Env, String, Symbol, Vec, IntoVal,
 };
 
 mod response;
