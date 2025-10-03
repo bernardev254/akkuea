@@ -649,3 +649,109 @@ fn test_milestone_link_nonexistent_progress() {
     contract.link_progress_with_milestone(&platform, &999u64, &100u64, &1u64);
 }
 
+// ============= EVENT EMISSION TESTS =============
+
+#[test]
+fn test_events_nft_issuance() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    let course_id = 1u64;
+    let token_id = contract.initialize_progress(&platform, &user, &course_id, &Vec::new(&env));
+    contract.update_progress(&platform, &token_id, &100u32);
+
+    // Issue NFT and check events
+    contract.issue_course_nft(&platform, &token_id);
+
+    // Verify events were emitted
+    let events = env.events().all();
+    let event_count = events.len();
+
+    // Should have events for: initialize_progress, update_progress, and issue_course_nft
+    assert!(event_count > 0);
+}
+
+#[test]
+fn test_events_prerequisite_verification() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    // Complete prerequisite
+    let prereq_token = contract.initialize_progress(&platform, &user, &1u64, &Vec::new(&env));
+    contract.update_progress(&platform, &prereq_token, &100u32);
+    contract.issue_course_nft(&platform, &prereq_token);
+
+    // Set prerequisite
+    let mut prerequisites = Vec::new(&env);
+    prerequisites.push_back(1u64);
+    contract.set_course_prerequisites(&platform, &2u64, &prerequisites);
+
+    // Verify prerequisites - should emit events
+    contract.verify_prerequisites(&user, &2u64);
+
+    let events = env.events().all();
+    assert!(events.len() > 0);
+}
+
+#[test]
+fn test_events_platform_management() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+
+    // Add platform - should emit event
+    contract.add_platform(&admin, &platform);
+
+    // Remove platform - should emit event
+    contract.remove_platform(&admin, &platform);
+
+    let events = env.events().all();
+    // Should have events for add and remove (at least 1)
+    assert!(events.len() >= 1);
+}
+
+#[test]
+fn test_events_progress_update() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    let token_id = contract.initialize_progress(&platform, &user, &1u64, &Vec::new(&env));
+
+    // Update progress multiple times
+    for completion in [25u32, 50u32, 75u32, 100u32] {
+        contract.update_progress(&platform, &token_id, &completion);
+    }
+
+    let events = env.events().all();
+    // Should have multiple progress update events (at least 1)
+    assert!(events.len() >= 1);
+}
