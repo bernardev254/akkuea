@@ -1,7 +1,11 @@
 'use client';
 
+import './HeaderLanding.css';
+
+import { gsap } from 'gsap';
+import { ArrowUpRight } from 'lucide-react';
+import { Menu, Monitor, Moon, Sun,XIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useRef, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -153,7 +157,7 @@ export default function HeaderLanding() {
       tl?.kill();
       tlRef.current = null;
     };
-  }, [createTimeline, navItems]);
+  }, [createTimeline]);
 
   useLayoutEffect(() => {
     const handleResize = () => {

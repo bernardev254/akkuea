@@ -1,8 +1,10 @@
 'use client';
 import { MessageCircle, Search, User } from 'lucide-react';
 import { LogOut, Settings } from 'lucide-react';
+import { Monitor, Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -23,8 +25,6 @@ import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useMessages } from '@/store/messaging-store';
 import { usePostsStore } from '@/store/postsStore';
-import { useTheme } from 'next-themes';
-import { Monitor, Moon, Sun } from 'lucide-react';
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');

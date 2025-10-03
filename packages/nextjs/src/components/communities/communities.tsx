@@ -3,8 +3,10 @@
 import { MessageCircle, Plus, Search, TrendingUp, User, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useMemo } from 'react';
 import { toast } from 'sonner';
 
+import { Pagination, PaginationInfo } from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -28,11 +30,9 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { usePagination } from '@/hooks/usePagination';
 
 import DiscussionItem from './DiscussionItem';
-import { Pagination, PaginationInfo } from '@/components/pagination';
-import { usePagination } from '@/hooks/usePagination';
-import { useMemo } from 'react';
 
 // Mock data
 const allCommunities = [

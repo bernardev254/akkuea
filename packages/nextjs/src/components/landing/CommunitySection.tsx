@@ -2,9 +2,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
+import { Github,MessageCircle } from 'lucide-react';
+import { useEffect, useRef,useState } from 'react';
+
 import TwitterIcon from '../ui/twitter-icon';
-import { MessageCircle, Github } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
 
 export default function CommunitySection() {
   const [isVisible, setIsVisible] = useState(false);

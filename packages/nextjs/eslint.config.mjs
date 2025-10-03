@@ -23,8 +23,6 @@ const eslintConfig = [
     rules: {
       'simple-import-sort/imports': 'warn',
       'simple-import-sort/exports': 'warn',
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-      'unused-imports/no-unused-imports': 'error',
     },
   },
 ];

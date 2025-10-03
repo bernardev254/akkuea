@@ -1,17 +1,16 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { TabNav, TabItem, TabContent } from '@/components/settings/tab-components';
 import { Bell, Eye, LockKeyhole, Palette, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { useGlobalAuthenticationStore } from '@/components/auth/store/data';
+import Navbar from '@/components/navbar/navbar';
+import { TabContent,TabItem, TabNav } from '@/components/settings/tab-components';
+import AccessibilityTab from '@/components/settings/tabs/accessibility-tab';
+import { AccountTab } from '@/components/settings/tabs/account-tab';
 import { AppearanceTab } from '@/components/settings/tabs/appearance-tab';
 import NotificationsTab from '@/components/settings/tabs/notifications-tab';
-import AccessibilityTab from '@/components/settings/tabs/accessibility-tab';
-import Navbar from '@/components/navbar/navbar';
-import { AccountTab } from '@/components/settings/tabs/account-tab';
-import { useGlobalAuthenticationStore } from '@/components/auth/store/data';
-
 import { PrivacyTab } from '@/components/settings/tabs/privacy-tab';
 import { TabProvider } from '@/contexts/TabContext';
 // import { useTheme } from "next-themes"
