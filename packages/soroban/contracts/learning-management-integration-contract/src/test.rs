@@ -413,3 +413,239 @@ fn test_invalid_prerequisite_id_zero() {
     contract.set_course_prerequisites(&platform, &course_id, &prerequisites);
 }
 
+// ============= PREREQUISITE TESTS =============
+
+#[test]
+fn test_verify_prerequisites_with_multiple_prereqs() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    // Complete multiple prerequisite courses
+    for prereq_id in 1..=3 {
+        let token_id = contract.initialize_progress(&platform, &user, &prereq_id, &Vec::new(&env));
+        contract.update_progress(&platform, &token_id, &100u32);
+        contract.issue_course_nft(&platform, &token_id);
+    }
+
+    // Set all as prerequisites for main course
+    let main_course_id = 4u64;
+    let mut prerequisites = Vec::new(&env);
+    for i in 1..=3 {
+        prerequisites.push_back(i);
+    }
+    contract.set_course_prerequisites(&platform, &main_course_id, &prerequisites);
+
+    // Verify all prerequisites met
+    assert!(contract.verify_prerequisites(&user, &main_course_id));
+}
+
+#[test]
+fn test_verify_prerequisites_partial_completion() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    // Complete first prerequisite
+    let token1 = contract.initialize_progress(&platform, &user, &1u64, &Vec::new(&env));
+    contract.update_progress(&platform, &token1, &100u32);
+    contract.issue_course_nft(&platform, &token1);
+
+    // Only partially complete second prerequisite
+    let _token2 = contract.initialize_progress(&platform, &user, &2u64, &Vec::new(&env));
+    // Don't complete it
+
+    // Set both as prerequisites
+    let main_course_id = 3u64;
+    let mut prerequisites = Vec::new(&env);
+    prerequisites.push_back(1u64);
+    prerequisites.push_back(2u64);
+    contract.set_course_prerequisites(&platform, &main_course_id, &prerequisites);
+
+    // Should fail because second prerequisite not complete
+    assert!(!contract.verify_prerequisites(&user, &main_course_id));
+}
+
+#[test]
+fn test_verify_prerequisites_completed_but_no_nft() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    // Complete prerequisite but don't issue NFT
+    let token_id = contract.initialize_progress(&platform, &user, &1u64, &Vec::new(&env));
+    contract.update_progress(&platform, &token_id, &100u32);
+    // Don't issue NFT
+
+    // Set as prerequisite
+    let main_course_id = 2u64;
+    let mut prerequisites = Vec::new(&env);
+    prerequisites.push_back(1u64);
+    contract.set_course_prerequisites(&platform, &main_course_id, &prerequisites);
+
+    // Should fail because NFT not issued
+    assert!(!contract.verify_prerequisites(&user, &main_course_id));
+}
+
+#[test]
+fn test_verify_prerequisites_not_started() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    // Set prerequisite without user starting it
+    let main_course_id = 2u64;
+    let mut prerequisites = Vec::new(&env);
+    prerequisites.push_back(1u64);
+    contract.set_course_prerequisites(&platform, &main_course_id, &prerequisites);
+
+    // Should fail because user hasn't started prerequisite
+    assert!(!contract.verify_prerequisites(&user, &main_course_id));
+}
+
+// ============= MILESTONE INTEGRATION TESTS =============
+
+#[test]
+fn test_milestone_integration_link_and_notify() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    let token_id = contract.initialize_progress(&platform, &user, &1u64, &Vec::new(&env));
+
+    // Link with milestone
+    let project_id = 100u64;
+    let milestone_id = 5u64;
+    contract.link_progress_with_milestone(&platform, &token_id, &project_id, &milestone_id);
+
+    // Verify link
+    let milestone_info = contract.get_milestone_info(&token_id);
+    assert_eq!(milestone_info.project_id, Some(project_id));
+    assert_eq!(milestone_info.milestone_id, Some(milestone_id));
+    assert!(milestone_info.linked);
+    assert!(!milestone_info.milestone_completed);
+
+    // Notify completion
+    contract.notify_milestone_completion(&platform, &token_id, &milestone_id);
+
+    // Verify completion
+    let milestone_info = contract.get_milestone_info(&token_id);
+    assert!(milestone_info.milestone_completed);
+}
+
+#[test]
+#[should_panic(expected = "Error(Contract, #6)")] // NotAuthorizedPlatform = 6
+fn test_milestone_unauthorized_platform_link() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let unauthorized = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    let token_id = contract.initialize_progress(&platform, &user, &1u64, &Vec::new(&env));
+
+    // Try to link from unauthorized platform
+    contract.link_progress_with_milestone(&unauthorized, &token_id, &100u64, &1u64);
+}
+
+#[test]
+#[should_panic(expected = "Error(Contract, #6)")] // NotAuthorizedPlatform = 6
+fn test_milestone_unauthorized_platform_notify() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let unauthorized = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    let token_id = contract.initialize_progress(&platform, &user, &1u64, &Vec::new(&env));
+    contract.link_progress_with_milestone(&platform, &token_id, &100u64, &1u64);
+
+    // Try to notify from unauthorized platform
+    contract.notify_milestone_completion(&unauthorized, &token_id, &1u64);
+}
+
+#[test]
+#[should_panic(expected = "Error(Contract, #17)")] // InvalidInput = 17
+fn test_milestone_wrong_milestone_id() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    let token_id = contract.initialize_progress(&platform, &user, &1u64, &Vec::new(&env));
+    contract.link_progress_with_milestone(&platform, &token_id, &100u64, &5u64);
+
+    // Try to notify with wrong milestone ID
+    contract.notify_milestone_completion(&platform, &token_id, &999u64);
+}
+
+#[test]
+#[should_panic(expected = "Error(Contract, #14)")] // ProgressNotFound = 14
+fn test_milestone_link_nonexistent_progress() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    // Try to link non-existent progress
+    contract.link_progress_with_milestone(&platform, &999u64, &100u64, &1u64);
+}
+
