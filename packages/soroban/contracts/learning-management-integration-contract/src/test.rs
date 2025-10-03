@@ -755,3 +755,64 @@ fn test_events_progress_update() {
     // Should have multiple progress update events (at least 1)
     assert!(events.len() >= 1);
 }
+
+// ============= COMPREHENSIVE INTEGRATION TEST =============
+
+#[test]
+fn test_full_learning_path_with_prerequisites_and_milestone() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let platform = Address::generate(&env);
+    let user = Address::generate(&env);
+    let contract = create_contract(&env);
+
+    contract.initialize(&admin);
+    contract.add_platform(&admin, &platform);
+
+    // Step 1: Complete foundational course (no prerequisites)
+    let foundation_course = 1u64;
+    let foundation_token = contract.initialize_progress(&platform, &user, &foundation_course, &Vec::new(&env));
+    contract.update_progress(&platform, &foundation_token, &100u32);
+    contract.issue_course_nft(&platform, &foundation_token);
+
+    // Step 2: Complete intermediate course (requires foundation)
+    let intermediate_course = 2u64;
+    let mut prereqs = Vec::new(&env);
+    prereqs.push_back(foundation_course);
+    contract.set_course_prerequisites(&platform, &intermediate_course, &prereqs);
+
+    assert!(contract.verify_prerequisites(&user, &intermediate_course));
+
+    let intermediate_token = contract.initialize_progress(&platform, &user, &intermediate_course, &Vec::new(&env));
+    contract.update_progress(&platform, &intermediate_token, &100u32);
+    contract.issue_course_nft(&platform, &intermediate_token);
+
+    // Step 3: Advanced course (requires both foundation and intermediate)
+    let advanced_course = 3u64;
+    let mut advanced_prereqs = Vec::new(&env);
+    advanced_prereqs.push_back(foundation_course);
+    advanced_prereqs.push_back(intermediate_course);
+    contract.set_course_prerequisites(&platform, &advanced_course, &advanced_prereqs);
+
+    assert!(contract.verify_prerequisites(&user, &advanced_course));
+
+    let advanced_token = contract.initialize_progress(&platform, &user, &advanced_course, &Vec::new(&env));
+
+    // Link with milestone
+    contract.link_progress_with_milestone(&platform, &advanced_token, &100u64, &1u64);
+
+    contract.update_progress(&platform, &advanced_token, &100u32);
+    contract.issue_course_nft(&platform, &advanced_token);
+
+    // Notify milestone completion
+    contract.notify_milestone_completion(&platform, &advanced_token, &1u64);
+
+    // Verify final state
+    let user_nfts = contract.get_user_nfts(&user);
+    assert_eq!(user_nfts.len(), 3); // All three NFTs issued
+
+    let milestone_info = contract.get_milestone_info(&advanced_token);
+    assert!(milestone_info.milestone_completed);
+}
