@@ -371,4 +371,12 @@ pub enum CredibilityTier {
     Intermediate, // 31-60 points
     Expert,      // 61-80 points
     Master,      // 81-100 points
+/// Statistics about the reward system
+#[contracttype]
+#[derive(Clone)]
+pub struct RewardStatistics {
+    pub total_rewards_issued: u64,
+    pub total_amount_distributed: i128,
+    pub average_reward_amount: i128,
+    pub unique_rewarded_reviewers: u64,
 }

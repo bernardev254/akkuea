@@ -153,28 +153,27 @@ export default function Post({ id, author, content, categories = [], modal }: Po
 
   return (
     <Card className="max-w-4xl w-full p-4">
-      <div className="flex flex-row justify-between items-center p-4">
-        <div className="flex gap-3">
-          <Avatar className="h-10 w-10">
+      <div className="flex flex-row justify-between items-center gap-3 p-4">
+        <div className="flex gap-3 min-w-0 flex-1">
+          <Avatar className="h-10 w-10 flex-shrink-0">
             <AvatarImage src={author.avatar} alt={author.name} />
             <AvatarFallback>{author.name[0]}</AvatarFallback>
           </Avatar>
-          <div className="flex flex-col">
-            <span className="font-semibold">{author.name}</span>
-            <span className="text-sm text-muted-foreground">@{author.username}</span>
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="font-semibold truncate">{author.name}</span>
+            <span className="text-sm text-muted-foreground truncate">@{author.username}</span>
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-shrink-0">
           {!isOpen && (
-            <Button variant="ghost" size="icon" className="ml-auto" onClick={modal}>
+            <Button variant="ghost" size="icon" onClick={modal}>
               <Eye className="h-4 w-4" />
             </Button>
           )}
           <Button
             variant="ghost"
             size="icon"
-            className="ml-auto"
             onClick={() => setReportDialogOpen(true)}
           >
             <Flag className="h-4 w-4" />
