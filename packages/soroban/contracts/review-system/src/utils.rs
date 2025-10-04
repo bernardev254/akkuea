@@ -277,3 +277,13 @@ pub struct ResponseStats {
     pub total_helpful_votes: u32,
     pub total_not_helpful_votes: u32,
 }
+
+/// Statistics about the reward system
+#[contracttype]
+#[derive(Clone)]
+pub struct RewardStatistics {
+    pub total_rewards_issued: u64,
+    pub total_amount_distributed: i128,
+    pub average_reward_amount: i128,
+    pub unique_rewarded_reviewers: u64,
+}
