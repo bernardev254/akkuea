@@ -13,9 +13,8 @@ mod incentives;
 mod test;
 
 pub use response::ThreadNode;
-pub use utils::{ResponseStats, CredibilityTier};
+pub use utils::{ResponseStats, CredibilityTier, RewardStatistics};
 pub use reputation::ReviewerProfile;
-pub use utils::{ResponseStats, RewardStatistics};
 pub use incentives::{ReviewReward, QualityThresholds, RewardAmounts, QualityTier, RewardError};
 
 #[contracttype]
@@ -443,6 +442,8 @@ impl ReviewSystemContract {
         // This is a simplified implementation
         let credible_reviewers = soroban_sdk::Vec::new(&env);
         credible_reviewers
+    }
+
     // === REWARD SYSTEM FUNCTIONS ===
 
     /// Initialize reward system with contract address and parameters

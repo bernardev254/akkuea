@@ -8,8 +8,6 @@ use soroban_sdk::{
 use crate::{
     ModerationStatus, Response, ResponseError, ResponseStats, ReviewSystemContract,
     ReviewSystemContractClient, ThreadNode, ReviewerProfile, CredibilityTier,
-    ModerationStatus, ReviewSystemContract,
-    ReviewSystemContractClient,
 };
 
 fn create_contract(env: &Env) -> (ReviewSystemContractClient, Address, Address, Address, Address) {
@@ -517,7 +515,6 @@ fn test_credibility_scoring() {
     env.mock_all_auths();
 
     let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
-    let user_reputation_contract = Address::generate(&env);
     client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
 
     let reviewer = Address::generate(&env);
@@ -545,7 +542,6 @@ fn test_credibility_auto_update_on_vote() {
     env.mock_all_auths();
 
     let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
-    let user_reputation_contract = Address::generate(&env);
     client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
 
     let responder = Address::generate(&env);
@@ -576,7 +572,6 @@ fn test_credibility_reset_admin_only() {
     env.mock_all_auths();
 
     let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
-    let user_reputation_contract = Address::generate(&env);
     client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
 
     let reviewer = Address::generate(&env);
@@ -602,7 +597,6 @@ fn test_reviewer_profile_updates() {
     env.mock_all_auths();
 
     let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
-    let user_reputation_contract = Address::generate(&env);
     client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
 
     let reviewer = Address::generate(&env);
@@ -616,6 +610,8 @@ fn test_reviewer_profile_updates() {
     let profile = client.get_reviewer_profile(&reviewer);
     assert_eq!(profile.review_count, 1);
     assert!(profile.credibility_score > 0);
+}
+
 // === REWARD SYSTEM TESTS ===
 
 use crate::{QualityThresholds, RewardAmounts};
@@ -653,8 +649,8 @@ fn test_initialize_reward_system() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, admin, moderation_contract, verification_contract) = create_contract(&env);
-    client.initialize(&admin, &moderation_contract, &verification_contract);
+    let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
+    client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
 
     setup_reward_system(&env, &client, &admin);
 
@@ -668,8 +664,8 @@ fn test_issue_reward_for_quality_review() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, admin, moderation_contract, verification_contract) = create_contract(&env);
-    client.initialize(&admin, &moderation_contract, &verification_contract);
+    let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
+    client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
     setup_reward_system(&env, &client, &admin);
 
     let reviewer = Address::generate(&env);
@@ -719,8 +715,8 @@ fn test_reward_eligibility_criteria() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, admin, moderation_contract, verification_contract) = create_contract(&env);
-    client.initialize(&admin, &moderation_contract, &verification_contract);
+    let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
+    client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
     setup_reward_system(&env, &client, &admin);
 
     let reviewer = Address::generate(&env);
@@ -760,8 +756,8 @@ fn test_prevent_duplicate_rewards() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, admin, moderation_contract, verification_contract) = create_contract(&env);
-    client.initialize(&admin, &moderation_contract, &verification_contract);
+    let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
+    client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
     setup_reward_system(&env, &client, &admin);
 
     let reviewer = Address::generate(&env);
@@ -788,8 +784,8 @@ fn test_custom_reward_amount() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, admin, moderation_contract, verification_contract) = create_contract(&env);
-    client.initialize(&admin, &moderation_contract, &verification_contract);
+    let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
+    client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
     setup_reward_system(&env, &client, &admin);
 
     let reviewer = Address::generate(&env);
@@ -814,8 +810,8 @@ fn test_invalid_reward_amount() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, admin, moderation_contract, verification_contract) = create_contract(&env);
-    client.initialize(&admin, &moderation_contract, &verification_contract);
+    let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
+    client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
     setup_reward_system(&env, &client, &admin);
 
     let reviewer = Address::generate(&env);
@@ -843,8 +839,8 @@ fn test_update_quality_thresholds() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, admin, moderation_contract, verification_contract) = create_contract(&env);
-    client.initialize(&admin, &moderation_contract, &verification_contract);
+    let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
+    client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
     setup_reward_system(&env, &client, &admin);
 
     // Update thresholds
@@ -880,8 +876,8 @@ fn test_update_reward_amounts() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, admin, moderation_contract, verification_contract) = create_contract(&env);
-    client.initialize(&admin, &moderation_contract, &verification_contract);
+    let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
+    client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
     setup_reward_system(&env, &client, &admin);
 
     // Update reward amounts
@@ -915,8 +911,8 @@ fn test_get_review_reward() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, admin, moderation_contract, verification_contract) = create_contract(&env);
-    client.initialize(&admin, &moderation_contract, &verification_contract);
+    let (client, admin, moderation_contract, verification_contract, user_reputation_contract) = create_contract(&env);
+    client.initialize(&admin, &moderation_contract, &verification_contract, &user_reputation_contract);
     setup_reward_system(&env, &client, &admin);
 
     let reviewer = Address::generate(&env);

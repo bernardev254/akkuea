@@ -371,6 +371,8 @@ pub enum CredibilityTier {
     Intermediate, // 31-60 points
     Expert,      // 61-80 points
     Master,      // 81-100 points
+}
+
 /// Statistics about the reward system
 #[contracttype]
 #[derive(Clone)]
