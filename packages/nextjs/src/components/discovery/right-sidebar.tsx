@@ -83,16 +83,23 @@ const mockTrending: TrendingItem[] = [
 ];
 
 export default function RightSidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
   const [trending, setTrending] = useState<TrendingItem[]>([]);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Load saved state from localStorage
-    const savedState = localStorage.getItem('rightSidebarState');
-    if (savedState) {
-      setIsCollapsed(JSON.parse(savedState));
+    // Check if desktop (>= 768px) and load saved state
+    const isDesktop = window.innerWidth >= 768;
+    if (isDesktop) {
+      const savedState = localStorage.getItem('rightSidebarState');
+      if (savedState) {
+        setIsCollapsed(JSON.parse(savedState));
+      } else {
+        setIsCollapsed(false); // Default expanded on desktop
+      }
+    } else {
+      setIsCollapsed(true); // Always collapsed on mobile
     }
 
     // Simulate API data fetch
@@ -101,12 +108,25 @@ export default function RightSidebar() {
       setTrending(mockTrending);
     };
     fetchData();
+
+    // Handle window resize
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsCollapsed(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const toggleSidebar = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
-    localStorage.setItem('rightSidebarState', JSON.stringify(newState));
+    // Only save state on desktop
+    if (window.innerWidth >= 768) {
+      localStorage.setItem('rightSidebarState', JSON.stringify(newState));
+    }
   };
 
   const scrollToTab = (tab: 'recommendations' | 'trending') => {
@@ -124,31 +144,42 @@ export default function RightSidebar() {
   };
 
   return (
-    <aside
-      className={`fixed right-0 top-14 h-[calc(100vh-3.5rem)] bg-sidebar text-sidebar-foreground border-l border-sidebar-border shadow-lg transition-all duration-300 ease-in-out z-40 
-        ${isCollapsed ? 'w-16' : 'w-[280px] md:w-[280px] max-md:w-[90vw] max-md:max-w-[320px]'}
-        transform md:translate-x-0
-        ${isCollapsed ? 'translate-x-0 max-md:translate-x-full' : 'translate-x-0'}
-      `}
-    >
-      {/* Toggle Button */}
-      <Button
-        onClick={toggleSidebar}
-        variant="outline"
-        size="icon"
-        className="absolute -left-3 top-1/2 -translate-y-1/2 bg-sidebar rounded-full p-1.5 shadow-lg z-50 hover:bg-sidebar-accent transition-colors border-sidebar-border h-8 w-8"
-        aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+    <>
+      {/* Overlay for mobile */}
+      {!isCollapsed && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={toggleSidebar}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`fixed md:sticky right-0 top-14 h-[calc(100vh-3.5rem)] bg-sidebar text-sidebar-foreground border-l border-sidebar-border shadow-lg transition-all duration-300 ease-in-out z-40 flex-shrink-0
+          ${isCollapsed ? 'w-0 md:w-16' : 'w-full md:w-64'}
+          ${isCollapsed ? 'translate-x-full md:translate-x-0' : 'translate-x-0'}
+        `}
       >
-        {isCollapsed ? (
-          <ChevronLeft className="text-sidebar-foreground" size={16} />
-        ) : (
-          <ChevronRight className="text-sidebar-foreground" size={16} />
-        )}
-      </Button>
+        {/* Toggle Button - Fixed position on mobile */}
+        <Button
+          onClick={toggleSidebar}
+          variant="outline"
+          size="icon"
+          className={`absolute top-4 bg-sidebar rounded-full p-1.5 shadow-lg z-50 hover:bg-sidebar-accent transition-all border-sidebar-border h-10 w-10
+            ${isCollapsed ? 'fixed right-4 md:absolute md:-left-3 md:top-1/2 md:-translate-y-1/2' : 'right-4 md:-left-3 md:top-1/2 md:-translate-y-1/2'}
+          `}
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {isCollapsed ? (
+            <ChevronLeft className="text-sidebar-foreground" size={20} />
+          ) : (
+            <ChevronRight className="text-sidebar-foreground" size={20} />
+          )}
+        </Button>
 
       {isCollapsed ? (
-        // Collapsed State - Icon Navigation
-        <div className="h-full py-4">
+        // Collapsed State - Icon Navigation (hidden on mobile)
+        <div className="hidden md:block h-full py-4">
           <div className="flex justify-center mb-6">
             <div className="bg-primary rounded-[8px] h-8 w-8 flex items-center justify-center">
               <Compass className="w-5 h-5 text-white" />
@@ -185,9 +216,9 @@ export default function RightSidebar() {
         </div>
       ) : (
         // Expanded State - Full Content
-        <div className="h-full flex flex-col">
-          <div className="p-4 border-b border-sidebar-border">
-            <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
+        <div className="h-full flex flex-col pt-16 md:pt-0">
+          <div className="p-4 md:p-4 border-b border-sidebar-border">
+            <h2 className="text-lg md:text-lg font-semibold text-primary flex items-center gap-2">
               <Compass className="w-5 h-5" />
               Discovery
             </h2>
@@ -195,16 +226,17 @@ export default function RightSidebar() {
 
           <div
             ref={contentRef}
-            className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            className="flex-1 overflow-y-auto p-4 md:p-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           >
             <Tabs defaultValue="recommendations" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-200 dark:bg-gray-800 rounded-lg p-1">
-                <TabsTrigger value="recommendations" className="text-xs">
-                  <Sparkles className="w-4 h-4 mr-1" />
-                  For You
+                <TabsTrigger value="recommendations" className="text-xs md:text-xs">
+                  <Sparkles className="w-4 h-4 mr-1.5" />
+                  <span className="hidden sm:inline">For You</span>
+                  <span className="sm:hidden">You</span>
                 </TabsTrigger>
-                <TabsTrigger value="trending" className="text-xs">
-                  <Flame className="w-4 h-4 mr-1" />
+                <TabsTrigger value="trending" className="text-xs md:text-xs">
+                  <Flame className="w-4 h-4 mr-1.5" />
                   Trending
                 </TabsTrigger>
               </TabsList>
@@ -291,6 +323,7 @@ export default function RightSidebar() {
           </div>
         </div>
       )}
-    </aside>
+      </aside>
+    </>
   );
 }
