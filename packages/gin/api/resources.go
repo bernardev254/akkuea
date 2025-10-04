@@ -88,6 +88,33 @@ func ListResources(c *gin.Context) {
     common.JSONSuccess(c, http.StatusOK, resources, "Resources retrieved successfully")
 }
 
+// GetResourceByID retrieves a single resource by its ID
+func GetResourceByID(c *gin.Context) {
+    // Parse resource ID from path
+    idParam := c.Param("id")
+    if idParam == "" {
+        common.JSONError(c, http.StatusBadRequest, "invalid_input", "Resource ID is required")
+        return
+    }
+    
+    rid, err := strconv.ParseUint(idParam, 10, 64)
+    if err != nil {
+        common.JSONError(c, http.StatusBadRequest, "invalid_input", "Invalid resource ID")
+        return
+    }
+
+    db := config.GetDB()
+
+    var resource models.Resource
+    // Preload Creator relationship to include creator details
+    if err := db.Preload("Creator").First(&resource, rid).Error; err != nil {
+        common.JSONError(c, http.StatusNotFound, "not_found", "Resource not found")
+        return
+    }
+
+    common.JSONSuccess(c, http.StatusOK, resource, "Resource retrieved successfully")
+}
+
 // ResourceUpdateRequest defines fields allowed for resource updates (all optional)
 type ResourceUpdateRequest struct {
     Title    *string `json:"title"`
