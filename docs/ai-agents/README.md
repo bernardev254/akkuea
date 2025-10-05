@@ -99,7 +99,6 @@ flowchart TD
 
 ---
 
-Issue 320
 
 #### Step 2: Expertise Configuration
 
@@ -206,7 +205,6 @@ Dr. RepGen: "For green iguana disease resistance breeding, focus on these key ge
 
 ---
 
-Issue 325
 
 ### Sabio Cabecar: Indigenous Knowledge Keeper
 
@@ -393,11 +391,6 @@ graph LR
 
 ---
 
-Issue 336
-
-<!-- Make the changes from issue number 336 here. Thank you for contributing to Akkuea! -->
-
----
 
 #### Performance Optimization
 
