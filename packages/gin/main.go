@@ -39,6 +39,12 @@ func main() {
 		protected.GET("/users/:id", api.GetUserByID)
 		protected.POST("/users", api.CreateUser)
 
+		// Resource endpoints
+		protected.POST("/resources", middleware.RequireRole("Educator"), api.CreateResource)
+		protected.GET("/resources", api.ListResources)
+		protected.GET("/resources/:id", api.GetResourceByID)
+		protected.PUT("/resources/:id", middleware.RequireRole("Educator"), api.UpdateResource)
+
 		// Current user endpoint
 		protected.GET("/auth/me", api.GetCurrentUser)
 		
