@@ -83,8 +83,6 @@ Detailed documentation of the contribution reward system, including point calcul
 
 ---
 
-Issue 301
-
 
 ## 🌟 Key Features Documented
 
@@ -133,7 +131,6 @@ pie title Documentation Coverage
 
 ---
 
-Issue 304
 
 ## 🎯 Documentation Principles
 
@@ -188,7 +185,6 @@ Issue 305
 
 ---
 
-Issue 307
 
 ## 📞 Support & Feedback
 
