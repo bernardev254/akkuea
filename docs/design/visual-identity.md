@@ -122,4 +122,8 @@ Issue 557
 
 ---
 
-Issue 558
+*This visual identity guide ensures Akkuea maintains a consistent, accessible, and culturally sensitive design language across all platforms and materials.*
+
+---
+
+*Next: [UI Components Library](ui-components.md)*
