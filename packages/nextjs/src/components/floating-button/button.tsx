@@ -45,11 +45,12 @@ export default function CreatePostModal() {
           <DialogTitle className="text-2xl font-bold text-primary">Create a new post</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="text" className="w-full" onValueChange={(value) => setActiveTab(value)}>
-          <TabsList className="grid w-full grid-cols-3 mb-4">
+          <TabsList className="grid font-medium w-full grid-cols-3 mb-4">
             <TabsTrigger value="text">Text</TabsTrigger>
             <TabsTrigger value="media">Media</TabsTrigger>
             <TabsTrigger value="link">Link</TabsTrigger>
           </TabsList>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <TabsContent value="text">
               <Textarea
