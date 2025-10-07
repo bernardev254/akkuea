@@ -109,3 +109,23 @@
 span[class^='TriangleIconWrapper'] {
   display: none !important;
 }
+
+
+
+
+/* Dark mode specific styling for timeline cards */
+.dark article[class^='TimelineItem'] {
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .card-description {
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+  --rc-gradient-color: none !important;
+}
+
+
+

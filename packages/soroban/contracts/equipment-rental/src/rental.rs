@@ -41,7 +41,7 @@ pub struct Cancellation {
 pub fn create_rental(env: &Env, renter: Address, equipment_id: u64, duration: u64) -> u64 {
     renter.require_auth();
 
-    if duration < 0 {
+    if duration == 0 {
         panic!("Duration Can't be negative");
     }
 
